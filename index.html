@@ -33,6 +33,7 @@
   <div class="card">
     <h2 style="margin-top:0">Add trip</h2>
     <div class="grid"><div><label>Date</label><input id="date" type="date"></div><div><label>Departure time</label><input id="time" type="time"></div></div>
+    <label>Arrival time</label><input id="endtime" type="time">
     <label>Trip reference / ID</label><input id="tripid" placeholder="e.g. 65563">
     <div class="grid"><div><label>From</label><input id="from" placeholder="Home"></div><div><label>To</label><input id="to" placeholder="Elsenburg"></div></div>
     <div class="grid"><div><label>Start odometer (km)</label><input id="startodo" type="number" inputmode="decimal" step="0.1"></div><div><label>End odometer (km)</label><input id="endodo" type="number" inputmode="decimal" step="0.1"></div></div>
@@ -44,11 +45,11 @@
 
   <div class="card">
     <h2 style="margin-top:0">Apple Shortcuts</h2>
-    <div class="small">Open this file from a Shortcut using URL parameters. Any fields supplied will be pre-filled automatically.</div>
+    <div class="small">Open this file from a Shortcut using URL parameters. Any fields supplied will be pre-filled automatically. An Odo End shortcut will match the most recent open trip on the same date and update it instead of creating a duplicate.</div>
     <label>Example URL format</label>
     <code id="exampleUrl"></code>
     <button class="btn secondary" onclick="copyShortcutTemplate()">Copy Shortcut URL template</button>
-    <div class="small" style="margin-top:8px">Supported fields: <code>date</code>, <code>time</code>, <code>tripid</code>, <code>from</code>, <code>to</code>, <code>startodo</code>, <code>endodo</code>, <code>type</code>, <code>purpose</code>, <code>receipt</code>, <code>autosave</code>.</div>
+    <div class="small" style="margin-top:8px">Supported fields: <code>date</code>, <code>time</code>, <code>endtime</code>, <code>tripid</code>, <code>from</code>, <code>to</code>, <code>startodo</code>, <code>endodo</code>, <code>type</code>, <code>purpose</code>, <code>receipt</code>, <code>autosave</code>.</div>
   </div>
 
   <div class="card">
@@ -64,6 +65,7 @@
 <script>
 const KEY='logbook_assistant_v2';
 let trips=JSON.parse(localStorage.getItem(KEY)||'[]');
+let editingTripId=null;
 const $=id=>document.getElementById(id);
 function localISODate(d=new Date()){const off=d.getTimezoneOffset();return new Date(d.getTime()-off*60000).toISOString().slice(0,10)}
 function todayDefaults(){const d=new Date();$('date').value=localISODate(d);$('time').value=d.toTimeString().slice(0,5)}
@@ -73,10 +75,12 @@ function persist(){localStorage.setItem(KEY,JSON.stringify(trips))}
 function saveTrip(opts={}){
   const start=num('startodo'), end=num('endodo');
   const distance=(start!=null && end!=null && end>=start)? +(end-start).toFixed(1): null;
-  const trip={id:Date.now(),date:$('date').value,time:$('time').value,tripid:$('tripid').value.trim(),from:$('from').value.trim(),to:$('to').value.trim(),startodo:start,endodo:end,distance,type:$('type').value,purpose:$('purpose').value.trim(),receipt:$('receipt').value.trim(),source:opts.source||'manual'};
+  const existing=editingTripId!=null?trips.find(t=>t.id===editingTripId):null;
+  const trip={id:existing?.id||Date.now(),date:$('date').value,time:$('time').value,endtime:$('endtime').value,tripid:$('tripid').value.trim(),from:$('from').value.trim(),to:$('to').value.trim(),startodo:start,endodo:end,distance,type:$('type').value,purpose:$('purpose').value.trim(),receipt:$('receipt').value.trim(),source:existing?.source||opts.source||'manual'};
   if(!trip.date || (!trip.from && !trip.to && start==null && end==null)){if(!opts.silent) alert('Please add at least a date and some trip information.');return false}
-  trips.unshift(trip);persist();render();
-  if(!opts.keepFields){['tripid','from','to','startodo','endodo','purpose','receipt'].forEach(x=>$(x).value='')}
+  if(existing){const i=trips.findIndex(t=>t.id===editingTripId);trips[i]=trip}else{trips.unshift(trip)}
+  editingTripId=null;persist();render();
+  if(!opts.keepFields){['tripid','from','to','startodo','endodo','endtime','purpose','receipt'].forEach(x=>$(x).value='')}
   return true;
 }
 function delTrip(id){trips=trips.filter(t=>t.id!==id);persist();render()}
@@ -86,24 +90,45 @@ function render(){
   const b=trips.filter(t=>t.type==='Business').reduce((s,t)=>s+(t.distance||0),0), p=trips.filter(t=>t.type==='Private').reduce((s,t)=>s+(t.distance||0),0);
   $('businesskm').textContent=b.toFixed(1);$('privatekm').textContent=p.toFixed(1);
   if(!trips.length){$('trips').innerHTML='<div class="small">No trips saved yet.</div>';return}
-  $('trips').innerHTML=trips.map(t=>`<div class="trip"><div><b>${esc(t.date)} ${esc(t.time||'')}</b> ${t.tripid?`<span class="pill">#${esc(t.tripid)}</span>`:''}${t.source==='shortcut'?'<span class="pill">Shortcut</span>':''}</div><div style="margin:5px 0">${esc(t.from||'—')} → ${esc(t.to||'—')}</div><div class="small">${esc(t.type)}${t.distance!=null?` • ${t.distance.toFixed(1)} km`:''}${t.startodo!=null?` • start ${t.startodo}`:''}${t.endodo!=null?` • end ${t.endodo}`:''}${t.purpose?` • ${esc(t.purpose)}`:''}</div>${t.receipt?`<div class="small" style="margin-top:4px">Receipt/subsistence: ${esc(t.receipt)}</div>`:''}<button class="btn secondary" style="padding:8px;margin-top:8px" onclick="delTrip(${t.id})">Delete</button></div>`).join('');
+  $('trips').innerHTML=trips.map(t=>`<div class="trip"><div><b>${esc(t.date)} ${esc(t.time||'')}${t.endtime?`–${esc(t.endtime)}`:''}</b> ${t.tripid?`<span class="pill">#${esc(t.tripid)}</span>`:''}${t.source==='shortcut'?'<span class="pill">Shortcut</span>':''}${t.startodo!=null&&t.endodo==null?'<span class="pill">Open trip</span>':''}</div><div style="margin:5px 0">${esc(t.from||'—')} → ${esc(t.to||'—')}</div><div class="small">${esc(t.type)}${t.distance!=null?` • ${t.distance.toFixed(1)} km`:''}${t.startodo!=null?` • start ${t.startodo}`:''}${t.endodo!=null?` • end ${t.endodo}`:''}${t.purpose?` • ${esc(t.purpose)}`:''}</div>${t.receipt?`<div class="small" style="margin-top:4px">Receipt/subsistence: ${esc(t.receipt)}</div>`:''}<button class="btn secondary" style="padding:8px;margin-top:8px" onclick="delTrip(${t.id})">Delete</button></div>`).join('');
 }
-function exportCSV(){const headers=['Date','Time','Trip ID','From','To','Start Odometer','End Odometer','Distance km','Type','Business Purpose','Receipt/Subsistence Note','Source'];const rows=trips.slice().reverse().map(t=>[t.date,t.time,t.tripid,t.from,t.to,t.startodo??'',t.endodo??'',t.distance??'',t.type,t.purpose,t.receipt,t.source||'manual']);const csv=[headers,...rows].map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');const blob=new Blob([csv],{type:'text/csv'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='vehicle-logbook.csv';a.click();URL.revokeObjectURL(a.href)}
+function exportCSV(){const headers=['Date','Departure Time','Arrival Time','Trip ID','From','To','Start Odometer','End Odometer','Distance km','Type','Business Purpose','Receipt/Subsistence Note','Source'];const rows=trips.slice().reverse().map(t=>[t.date,t.time,t.endtime||'',t.tripid,t.from,t.to,t.startodo??'',t.endodo??'',t.distance??'',t.type,t.purpose,t.receipt,t.source||'manual']);const csv=[headers,...rows].map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');const blob=new Blob([csv],{type:'text/csv'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='vehicle-logbook.csv';a.click();URL.revokeObjectURL(a.href)}
 function copySummary(){const b=trips.filter(t=>t.type==='Business').reduce((s,t)=>s+(t.distance||0),0),p=trips.filter(t=>t.type==='Private').reduce((s,t)=>s+(t.distance||0),0);navigator.clipboard.writeText(`Vehicle Logbook Summary\nTrips: ${trips.length}\nBusiness km: ${b.toFixed(1)}\nPrivate km: ${p.toFixed(1)}\nGenerated: ${new Date().toLocaleString()}`).then(()=>alert('Summary copied.'))}
+function populateFromTrip(t){
+  ['date','time','endtime','tripid','from','to','startodo','endodo','purpose','receipt'].forEach(k=>{$(k).value=t[k]??''});
+  $('type').value=t.type||'Business';
+}
 function applyQueryParams(){
   const q=new URLSearchParams(location.search); if([...q.keys()].length===0) return;
-  const map=['date','time','tripid','from','to','startodo','endodo','purpose','receipt'];
+  const isEnd=q.has('endodo')&&!q.has('startodo');
+  let matched=null;
+  if(isEnd){
+    const qDate=q.get('date');
+    matched=trips.find(t=>t.startodo!=null&&t.endodo==null&&(!qDate||t.date===qDate))||null;
+    if(matched){editingTripId=matched.id;populateFromTrip(matched)}
+  }
+  const map=isEnd?['date','tripid','from','to','endodo','purpose','receipt']:['date','time','endtime','tripid','from','to','startodo','endodo','purpose','receipt'];
   map.forEach(k=>{if(q.has(k)) $(k).value=q.get(k)});
+  if(isEnd){const arrival=q.get('endtime')||q.get('time');if(arrival)$('endtime').value=arrival}
   if(q.has('type')){const v=q.get('type').toLowerCase();$('type').value=v.startsWith('p')?'Private':'Business'}
-  $('shortcutBanner').classList.remove('hidden');$('shortcutBanner').innerHTML='<b>Shortcut data received.</b><div class="small">Review the fields below, then save — or use <code>autosave=1</code> in the Shortcut URL to save automatically.</div>';
+  $('shortcutBanner').classList.remove('hidden');
+  if(isEnd&&matched){
+    $('shortcutBanner').innerHTML='<b>Open trip matched.</b><div class="small">The ending odometer has been added to the existing trip. Review, then save — or use <code>autosave=1</code> to update it automatically.</div>';
+  }else if(isEnd&&!matched){
+    $('shortcutBanner').innerHTML='<b>No open trip found.</b><div class="small">The ending odometer is pre-filled, but it has not been linked to an earlier trip. Review before saving.</div>';
+  }else{
+    $('shortcutBanner').innerHTML='<b>Shortcut data received.</b><div class="small">Review the fields below, then save — or use <code>autosave=1</code> in the Shortcut URL to save automatically.</div>';
+  }
   if(['1','true','yes'].includes((q.get('autosave')||'').toLowerCase())){
+    if(isEnd&&!matched){$('shortcutBanner').innerHTML='<b>Not auto-saved.</b><div class="small">No open trip could be matched, so please review this ending reading manually.</div>';return}
+    const wasEdit=editingTripId!=null;
     const ok=saveTrip({source:'shortcut',silent:true,keepFields:true});
-    if(ok) $('shortcutBanner').innerHTML='<b>Shortcut trip saved.</b><div class="small">The incoming record was added automatically.</div>';
+    if(ok) $('shortcutBanner').innerHTML=wasEdit?'<b>Trip completed.</b><div class="small">The ending odometer was added to the existing trip automatically.</div>':'<b>Shortcut trip saved.</b><div class="small">The incoming record was added automatically.</div>';
   }
 }
 function copyShortcutTemplate(){
   const base=location.href.split('?')[0];
-  const tpl=base+'?date=[Date]&time=[Time]&tripid=[TripID]&from=[From]&to=[To]&startodo=[StartOdo]&endodo=[EndOdo]&type=Business&purpose=[Purpose]&receipt=[Receipt]&autosave=0';
+  const tpl=base+'?date=[Date]&time=[Time]&endtime=[EndTime]&tripid=[TripID]&from=[From]&to=[To]&startodo=[StartOdo]&endodo=[EndOdo]&type=Business&purpose=[Purpose]&receipt=[Receipt]&autosave=0';
   navigator.clipboard.writeText(tpl).then(()=>alert('Shortcut URL template copied.'));
 }
 todayDefaults();
