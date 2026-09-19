@@ -1,15 +1,15 @@
 {
-  "updatedAt": "2026-09-19T16:18:00+02:00",
+  "updatedAt": "2026-09-19T19:55:00+02:00",
   "updatedBy": "Build Garden",
   "overrides": [
     {
       "n": "Master Build Board",
-      "s": "Live / UX polished",
+      "s": "Live / resume-enabled",
       "h": "live",
       "x": 100,
-      "b": "No material blocker. Live source now includes clickable status filters, Show all reset, per-project purpose summaries, collapsing sticky header and cache-busting refresh control.",
-      "a": "Use the revised board in normal browsing; only change interaction patterns if real use exposes another friction point.",
-      "activity": "First-use UX improvements deployed on 19 Sep 2026."
+      "b": "No material blocker. Project titles now launch ChatGPT with a project-specific resume prompt assembled from the card's purpose, blocker, next action and parent relationship.",
+      "a": "Use the tap-to-resume flow in normal browsing and refine only if real use exposes friction.",
+      "activity": "Tap-to-resume launcher deployed on 19 Sep 2026."
     }
   ],
   "additions": []
