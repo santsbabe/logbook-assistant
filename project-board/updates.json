@@ -1,15 +1,15 @@
 {
-  "updatedAt": "2026-09-19T15:12:00+02:00",
+  "updatedAt": "2026-09-19T16:18:00+02:00",
   "updatedBy": "Build Garden",
   "overrides": [
     {
       "n": "Master Build Board",
-      "s": "Live / refresh-driven",
+      "s": "Live / UX polished",
       "h": "live",
       "x": 100,
-      "b": "No material blocker. The page loads a cache-busted update feed on every refresh and checks public GitHub repositories for latest commit activity.",
-      "a": "Whenever we materially change a non-public or non-GitHub build, update this feed as part of that work so the next page refresh reflects the new state.",
-      "activity": "Refresh-driven architecture enabled: live public GitHub activity plus a separate tracker update feed."
+      "b": "No material blocker. Live source now includes clickable status filters, Show all reset, per-project purpose summaries, collapsing sticky header and cache-busting refresh control.",
+      "a": "Use the revised board in normal browsing; only change interaction patterns if real use exposes another friction point.",
+      "activity": "First-use UX improvements deployed on 19 Sep 2026."
     }
   ],
   "additions": []
