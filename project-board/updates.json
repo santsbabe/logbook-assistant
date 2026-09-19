@@ -1,15 +1,15 @@
 {
-  "updatedAt": "2026-09-19T19:55:00+02:00",
+  "updatedAt": "2026-09-19T19:58:00+02:00",
   "updatedBy": "Build Garden",
   "overrides": [
     {
       "n": "Master Build Board",
-      "s": "Live / resume-enabled",
+      "s": "Live / handoff fixed",
       "h": "live",
       "x": 100,
-      "b": "No material blocker. Project titles now launch ChatGPT with a project-specific resume prompt assembled from the card's purpose, blocker, next action and parent relationship.",
-      "a": "Use the tap-to-resume flow in normal browsing and refine only if real use exposes friction.",
-      "activity": "Tap-to-resume launcher deployed on 19 Sep 2026."
+      "b": "No material blocker. Tap-to-resume now avoids silently creating a new chat: linked projects deep-link to the specific ChatGPT conversation; unlinked projects show a clear recovery handoff and copy the resume prompt.",
+      "a": "Link origin conversation IDs to project cards as they are recovered so more builds can jump straight back into their exact chat.",
+      "activity": "ChatGPT handoff corrected on 19 Sep 2026 after first-use testing."
     }
   ],
   "additions": []
