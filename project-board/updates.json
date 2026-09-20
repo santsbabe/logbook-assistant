@@ -1,15 +1,173 @@
 {
-  "updatedAt": "2026-09-20T15:22:00+02:00",
+  "updatedAt": "2026-09-20T20:55:00+02:00",
   "updatedBy": "Build Garden",
   "overrides": [
     {
       "n": "Master Build Board",
-      "s": "Live / ranked + sortable",
+      "s": "Live / QA-integrated",
       "h": "live",
       "x": 100,
-      "b": "No material blocker. Build Garden now defaults to a personalised value ranking and supports sorting by completion, age and category.",
-      "a": "Use the value ranking in normal work and adjust individual ranks only if real use shows that the ordering does not match actual usefulness.",
-      "activity": "Personal value ranking and five-way sorting deployed on 20 Sep 2026."
+      "b": "No material blocker. Build Garden now has Dashboard/Cards views, an attention strip, ageing cues, and Homework Quest QA roll-up support.",
+      "a": "Use the integrated dashboard in normal work; QA feed will become live once Snag Tracker is published.",
+      "activity": "Homework Quest Snag Tracker integration added on 20 Sep 2026."
+    },
+    {
+      "n": "Homework Quest",
+      "qa": {
+        "generatedAt": "2026-09-20T20:55:00+02:00",
+        "project": "Homework Quest",
+        "total": 22,
+        "open": 17,
+        "resolved": 5,
+        "criticalOpen": 5,
+        "readyToRetest": 8,
+        "blocked": 3,
+        "regressions": 0,
+        "needsSantie": 6,
+        "quickWins": 7,
+        "qaHealth": 27,
+        "statusCounts": {
+          "New": 0,
+          "Triaged": 6,
+          "In progress": 0,
+          "Blocked": 3,
+          "Ready to retest": 8,
+          "Resolved": 5,
+          "Regression": 0
+        },
+        "lastQaActivity": "2026-09-20T20:55:00+02:00",
+        "source": "Homework Quest Snag Tracker",
+        "schemaVersion": 1,
+        "url": null
+      },
+      "needsUser": true,
+      "readyTest": true,
+      "activity": "QA roll-up connected: build completion and QA health are now separate."
+    },
+    {
+      "n": "Homework Processing System",
+      "qa": {
+        "generatedAt": "2026-09-20T20:55:00+02:00",
+        "project": "Homework Quest",
+        "total": 22,
+        "open": 17,
+        "resolved": 5,
+        "criticalOpen": 5,
+        "readyToRetest": 8,
+        "blocked": 3,
+        "regressions": 0,
+        "needsSantie": 6,
+        "quickWins": 7,
+        "qaHealth": 27,
+        "statusCounts": {
+          "New": 0,
+          "Triaged": 6,
+          "In progress": 0,
+          "Blocked": 3,
+          "Ready to retest": 8,
+          "Resolved": 5,
+          "Regression": 0
+        },
+        "lastQaActivity": "2026-09-20T20:55:00+02:00",
+        "source": "Homework Quest Snag Tracker",
+        "schemaVersion": 1,
+        "url": null
+      },
+      "readyTest": true
+    },
+    {
+      "n": "Homework Quest Parent Console",
+      "qa": {
+        "generatedAt": "2026-09-20T20:55:00+02:00",
+        "project": "Homework Quest",
+        "total": 22,
+        "open": 17,
+        "resolved": 5,
+        "criticalOpen": 5,
+        "readyToRetest": 8,
+        "blocked": 3,
+        "regressions": 0,
+        "needsSantie": 6,
+        "quickWins": 7,
+        "qaHealth": 27,
+        "statusCounts": {
+          "New": 0,
+          "Triaged": 6,
+          "In progress": 0,
+          "Blocked": 3,
+          "Ready to retest": 8,
+          "Resolved": 5,
+          "Regression": 0
+        },
+        "lastQaActivity": "2026-09-20T20:55:00+02:00",
+        "source": "Homework Quest Snag Tracker",
+        "schemaVersion": 1,
+        "url": null
+      },
+      "needsUser": true,
+      "readyTest": true
+    },
+    {
+      "n": "Afrikaans Tutor",
+      "qa": {
+        "generatedAt": "2026-09-20T20:55:00+02:00",
+        "project": "Homework Quest",
+        "total": 22,
+        "open": 17,
+        "resolved": 5,
+        "criticalOpen": 5,
+        "readyToRetest": 8,
+        "blocked": 3,
+        "regressions": 0,
+        "needsSantie": 6,
+        "quickWins": 7,
+        "qaHealth": 27,
+        "statusCounts": {
+          "New": 0,
+          "Triaged": 6,
+          "In progress": 0,
+          "Blocked": 3,
+          "Ready to retest": 8,
+          "Resolved": 5,
+          "Regression": 0
+        },
+        "lastQaActivity": "2026-09-20T20:55:00+02:00",
+        "source": "Homework Quest Snag Tracker",
+        "schemaVersion": 1,
+        "url": null
+      }
+    },
+    {
+      "n": "Homework Quest Snag Tracker",
+      "qa": {
+        "generatedAt": "2026-09-20T20:55:00+02:00",
+        "project": "Homework Quest",
+        "total": 22,
+        "open": 17,
+        "resolved": 5,
+        "criticalOpen": 5,
+        "readyToRetest": 8,
+        "blocked": 3,
+        "regressions": 0,
+        "needsSantie": 6,
+        "quickWins": 7,
+        "qaHealth": 27,
+        "statusCounts": {
+          "New": 0,
+          "Triaged": 6,
+          "In progress": 0,
+          "Blocked": 3,
+          "Ready to retest": 8,
+          "Resolved": 5,
+          "Regression": 0
+        },
+        "lastQaActivity": "2026-09-20T20:55:00+02:00",
+        "source": "Homework Quest Snag Tracker",
+        "schemaVersion": 1,
+        "url": null
+      },
+      "needsUser": true,
+      "readyTest": true
     }
   ],
   "additions": []
