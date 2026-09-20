@@ -1,15 +1,15 @@
 {
-  "updatedAt": "2026-09-19T19:58:00+02:00",
+  "updatedAt": "2026-09-20T15:09:00+02:00",
   "updatedBy": "Build Garden",
   "overrides": [
     {
       "n": "Master Build Board",
-      "s": "Live / handoff fixed",
+      "s": "Live / UX polished",
       "h": "live",
       "x": 100,
-      "b": "No material blocker. Tap-to-resume now avoids silently creating a new chat: linked projects deep-link to the specific ChatGPT conversation; unlinked projects show a clear recovery handoff and copy the resume prompt.",
-      "a": "Link origin conversation IDs to project cards as they are recovered so more builds can jump straight back into their exact chat.",
-      "activity": "ChatGPT handoff corrected on 19 Sep 2026 after first-use testing."
+      "b": "No material blocker. Compact sticky controls now include Build Category and all four status filters, with stable hysteresis-based collapse/expand behaviour.",
+      "a": "Use the revised sticky header in normal scrolling and report only any remaining real-use friction.",
+      "activity": "Sticky header controls completed and scroll glitch stabilised on 20 Sep 2026."
     }
   ],
   "additions": []
