@@ -516,28 +516,115 @@ body{background:#e7dccd}
 #review .hero{background-image:linear-gradient(180deg,rgba(9,11,13,.10),rgba(28,17,26,.70)),var(--mock-review)!important;min-height:235px;background-size:cover;background-position:center}
 #home .hero:after,#mood .visualHero:after,#queue .visualHero:after,#browse .hero:after,#review .hero:after{display:none!important}
 </style>
+
+<style id="rrMockupFinal">
+:root{--rr-plum:#761747;--rr-plum-dark:#4b1231;--rr-cream:#fbf5ea;--rr-paper:#fffaf1;--rr-ink:#241827;--rr-muted:#796c73;--rr-green:#287e6a;--rr-gold:#d18417;--rr-navy:#074a70;--rr-line:#e7dac9}
+html,body{background:#dfd2c2}
+body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+.app{max-width:430px;background:var(--rr-cream);padding:0 12px 92px}
+.screen{min-height:100vh}
+.hero,.visualHero{height:248px;min-height:248px;margin:0 -12px 0;border-radius:0 0 24px 24px;padding:30px 24px 18px;background-size:185% auto!important;background-repeat:no-repeat!important;background-position:82% 50%!important;box-shadow:none}
+#home .hero{height:296px;min-height:296px;background-size:170% auto!important;background-position:78% 50%!important}
+#review .hero{background-position:88% 50%!important}
+.hero:before,.visualHero:before{background:linear-gradient(90deg,rgba(15,8,10,.72) 0%,rgba(15,8,10,.45) 43%,rgba(15,8,10,.16) 72%,rgba(15,8,10,.08) 100%)!important}
+.brand,.visualHero h1{font:700 43px/.92 Georgia,"Times New Roman",serif!important;letter-spacing:-.045em;max-width:270px;text-shadow:0 2px 10px rgba(0,0,0,.38)}
+.subtitle,.visualHero .heroSub{font:800 11px/1.45 ui-sans-serif,system-ui,sans-serif!important;letter-spacing:.22em;text-transform:uppercase;max-width:240px;margin-top:13px}
+.hero .search{position:absolute;left:18px;right:18px;bottom:16px;margin:0;height:51px;border-radius:999px;padding:0 16px;background:rgba(255,250,241,.98);box-shadow:0 7px 18px rgba(20,8,16,.15)}
+.hero .search input{font-size:14px}
+.hero .searchresults{position:absolute;z-index:20;left:18px;right:18px;top:235px;max-height:240px;overflow:auto}
+#home .hero .searchresults{top:286px}
+.sectionHead{display:flex;align-items:center;justify-content:space-between;margin:14px 4px 8px}
+.sectionHead h2,.queueSectionTitle{font:700 20px/1 Georgia,serif;margin:0;color:var(--rr-ink)}
+.textLink{border:0;background:none;font:500 29px/1 Georgia,serif;color:#4c3d43;cursor:pointer;padding:0 4px}
+.homeReading{margin:0}
+.homeCurrent{display:grid;grid-template-columns:96px 1fr;gap:15px;align-items:center;padding:15px;border:1px solid #f0d5aa;border-radius:16px;background:linear-gradient(135deg,#fff3d8,#fff8e9 70%);box-shadow:0 8px 20px rgba(68,42,26,.08)}
+.homeCurrent .cover,.homeCurrent .fallback{width:96px!important;height:144px;object-fit:cover;border-radius:6px}
+.currentMeta h2{font:700 20px/1.06 Georgia,serif;margin:0 0 5px}
+.currentMeta .author{font-size:13px;color:#75676b;margin-bottom:10px}
+.currentMeta .statuswrap{margin:0 0 7px}.currentMeta .statuswrap label{display:none}.currentMeta .statusselect{max-width:145px;border-radius:999px;background:#fffaf1;border-color:#e3d2bb;padding:9px 11px}
+.currentStatus{font-size:11px;color:#7c696e;margin-top:7px}
+.nextLabel{font:700 19px Georgia,serif;text-transform:none;letter-spacing:0;color:var(--rr-ink);margin:14px 4px 8px}
+.homeNext{gap:8px}
+.nextCard{display:block;min-height:205px;padding:10px;border-radius:12px;background:#fffaf2;box-shadow:0 4px 12px rgba(44,27,38,.05)}
+.nextCard .miniCover{float:none;width:100%!important;height:115px;object-fit:cover;margin:0 0 8px;border-radius:5px}
+.nextCard h3{font-size:14px;line-height:1.05}.nextCard .author{font-size:10px}.queuePill{display:inline-block;margin-top:6px;background:#f5dce6;color:#6b2847;padding:4px 8px;border-radius:999px;font-size:10px}
+.actions{margin:12px 0 0;gap:8px}
+.action{min-height:123px;border-radius:10px;padding:13px 12px;box-shadow:0 5px 12px rgba(35,21,30,.12)}
+.actionIcon{width:29px;height:29px;margin-bottom:9px}.action h3{font-size:18px;margin-bottom:4px}.action p{font-size:11px;line-height:1.25}
+.action:nth-child(1){background:linear-gradient(145deg,#8f1e55,#69143f)}.action:nth-child(2){background:linear-gradient(145deg,#23816c,#176150)}.action:nth-child(3){background:linear-gradient(145deg,#d58a1c,#a35e06)}.action:nth-child(4){background:linear-gradient(145deg,#0c587f,#043a58)}
+#mood .visualHero,#queue .visualHero{height:218px;min-height:218px}
+#mood{padding-bottom:12px}.moodPanel{border:0;border-radius:0;margin:0 -12px;padding:16px 18px 4px;box-shadow:none;background:transparent}
+#mood .moodPanel:first-of-type{padding-top:15px}
+#mood .moodPanel h3{font:700 16px Georgia,serif;margin:0 0 9px}
+#mood .choices{gap:6px}.choice{min-height:39px;padding:9px 10px;font-size:11px;font-weight:500;background:#fbf5eb;border-color:#e7dacb}
+#mood .choice.selected{background:#8c2859!important;color:#fff!important;border-color:#8c2859!important}
+#mood .moodPanel:nth-of-type(2) .choice.selected{background:#2b806b!important;border-color:#2b806b!important;color:#fff!important}
+#mood .moodPanel:nth-of-type(3) .choice.selected{background:#d48716!important;border-color:#d48716!important;color:#fff!important}
+#mood>.primary{width:calc(100% - 24px);margin:10px 12px 4px;height:46px;background:linear-gradient(90deg,#7c1648,#641138);border-radius:999px;font-size:16px}
+#resetMood{width:calc(100% - 24px)!important;margin:4px 12px 8px!important;background:transparent!important;border:0!important;color:#7b6870!important;min-height:34px!important}
+#moodResults{margin-top:10px}#moodResults:before{content:"Recommendations";display:block;font:700 19px Georgia,serif;margin:8px 4px 10px}
+.queueSearch{margin:11px 0 8px;border-radius:999px}
+.queueSectionTitle{margin:15px 4px 8px}
+.queueSection{display:grid;gap:7px}
+#queueList .book{display:grid;grid-template-columns:54px 1fr;gap:10px;padding:9px;border-radius:12px;margin:0;background:#fffaf2;border:0;box-shadow:0 4px 11px rgba(44,27,38,.06)}
+#queueList .queueCurrent .book{grid-template-columns:88px 1fr;padding:12px}
+#queueList .queueCurrent .cover,#queueList .queueCurrent .fallback{width:88px;height:132px}
+#queueList .cover,#queueList .fallback{width:54px;height:80px;object-fit:cover}
+#queueList .book h3{font-size:15px;margin-bottom:2px}
+#queueList .author{font-size:11px}
+#queueList .badges{display:none}
+#queueList .statuswrap{margin-top:6px}#queueList .statuswrap label{display:none}#queueList .statusselect{padding:6px 8px;max-width:125px;font-size:11px}
+#queueList .queueaction{font-size:10px;padding:6px 8px;margin-top:5px}
+#browse .hero,#review .hero{height:230px;min-height:230px}
+#browse .brand,#review .brand{font-size:42px!important}
+.browseControls{margin-top:10px}.browseControls .addbtn{position:fixed;right:max(calc((100vw - 430px)/2 + 18px),18px);bottom:82px;width:54px;height:54px;border-radius:50%;font-size:0;z-index:20;padding:0}
+.browseControls .addbtn:after{content:"+";font-size:31px;font-weight:300;line-height:54px}
+.toolbar{grid-template-columns:repeat(4,1fr);gap:5px}.filter{font-size:10px;padding:8px 2px;border-radius:999px;background:#fffaf2}
+.filter.active{background:#7b1749;color:#fff;border-color:#7b1749}
+#browseCount{font-size:10px;margin:4px 2px 8px}
+#browseList{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+#browseList .book{display:block;padding:8px;margin:0;border:0;border-radius:10px;background:#fffaf1;box-shadow:0 3px 10px rgba(44,27,38,.05)}
+#browseList .cover,#browseList .fallback{width:100%;height:205px;object-fit:cover;margin:0 0 8px;border-radius:5px}
+#browseList .book h3{font-size:14px;line-height:1.05;margin:0 0 3px}
+#browseList .author{font-size:10px}
+#browseList .badges{margin-top:6px}.badge{font-size:9px;padding:3px 6px}
+#browseList .statuswrap{margin-top:6px}#browseList .statuswrap label{display:none}#browseList .statusselect{font-size:10px;padding:5px 6px}
+#browseList .queueaction{font-size:10px;padding:7px 5px;margin-top:5px}
+.reviewSheet{margin:11px 0 0;border:0;box-shadow:none;background:transparent;padding:0 2px}
+.reviewingCard{display:grid;grid-template-columns:82px 1fr;gap:12px;align-items:center;background:#fffaf2;border-radius:13px;padding:10px;margin-bottom:18px;box-shadow:0 4px 12px rgba(44,27,38,.05)}
+.reviewingCard>.cover,.reviewingCard>.fallback{width:82px;height:123px;object-fit:cover}.reviewingCard h3{font:700 17px Georgia,serif;margin:0 0 4px}.changeBook{margin-top:10px;background:#fffaf1;border:1px solid #e5d8c7;border-radius:999px;padding:7px 11px;font-size:11px}
+#review .reviewSheet>h3{font:700 16px Georgia,serif;margin:13px 0 8px}
+#review .reviewgrid{grid-template-columns:repeat(4,1fr);gap:6px}#reviewReread{grid-template-columns:1fr 1fr!important}
+.reviewbtn{min-height:55px;border-radius:12px;font-size:11px;font-weight:500}.reviewbtn.selected{background:#f0bfd1;color:#5e1639;border-color:#bb4870;box-shadow:none}
+#reviewReread .reviewbtn.selected{background:#811b4d;color:#fff;border-color:#811b4d}
+.reviewThoughts{margin-top:14px}.reviewThoughts label{display:block;font:700 15px Georgia,serif;margin-bottom:7px}.reviewThoughts label span{font:400 12px ui-sans-serif,system-ui;color:#7b6a72}.reviewThoughts textarea{width:100%;min-height:118px;resize:vertical;border:1px solid #e4d7c8;border-radius:12px;background:#fffaf2;padding:11px;font:14px ui-sans-serif,system-ui;color:#2b2026}
+#review .primary{margin-top:12px!important;border-radius:999px;height:45px;background:linear-gradient(90deg,#7c1648,#641138)}
+.bottom{height:66px;padding:5px 5px calc(5px + env(safe-area-inset-bottom));background:linear-gradient(90deg,#551131,#711847,#571132);border-radius:16px 16px 0 0}
+.tab{min-height:54px;font-size:9px;color:#f1dfe8;border-radius:13px;gap:2px}.tab.active{background:#8b2458;color:#fff}.navIcon{width:19px;height:19px}
+@media(max-width:360px){.hero,.visualHero{background-size:205% auto!important}.brand,.visualHero h1{font-size:39px!important}#browseList .cover,#browseList .fallback{height:180px}}
+</style>
 </head>
 <body><div class="app">
 <section class="screen active" id="home">
 <div class="hero"><div class="brand">Reading Radar</div><div class="subtitle">A little library that knows your taste.</div><div class="search"><input data-search="home" placeholder="Search title or author"></div><div class="searchresults" data-results="home"></div></div>
-<div class="homeReading" id="homeReading" style="display:none"><div class="kicker">Currently reading</div><div id="homeCurrent"></div><div class="nextLabel" id="nextLabel" style="display:none">Next up</div><div class="homeNext" id="homeNext"></div></div><div class="title">What do you want?</div>
+<div class="homeReading" id="homeReading" style="display:none"><div class="sectionHead"><h2>Currently Reading</h2><button class="textLink" data-go="queue">›</button></div><div id="homeCurrent"></div><div class="nextLabel" id="nextLabel" style="display:none">Next Up</div><div class="homeNext" id="homeNext"></div></div>
 <div class="actions">
 <button class="action" data-go="mood"><span class="actionIcon"><svg viewBox="0 0 24 24"><path d="M9.5 4.5a3 3 0 0 0-5.5 1.7 3 3 0 0 0-1 5.8 3 3 0 0 0 1.5 5.6 3 3 0 0 0 5 1.9V4.5Z"/><path d="M14.5 4.5A3 3 0 0 1 20 6.2a3 3 0 0 1 1 5.8 3 3 0 0 1-1.5 5.6 3 3 0 0 1-5 1.9V4.5Z"/></svg></span><h3>Match my mood</h3><p>Tell me what your brain wants.</p></button>
 <button class="action" data-go="queue"><span class="actionIcon"><svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13"/><circle cx="3" cy="6" r="1"/><circle cx="3" cy="12" r="1"/><circle cx="3" cy="18" r="1"/></svg></span><h3>My queue</h3><p>Next up, without the swamp.</p></button>
 <button class="action" data-go="review"><span class="actionIcon"><svg viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H11v16H6.5A2.5 2.5 0 0 0 4 21.5v-16Z"/><path d="M20 5.5A2.5 2.5 0 0 0 17.5 3H13v16h4.5a2.5 2.5 0 0 1 2.5 2.5v-16Z"/></svg></span><h3>Review a book</h3><p>Fast feedback, better recs.</p></button>
 <button class="action" data-go="browse"><span class="actionIcon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m14.8 9.2-2 5.6-5.6 2 2-5.6 5.6-2Z"/></svg></span><h3>Browse shelves</h3><p>Wander by lane, tag or vibe.</p></button>
 </div></section>
-<section class="screen" id="mood"><div class="visualHero"><button class="back" data-go="home">← Home</button><h1>Match<br>my mood</h1><div class="heroSub">Find your next great read</div></div>
-<div class="panel"><h3>How's your brain?</h3><div class="choices" data-single><button class="choice">Fried</button><button class="choice">Fine</button><button class="choice">Feed me</button><button class="choice">Restless</button></div></div>
-<div class="panel"><h3>What do you want emotionally?</h3><div class="choices" data-single id="emotion"><button class="choice">Fun</button><button class="choice">Tense</button><button class="choice">Strange</button><button class="choice">Gentle</button><button class="choice">Fascinating</button><button class="choice">Healing</button></div></div>
-<div class="panel"><h3>Commitment?</h3><div class="choices" data-single><button class="choice">Light</button><button class="choice">Normal</button><button class="choice">Immerse me</button><button class="choice">Continue something</button></div></div>
-<button class="primary" id="findMood">Find my 3 books</button><button class="choice" id="resetMood" style="width:100%;margin-top:8px">Reset selections</button><div id="moodResults" class="results"></div></section>
-<section class="screen" id="queue"><div class="visualHero"><button class="back" data-go="home">← Home</button><h1>My queue</h1><div class="heroSub">Your next chapter is waiting</div></div><div class="search"><input data-search="queue" placeholder="Search queue"></div><div id="queueList"></div></section>
-<section class="screen" id="browse"><div class="hero"><div class="brand">Browse shelves</div><div class="subtitle">By mood, genre, status or ownership.</div><div class="search"><input data-search="browse" placeholder="Search title or author"><button type="button" id="clearBrowse" aria-label="Clear search" style="display:none;border:0;background:transparent;color:var(--plum);font-weight:900;font-size:18px;cursor:pointer">×</button></div></div>
+<section class="screen" id="mood"><div class="visualHero"><h1>Match<br>my mood</h1><div class="heroSub">Find a book for right now.</div></div>
+<div class="panel moodPanel"><h3>1. How’s your brain today?</h3><div class="choices" data-single><button class="choice" data-value="Fried">I need something easy</button><button class="choice" data-value="Fine">I want a bit of a challenge</button><button class="choice" data-value="Feed me">I’m ready for something complex</button><button class="choice" data-value="Restless">Surprise me</button></div></div>
+<div class="panel moodPanel"><h3>2. What kind of mood are you in?</h3><div class="choices" data-single id="emotion"><button class="choice" data-value="Fun">Happy</button><button class="choice" data-value="Gentle">Calm</button><button class="choice" data-value="Tense">Stressed</button><button class="choice" data-value="Fascinating">Reflective</button><button class="choice" data-value="Strange">Adventurous</button><button class="choice" data-value="Healing">Mellow</button></div></div>
+<div class="panel moodPanel"><h3>3. How much commitment?</h3><div class="choices" data-single><button class="choice" data-value="Light">Short and sweet</button><button class="choice" data-value="Normal">Medium length</button><button class="choice" data-value="Immerse me">A real time investment</button><button class="choice" data-value="Continue something">No preference</button></div></div>
+<button class="primary" id="findMood">Find my books <span aria-hidden="true">→</span></button><button class="choice" id="resetMood" style="width:100%;margin-top:8px">Reset selections</button><div id="moodResults" class="results"></div></section>
+<section class="screen" id="queue"><div class="visualHero"><h1>My Queue</h1><div class="heroSub">Your reading plan at a glance.</div></div><div class="search queueSearch"><input data-search="queue" placeholder="Search queue"></div><div id="queueList"></div></section>
+<section class="screen" id="browse"><div class="hero"><div class="brand">Browse<br>my shelves</div><div class="subtitle">Explore your collection.</div><div class="search"><input data-search="browse" placeholder="Search title or author"><button type="button" id="clearBrowse" aria-label="Clear search" style="display:none;border:0;background:transparent;color:var(--plum);font-weight:900;font-size:18px;cursor:pointer">×</button></div></div>
 <div class="browseControls"><button class="addbtn" id="openAdd">Add a title</button><div class="toolbar"><button class="filter" data-filter="mood">Mood</button><button class="filter" data-filter="genre">Genre</button><button class="filter" data-filter="status">Status</button><button class="filter" data-filter="ownership">Ownership</button></div></div>
 <div id="filterPanel" class="panel" style="display:none"><div class="kicker" id="filterTitle">Filter</div><div class="choices" id="filterChoices"></div><button class="choice" id="clearFilters" style="width:100%;margin-top:10px">Clear all filters</button></div><div id="browseCount" class="count"></div><div id="browseList"></div></section>
-<section class="screen" id="review"><div class="hero"><div class="brand">Review a book</div><div class="subtitle">Quick enough to actually use.</div><div class="search"><input data-search="review" placeholder="Find title or author"></div><div class="searchresults" data-results="review"></div></div>
-<div class="panel"><div id="reviewing" class="note">Select a book above.</div><h3>How was it?</h3><div class="reviewgrid" data-single id="reviewRating"><button class="reviewbtn">Loved</button><button class="reviewbtn">Liked</button><button class="reviewbtn">Fine</button><button class="reviewbtn">Nope</button></div><h3>Would you reread it?</h3><div class="reviewgrid" data-single id="reviewReread"><button class="reviewbtn">Yes</button><button class="reviewbtn">No</button></div><button class="primary" id="saveReview" style="margin-top:16px">Save review</button><div class="done" id="reviewDone">Review saved.</div></div></section>
+<section class="screen" id="review"><div class="hero"><div class="brand">Review<br>a book</div><div class="subtitle">Capture your thoughts.</div><div class="search"><input data-search="review" placeholder="Find title or author"></div><div class="searchresults" data-results="review"></div></div>
+<div class="panel reviewSheet"><div id="reviewing" class="reviewingCard">Select a book above.</div><h3>How did you feel about it?</h3><div class="reviewgrid" data-single id="reviewRating"><button class="reviewbtn">Loved</button><button class="reviewbtn">Liked</button><button class="reviewbtn">Fine</button><button class="reviewbtn">Nope</button></div><h3>Would you reread it?</h3><div class="reviewgrid" data-single id="reviewReread"><button class="reviewbtn">Yes</button><button class="reviewbtn">No</button></div><div class="reviewThoughts"><label for="reviewNotes">Your thoughts <span>(optional)</span></label><textarea id="reviewNotes" placeholder="Write your review…"></textarea></div><button class="primary" id="saveReview" style="margin-top:16px">Save review</button><div class="done" id="reviewDone">Review saved.</div></div></section>
 <nav class="bottom">
   <button class="tab active" data-go="home"><span class="navIcon"><svg viewBox="0 0 24 24"><path d="m3 11 9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M9 20v-6h6v6"/></svg></span>Home</button>
   <button class="tab" data-go="mood"><span class="navIcon"><svg viewBox="0 0 24 24"><path d="M9.5 4.5a3 3 0 0 0-5.5 1.7 3 3 0 0 0-1 5.8 3 3 0 0 0 1.5 5.6 3 3 0 0 0 5 1.9V4.5Z"/><path d="M14.5 4.5A3 3 0 0 1 20 6.2a3 3 0 0 1 1 5.8 3 3 0 0 1-1.5 5.6 3 3 0 0 1-5 1.9V4.5Z"/></svg></span>Mood</button>
@@ -893,32 +980,27 @@ function renderHome(){
   if(!wrap||!current||!next)return;
   const books=queueKeys.map(k=>libraryMap.get(k)).filter(Boolean);
   current.innerHTML="";next.innerHTML="";
-  if(!books.length){
-    wrap.style.display="none";label.style.display="none";return;
-  }
+  if(!books.length){wrap.style.display="none";label.style.display="none";return}
   wrap.style.display="block";
-
   const b=books[0];
   const box=el("div","homeCurrent");
   box.onclick=()=>go("queue");
   const {img,fallback}=bookCoverNodes(b);
-  img.style.width="92px";fallback.style.width="92px";
-  const meta=el("div");
-  meta.append(el("h2",null,b.title),el("div","author",b.author));
-  const badges=el("div","badges");
-  badges.append(el("span","badge",b.status),el("span","badge","In queue"));
-  meta.append(badges,statusControl(b));
+  const meta=el("div","currentMeta");
+  meta.append(el("h2",null,b.title),el("div","author",b.author),statusControl(b));
+  const status=el("div","currentStatus",b.status);
+  meta.append(status);
   box.append(img,fallback,meta);
   current.appendChild(box);
 
   const upcoming=books.slice(1,3);
   label.style.display=upcoming.length?"block":"none";
-  upcoming.forEach(x=>{
+  upcoming.forEach((x,idx)=>{
     const d=el("div","nextCard");
     d.onclick=()=>go("queue");
     const {img:im,fallback:fb}=bookCoverNodes(x,"miniCover");
-    const info=el("div");
-    info.append(el("h3",null,x.title),el("div","author",x.author));
+    const info=el("div","nextInfo");
+    info.append(el("h3",null,x.title),el("div","author",x.author),el("span","queuePill","Queue #"+(idx+2)));
     d.append(im,fb,info);
     next.appendChild(d);
   });
@@ -944,15 +1026,7 @@ function renderBrowse(){
   if(!out)return;
   qs("#browseCount").textContent=rows.length+" book"+(rows.length===1?"":"s")+" shown";
   out.innerHTML="";
-  const lanes=new Map();
-  rows.forEach(b=>{
-    if(!lanes.has(b.lane||"Other"))lanes.set(b.lane||"Other",[]);
-    lanes.get(b.lane||"Other").push(b);
-  });
-  lanes.forEach((books,lane)=>{
-    out.appendChild(el("div","lane",lane));
-    books.forEach(b=>out.appendChild(card(b)));
-  });
+  rows.forEach(b=>out.appendChild(card(b)));
   const clear=qs("#clearBrowse");
   if(clear)clear.style.display=q?"block":"none";
 }
@@ -967,7 +1041,20 @@ function renderQueue(){
     out.appendChild(el("div","note",queueKeys.length?"No queued books match this search.":"Your queue is empty. Add a book from Browse or Mood."));
     return;
   }
-  rows.forEach(b=>out.appendChild(card(b,{removeQueue:true})));
+  const addSection=(label,items,cls)=>{
+    if(!items.length)return;
+    out.appendChild(el("h2","queueSectionTitle",label));
+    const section=el("div","queueSection "+cls);
+    items.forEach((b,i)=>{
+      const row=card(b,{removeQueue:true});
+      row.dataset.queueIndex=String(queueKeys.indexOf(keyFor(b))+1);
+      section.appendChild(row);
+    });
+    out.appendChild(section);
+  };
+  addSection("Currently Reading",rows.slice(0,1),"queueCurrent");
+  addSection("Up Next",rows.slice(1,3),"queueNext");
+  addSection("Later",rows.slice(3),"queueLater");
 }
 function showSearch(scope,input){
   const box=qs('[data-results="'+scope+'"]');
@@ -985,7 +1072,16 @@ function showSearch(scope,input){
       if(scope==="review"){
         selectedReviewBook=b;
         input.value=b.title;
-        qs("#reviewing").textContent="Reviewing: "+b.title+" — "+b.author;
+        const reviewing=qs("#reviewing");
+        reviewing.innerHTML="";
+        const cov=bookCoverNodes(b);
+        const copy=el("div","reviewingCopy");
+        copy.append(el("h3",null,b.title),el("div","author",b.author));
+        const change=el("button","changeBook","Change book");
+        change.type="button";
+        change.onclick=()=>{input.value="";input.focus();showSearch("review",input)};
+        copy.append(change);
+        reviewing.append(cov.img,cov.fallback,copy);
         box.style.display="none";
       }else if(scope==="home"){
         const browseInput=qs('[data-search="browse"]');
@@ -1086,9 +1182,9 @@ const findMood=qs("#findMood");
 if(findMood)findMood.onclick=()=>{
   const groups=qsa("#mood [data-single]");
   if(groups.some(g=>!qs(".selected",g))){alert("Choose one option in each section first.");return}
-  const brain=qs(".selected",groups[0]).textContent;
-  const emotion=qs(".selected",groups[1]).textContent;
-  const commitment=qs(".selected",groups[2]).textContent;
+  const brain=qs(".selected",groups[0]).dataset.value||qs(".selected",groups[0]).textContent;
+  const emotion=qs(".selected",groups[1]).dataset.value||qs(".selected",groups[1]).textContent;
+  const commitment=qs(".selected",groups[2]).dataset.value||qs(".selected",groups[2]).textContent;
   const candidates=library.filter(b=>MOOD_CANDIDATE_STATUSES.has(b.status));
   const rows=candidates
     .map(b=>({b,score:moodScore(b,brain,emotion,commitment)}))
