@@ -23,11 +23,11 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}*{box-sizing:border-box;mi
 <div class="panel"><h3>How's your brain?</h3><div class="choices" data-single><button class="choice">Fried</button><button class="choice">Fine</button><button class="choice">Feed me</button><button class="choice">Restless</button></div></div>
 <div class="panel"><h3>What do you want emotionally?</h3><div class="choices" data-single id="emotion"><button class="choice">Fun</button><button class="choice">Tense</button><button class="choice">Strange</button><button class="choice">Gentle</button><button class="choice">Fascinating</button><button class="choice">Healing</button></div></div>
 <div class="panel"><h3>Commitment?</h3><div class="choices" data-single><button class="choice">Light</button><button class="choice">Normal</button><button class="choice">Immerse me</button><button class="choice">Continue something</button></div></div>
-<button class="primary" id="findMood">Find my 3 books</button><div id="moodResults" class="results"></div></section>
+<button class="primary" id="findMood">Find my 3 books</button><button class="choice" id="resetMood" style="width:100%;margin-top:8px">Reset selections</button><div id="moodResults" class="results"></div></section>
 <section class="screen" id="queue"><button class="back" data-go="home">Back to Home</button><div class="title">My queue</div><div class="search"><input data-search="queue" placeholder="Search queue"></div><div id="queueList"></div></section>
 <section class="screen" id="browse"><div class="hero"><div class="brand">Browse shelves</div><div class="subtitle">By mood, genre, status or ownership.</div><div class="search"><input data-search="browse" placeholder="Search title or author"><button type="button" id="clearBrowse" aria-label="Clear search" style="display:none;border:0;background:transparent;color:var(--plum);font-weight:900;font-size:18px;cursor:pointer">×</button></div></div>
 <div class="browseControls"><button class="addbtn" id="openAdd">Add a title</button><div class="toolbar"><button class="filter" data-filter="mood">Mood</button><button class="filter" data-filter="genre">Genre</button><button class="filter" data-filter="status">Status</button><button class="filter" data-filter="ownership">Ownership</button></div></div>
-<div id="filterPanel" class="panel" style="display:none"><div class="kicker" id="filterTitle">Filter</div><div class="choices" id="filterChoices"></div></div><div id="browseCount" class="count"></div><div id="browseList"></div></section>
+<div id="filterPanel" class="panel" style="display:none"><div class="kicker" id="filterTitle">Filter</div><div class="choices" id="filterChoices"></div><button class="choice" id="clearFilters" style="width:100%;margin-top:10px">Clear all filters</button></div><div id="browseCount" class="count"></div><div id="browseList"></div></section>
 <section class="screen" id="review"><div class="hero"><div class="brand">Review a book</div><div class="subtitle">Quick enough to actually use.</div><div class="search"><input data-search="review" placeholder="Find title or author"></div><div class="searchresults" data-results="review"></div></div>
 <div class="panel"><div id="reviewing" class="note">Select a book above.</div><h3>How was it?</h3><div class="reviewgrid" data-single id="reviewRating"><button class="reviewbtn">Loved</button><button class="reviewbtn">Liked</button><button class="reviewbtn">Fine</button><button class="reviewbtn">Nope</button></div><h3>Would you reread it?</h3><div class="reviewgrid" data-single id="reviewReread"><button class="reviewbtn">Yes</button><button class="reviewbtn">No</button></div><button class="primary" id="saveReview" style="margin-top:16px">Save review</button><div class="done" id="reviewDone">Review saved.</div></div></section>
 <nav class="bottom"><button class="tab active" data-go="home">Home</button><button class="tab" data-go="mood">Mood</button><button class="tab" data-go="browse">Browse</button><button class="tab" data-go="review">Review</button></nav>
@@ -35,23 +35,51 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}*{box-sizing:border-box;mi
 </div>
 <script>
 var seed=[
-{title:"The Thursday Murder Club",author:"Richard Osman",status:"Read + loved",genre:"Thriller",mood:"Fun",owned:true,lane:"Thrillers"},
-{title:"The Man Who Died Twice",author:"Richard Osman",status:"Unread",genre:"Thriller",mood:"Fun",owned:true,lane:"Thrillers"},
-{title:"Dark Places",author:"Gillian Flynn",status:"Read + loved",genre:"Thriller",mood:"Tense",owned:true,lane:"Thrillers"},
-{title:"Sharp Objects",author:"Gillian Flynn",status:"Read + loved",genre:"Thriller",mood:"Tense",owned:true,lane:"Thrillers"},
-{title:"The Coworker",author:"Freida McFadden",status:"Read + loved",genre:"Thriller",mood:"Tense",owned:true,lane:"Thrillers"},
-{title:"The Safekeep",author:"Yael van der Wouden",status:"Read + loved",genre:"Literary",mood:"Immersive",owned:true,lane:"Literary"},
-{title:"The Collapsing Empire",author:"John Scalzi",status:"Read + loved",genre:"Fantasy",mood:"Fun",owned:false,lane:"Speculative"},
-{title:"Starter Villain",author:"John Scalzi",status:"Read + loved",genre:"Fantasy",mood:"Fun",owned:false,lane:"Speculative"},
-{title:"The Kaiju Preservation Society",author:"John Scalzi",status:"Read + loved",genre:"Fantasy",mood:"Fun",owned:false,lane:"Speculative"},
-{title:"Adult Children of Emotionally Immature Parents",author:"Lindsay C. Gibson",status:"Unread",genre:"Nonfiction",mood:"Healing",owned:true,lane:"Healing Through Parenting"},
-{title:"What Happened to You?",author:"Bruce D. Perry & Oprah Winfrey",status:"Unread",genre:"Nonfiction",mood:"Healing",owned:false,lane:"Healing Through Parenting"},
-{title:"Parenting from the Inside Out",author:"Daniel J. Siegel & Mary Hartzell",status:"Unread",genre:"Parenting",mood:"Healing",owned:false,lane:"Healing Through Parenting"},
 {title:"Practical Magic",author:"Alice Hoffman",status:"To assess",genre:"Fantasy",mood:"Strange",owned:false,lane:"Alice Hoffman"},
 {title:"The Rules of Magic",author:"Alice Hoffman",status:"To assess",genre:"Fantasy",mood:"Strange",owned:false,lane:"Alice Hoffman"},
 {title:"Magic Lessons",author:"Alice Hoffman",status:"To assess",genre:"Fantasy",mood:"Strange",owned:false,lane:"Alice Hoffman"},
 {title:"The Book of Magic",author:"Alice Hoffman",status:"To assess",genre:"Fantasy",mood:"Strange",owned:false,lane:"Alice Hoffman"},
-{title:"The Red Garden",author:"Alice Hoffman",status:"To assess",genre:"Literary",mood:"Strange",owned:false,lane:"Alice Hoffman"}];
+{title:"The Red Garden",author:"Alice Hoffman",status:"To assess",genre:"Literary",mood:"Strange",owned:false,lane:"Alice Hoffman"},
+{title:"The Marriage of Opposites",author:"Alice Hoffman",status:"To assess",genre:"Literary",mood:"Fascinating",owned:false,lane:"Alice Hoffman"},
+{title:"The Otherwhere Post",author:"Emily J. Taylor",status:"Read + loved",genre:"Fantasy",mood:"Strange",owned:true,lane:"Speculative"},
+{title:"The Safekeep",author:"Yael van der Wouden",status:"Read + loved",genre:"Literary",mood:"Immersive",owned:true,lane:"Literary"},
+{title:"The Coworker",author:"Freida McFadden",status:"Read + loved",genre:"Thriller",mood:"Tense",owned:true,lane:"Thrillers"},
+{title:"The Thursday Murder Club",author:"Richard Osman",status:"Read + loved",genre:"Thriller",mood:"Fun",owned:true,lane:"Thrillers"},
+{title:"All the Beautiful Lies",author:"Peter Swanson",status:"Read + loved",genre:"Thriller",mood:"Tense",owned:true,lane:"Thrillers"},
+{title:"Dark Places",author:"Gillian Flynn",status:"Read + loved",genre:"Thriller",mood:"Tense",owned:true,lane:"Thrillers"},
+{title:"Sharp Objects",author:"Gillian Flynn",status:"Read + loved",genre:"Thriller",mood:"Tense",owned:true,lane:"Thrillers"},
+{title:"The Kind Worth Killing",author:"Peter Swanson",status:"Read + loved",genre:"Thriller",mood:"Tense",owned:true,lane:"Thrillers"},
+{title:"The Woman in the Window",author:"A. J. Finn",status:"Read + loved",genre:"Thriller",mood:"Tense",owned:true,lane:"Thrillers"},
+{title:"Becoming",author:"Michelle Obama",status:"Read + loved",genre:"Memoir",mood:"Fascinating",owned:false,lane:"Memoir"},
+{title:"Born a Crime",author:"Trevor Noah",status:"Read + loved",genre:"Memoir",mood:"Fascinating",owned:false,lane:"Memoir"},
+{title:"Everything Is Tuberculosis",author:"John Green",status:"Read + loved",genre:"Nonfiction",mood:"Fascinating",owned:false,lane:"Nonfiction"},
+{title:"Home Is Where the Bodies Are",author:"Jeneva Rose",status:"Read + loved",genre:"Thriller",mood:"Tense",owned:false,lane:"Thrillers"},
+{title:"The Collapsing Empire",author:"John Scalzi",status:"Read + loved",genre:"Fantasy",mood:"Fun",owned:false,lane:"Speculative"},
+{title:"Starter Villain",author:"John Scalzi",status:"Read + loved",genre:"Fantasy",mood:"Fun",owned:false,lane:"Speculative"},
+{title:"The Kaiju Preservation Society",author:"John Scalzi",status:"Read + loved",genre:"Fantasy",mood:"Fun",owned:false,lane:"Speculative"},
+{title:"The Martian",author:"Andy Weir",status:"Read + loved",genre:"Fantasy",mood:"Fascinating",owned:false,lane:"Speculative"},
+{title:"Wicked",author:"Gregory Maguire",status:"Read + loved",genre:"Fantasy",mood:"Strange",owned:false,lane:"Fantasy"},
+{title:"Clean & Green",author:"Nancy Birtwhistle",status:"Read + loved",genre:"Practical",mood:"Fascinating",owned:false,lane:"Practical"},
+{title:"How to Keep House While Drowning",author:"KC Davis",status:"Read + loved",genre:"Practical",mood:"Gentle",owned:false,lane:"Reread"},
+{title:"The Color Purple",author:"Alice Walker",status:"Read",genre:"Literary",mood:"Heavy",owned:false,lane:"Reread"},
+{title:"Cute Kawaii Cross Stitch",author:"Sosae Caetano & Dennis Caetano",status:"Read",genre:"Practical",mood:"Gentle",owned:false,lane:"Craft"},
+{title:"Self-Care Cross-Stitch",author:"Stephanie Rohr",status:"Read + loved",genre:"Practical",mood:"Gentle",owned:false,lane:"Craft"},
+{title:"The Book With No Pictures",author:"B. J. Novak",status:"Read + loved",genre:"Family",mood:"Fun",owned:false,lane:"Family"},
+{title:"How to Talk So Kids Will Listen & Listen So Kids Will Talk",author:"Adele Faber & Elaine Mazlish",status:"Started",genre:"Parenting",mood:"Practical",owned:true,lane:"Parenting"},
+{title:"No-Drama Discipline",author:"Daniel J. Siegel & Tina Payne Bryson",status:"Started",genre:"Parenting",mood:"Practical",owned:true,lane:"Parenting"},
+{title:"Divergent Mind",author:"Jenara Nerenberg",status:"Started",genre:"Nonfiction",mood:"Fascinating",owned:false,lane:"Neurodivergence"},
+{title:"Forgiving What You Can't Forget",author:"Lysa TerKeurst",status:"Started",genre:"Nonfiction",mood:"Healing",owned:false,lane:"Healing"},
+{title:"The Man Who Died Twice",author:"Richard Osman",status:"Unread",genre:"Thriller",mood:"Fun",owned:true,lane:"Thrillers"},
+{title:"Adult Children of Emotionally Immature Parents",author:"Lindsay C. Gibson",status:"Unread",genre:"Nonfiction",mood:"Healing",owned:true,lane:"Healing Through Parenting"},
+{title:"What Happened to You?",author:"Bruce D. Perry & Oprah Winfrey",status:"Unread",genre:"Nonfiction",mood:"Healing",owned:false,lane:"Healing Through Parenting"},
+{title:"Parenting from the Inside Out",author:"Daniel J. Siegel & Mary Hartzell",status:"Unread",genre:"Parenting",mood:"Healing",owned:false,lane:"Healing Through Parenting"},
+{title:"Everyone in My Family Has Killed Someone",author:"Benjamin Stevenson",status:"Unread",genre:"Thriller",mood:"Fun",owned:false,lane:"Thrillers"},
+{title:"The Adventures of Amina al-Sirafi",author:"Shannon Chakraborty",status:"Unread",genre:"Fantasy",mood:"Strange",owned:false,lane:"Fantasy"},
+{title:"The Golden Thread",author:"Kassia St Clair",status:"Unread",genre:"Nonfiction",mood:"Fascinating",owned:false,lane:"Textiles"},
+{title:"A Radical Guide for Women with ADHD",author:"Sari Solden & Michelle Frank",status:"Unread",genre:"Nonfiction",mood:"Healing",owned:false,lane:"Neurodivergence"},
+{title:"The Soul's Guide to the After Death",author:"Gwenna Laithland",status:"Unread",genre:"Fantasy",mood:"Strange",owned:true,lane:"Fantasy"},
+{title:"The Language of Thorns",author:"Leigh Bardugo",status:"Unread",genre:"Fantasy",mood:"Strange",owned:true,lane:"Fantasy"},
+{title:"The Ballad of Songbirds and Snakes",author:"Suzanne Collins",status:"Unread",genre:"Fantasy",mood:"Tense",owned:true,lane:"Fantasy"}]
 var added=JSON.parse(localStorage.getItem("rr-added")||"[]"),library=seed.concat(Array.isArray(added)?added:[]),filters={mood:null,genre:null,status:null,ownership:null},selectedReviewBook=null;
 function qs(s){return document.querySelector(s)}function qsa(s){return Array.from(document.querySelectorAll(s))}function norm(s){return(s||"").toLowerCase().trim()}
 function go(id){qsa(".screen").forEach(function(x){x.classList.toggle("active",x.id===id)});qsa(".tab").forEach(function(x){x.classList.toggle("active",x.dataset.go===id)});scrollTo(0,0)}
@@ -95,8 +123,62 @@ function search(scope,input){var box=qs('[data-results="'+scope+'"]'),q=norm(inp
 qsa("[data-search]").forEach(function(i){i.addEventListener("input",function(){var s=i.dataset.search;if(s==="browse"){qs("#clearBrowse").style.display=i.value?"block":"none";renderBrowse();return}if(s==="queue"){renderQueue();return}if(["home","review"].includes(s))search(s,i)})})
 qs("#clearBrowse").onclick=function(){var i=qs('[data-search="browse"]');i.value="";this.style.display="none";renderBrowse();i.focus()};
 var fd={mood:["Fun","Tense","Strange","Gentle","Fascinating","Healing"],genre:["Thriller","Fantasy","Nonfiction","Parenting","Literary"],status:["To assess","Unread","Started","Read","Read + loved","DNF"],ownership:["Owned","Not owned"]};
+qs("#clearFilters").onclick=function(){filters={mood:null,genre:null,status:null,ownership:null};qsa(".filter").forEach(function(x){x.classList.remove("active")});qs("#filterPanel").style.display="none";renderBrowse()};
 qsa(".filter").forEach(function(btn){btn.onclick=function(){qsa(".filter").forEach(function(x){x.classList.remove("active")});btn.classList.add("active");var k=btn.dataset.filter,c=qs("#filterChoices");qs("#filterTitle").textContent=k.charAt(0).toUpperCase()+k.slice(1);c.innerHTML="";qs("#filterPanel").style.display="block";fd[k].forEach(function(label){var o=document.createElement("button");o.className="choice"+(filters[k]===label?" selected":"");o.textContent=label;o.onclick=function(){Array.from(c.children).forEach(function(x){x.classList.remove("selected")});o.classList.add("selected");filters[k]=label;renderBrowse()};c.appendChild(o)})}})
-qs("#findMood").onclick=function(){var gs=qsa("#mood [data-single]");if(gs.some(function(g){return!g.querySelector(".selected")})){alert("Choose one option in each section first.");return}var em=qs("#emotion .selected").textContent,rows=library.filter(function(b){return b.mood===em&&["Unread","Started"].includes(b.status)}).slice(0,3),out=qs("#moodResults");out.innerHTML="";if(!rows.length)rows=library.filter(function(b){return["Unread","Started"].includes(b.status)}).slice(0,3);rows.forEach(function(b){out.appendChild(card(b))});out.style.display="block"}
+function moodScore(b,brain,emotion,commitment){
+  var s=0;
+  if(b.mood===emotion)s+=8;
+  if(b.status==="Started")s+=1;
+  if(b.owned)s+=1;
+
+  if(brain==="Fried"){
+    if(["Gentle","Fun","Healing","Practical"].includes(b.mood))s+=4;
+    if(["Tense","Heavy"].includes(b.mood))s-=3;
+    if(["Practical","Parenting"].includes(b.genre))s+=1;
+  }else if(brain==="Feed me"){
+    if(["Fascinating","Strange","Tense"].includes(b.mood))s+=4;
+    if(["Nonfiction","Fantasy","Thriller","Literary"].includes(b.genre))s+=2;
+  }else if(brain==="Restless"){
+    if(["Fun","Tense","Strange"].includes(b.mood))s+=4;
+    if(["Thriller","Fantasy"].includes(b.genre))s+=2;
+  }else if(brain==="Fine"){
+    s+=1;
+  }
+
+  if(commitment==="Light"){
+    if(b.status==="Started")s+=3;
+    if(["Fun","Gentle","Practical"].includes(b.mood))s+=2;
+    if(["Thriller","Practical","Parenting"].includes(b.genre))s+=1;
+  }else if(commitment==="Immerse me"){
+    if(["Fantasy","Literary"].includes(b.genre))s+=3;
+    if(["Strange","Fascinating","Tense","Healing"].includes(b.mood))s+=2;
+  }else if(commitment==="Continue something"){
+    if(b.status==="Started")s+=8; else s-=2;
+  }else if(commitment==="Normal"){
+    s+=1;
+  }
+  return s;
+}
+qs("#findMood").onclick=function(){
+  var gs=qsa("#mood [data-single]");
+  if(gs.some(function(g){return!g.querySelector(".selected")})){alert("Choose one option in each section first.");return}
+  var brain=gs[0].querySelector(".selected").textContent;
+  var emotion=gs[1].querySelector(".selected").textContent;
+  var commitment=gs[2].querySelector(".selected").textContent;
+  var candidates=library.filter(function(b){return ["Unread","Started","To assess"].includes(b.status)});
+  var rows=candidates.map(function(b){return {book:b,score:moodScore(b,brain,emotion,commitment)}})
+    .sort(function(a,b){return b.score-a.score || a.book.title.localeCompare(b.book.title)})
+    .slice(0,3).map(function(x){return x.book});
+  var out=qs("#moodResults");out.innerHTML="";
+  rows.forEach(function(b){out.appendChild(card(b))});
+  out.style.display="block";
+  out.scrollIntoView({behavior:"smooth",block:"start"});
+}
+qs("#resetMood").onclick=function(){
+  qsa("#mood [data-single] .selected").forEach(function(x){x.classList.remove("selected")});
+  qs("#moodResults").innerHTML="";
+  qs("#moodResults").style.display="none";
+}
 
 qs("#saveReview").onclick=function(){
   if(!selectedReviewBook){alert("Choose a book first.");return}
