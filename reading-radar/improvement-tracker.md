@@ -36,3 +36,26 @@ Desired behaviour:
 - Preserve raw session history
 - Optional streaks only if they are useful rather than guilt-inducing
 - Later investigate an iPhone-friendly shortcut / live activity style flow so the app does not need to stay open
+
+
+### 3. Sync app state across devices
+Status: Deferred
+
+Move user-specific Reading Radar state out of browser-local storage into a persistent synced store so it survives browser-data clearing and follows the user across devices.
+
+State to sync:
+- Manual cover assignments
+- Queue order
+- Reading status changes
+- Reviews and reread signals
+- Added books
+- Future reading-time sessions
+- Future discovery preferences / exclusions
+
+Current limitation:
+- These items are presently stored in local browser storage on the device where they were entered.
+
+Desired outcome:
+- Changes made on one device are available on another.
+- State survives browser cache/site-data clearing.
+- The roadmap itself remains stable and separate from personal activity state.
