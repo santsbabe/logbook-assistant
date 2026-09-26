@@ -24,6 +24,14 @@ body.driveMode .shopItem .btn:first-child{width:100%;font-size:20px;padding:15px
 .todayHero{background:linear-gradient(135deg,var(--soft),var(--card));border-color:#cbd8cd}.todaySection{scroll-margin-top:92px}.toolGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.toolLink{display:flex;flex-direction:column;gap:4px;padding:13px;border:1px solid var(--line);border-radius:15px;background:white;text-decoration:none;color:var(--ink)}.toolLink span{font-size:12px;color:var(--muted)}.driveBack{display:none}
 body.driveMode .driveBack{display:block;margin:16px 0;text-align:center}
 @media(max-width:560px){.grid,.two,.toolGrid{grid-template-columns:1fr}.tabs{margin-left:-14px;margin-right:-14px;padding-left:14px;padding-right:14px}}
+.renoBudget{margin-top:12px;border-top:1px solid var(--line)}
+.renoRow{display:grid;grid-template-columns:1fr auto;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);align-items:start}
+.renoRow b:last-child{white-space:nowrap}
+.renoTotal{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-top:12px;padding:14px;border-radius:15px;background:var(--soft)}
+.renoTotal strong{font-size:20px}
+.renoNotes{display:grid;gap:7px;margin-top:12px}
+.renoNote{padding:9px 11px;border-radius:12px;background:#f1f4ee;font-size:13px}
+@media(max-width:560px){.renoRow{grid-template-columns:1fr}.renoRow b:last-child{white-space:normal}.renoTotal{align-items:flex-start;flex-direction:column}}
 .statusStrip{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:10px 0}.statusFilter{border:1px solid var(--line);background:var(--soft);border-radius:14px;padding:9px 5px;color:var(--ink);font:inherit;cursor:pointer;text-align:center;min-width:0}.statusFilter b{display:block;font-size:20px;line-height:1}.statusFilter span{display:block;font-size:11px;margin-top:4px;white-space:nowrap}.statusFilter.active{background:var(--accent);border-color:var(--accent);color:white}.todaySection.filterHidden,.todayAux.filterHidden{display:none!important}@media(max-width:560px){.statusStrip{gap:5px}.statusFilter{padding:8px 3px}.statusFilter b{font-size:18px}.statusFilter span{font-size:10px}}
 </style></head><body><div class="app">
 <div class="muted">FAMILYROY</div><h1>Control Centre</h1><div class="muted" id="today"></div>
@@ -47,7 +55,30 @@ body.driveMode .driveBack{display:block;margin:16px 0;text-align:center}
   </section>
   
   <section id="electricity" class="panel"><div class="card"><h2>Electricity</h2><div class="muted">Meter readings are data. Only missing, unusual or follow-up items should become Today actions.</div><div class="grid" id="electricityKpis" style="margin-top:10px"></div></div><div class="card"><h2>Add meter reading</h2><div class="form"><input id="meterDate" type="date"><input id="meterValue" type="number" inputmode="numeric" step="1" min="0" placeholder="Meter reading"><button type="button" class="btn primary" onclick="addMeterReading()">Save reading</button></div><div id="meterFeedback" class="muted" style="margin-top:8px"></div></div><div class="card"><h2>Reading history</h2><div id="meterHistory"></div></div></section>
-<section id="admin" class="panel"><div class="card"><h2>Personal & family admin</h2><p class="muted">A register for family admin processes. Each process can feed its next action into Today.</p><div class="task"><strong>Harrison · Birth-record correction</strong><span class="pill">Identity & documents</span><div class="tiny">Active process</div></div></div><div class="card"><h2>Harrison birth-record correction</h2><p class="muted">Later stages stay blocked until earlier gates are complete.</p><div id="docStages"></div></div></section>
+<section id="admin" class="panel"><div class="card"><h2>Personal & family admin</h2><p class="muted">A register for family admin processes. Each process can feed its next action into Today.</p><div class="task"><strong>Harrison · Birth-record correction</strong><span class="pill">Identity & documents</span><div class="tiny">Active process</div></div></div>
+<div class="card"><h2>Living Room refurnishing/redecoration</h2><div class="muted">Future room upgrade · calm charcoal seating, muted green walls, warm wood, more modern pattern, colour and whimsy without toy storage.</div>
+  <div class="renoBudget">
+    <div class="renoRow"><div><b>2-seater sofa</b><div class="tiny">Rebuild/reupholster as designed: charcoal performance upholstery, plush seat cushions + restored loose back cushions.</div></div><b>R14,000–R20,000</b></div>
+    <div class="renoRow"><div><b>1960s Chesterfield</b><div class="tiny">Full reupholstery, rebuild Max-damaged arm, restore stuffing, replace one caster/foot, plush seat cushions.</div></div><b>R24,000–R34,000</b></div>
+    <div class="renoRow"><div><b>Warm-wood coffee table</b><div class="tiny">Rectangular solid-wood / near-identical table with practical lower shelf.</div></div><b>R3,500–R7,000</b></div>
+    <div class="renoRow"><div><b>Large modern muted rug</b><div class="tiny">Low-contrast, less floral; charcoal / faded blue / rust / olive tones.</div></div><b>R4,000–R8,000</b></div>
+    <div class="renoRow"><div><b>Plants + planters</b><div class="tiny">3–5 coordinated indoor plants including hanging plants and floor/surface holders.</div></div><b>R2,000–R4,500</b></div>
+    <div class="renoRow"><div><b>Blanket basket</b><div class="tiny">Large woven basket for throws.</div></div><b>R500–R1,200</b></div>
+    <div class="renoRow"><div><b>DIY UV window film</b><div class="tiny">Clear/high-transmission film for 2 windows to reduce UV damage while retaining daylight.</div></div><b>R1,000–R1,300</b></div>
+    <div class="renoRow"><div><b>Walls</b><div class="tiny">Paint in a muted sage / grey-green.</div></div><b>R2,000–R4,000</b></div>
+    <div class="renoRow"><div><b>Ceiling</b><div class="tiny">Prep, knot/stain block and paint the knotty-pine ceiling white.</div></div><b>R4,000–R8,000</b></div>
+    <div class="renoRow"><div><b>Art / family gallery</b><div class="tiny">One beautiful focal painting + coordinated framed photos of the kids/family and simpler supporting pieces.</div></div><b>R2,500–R7,500</b></div>
+    <div class="renoRow"><div><b>Chandelier shades ×6</b><div class="tiny">Six identical small white clip-on shades for the existing fitting.</div></div><b>R582</b></div>
+    <div class="renoRow"><div><b>Lighting allowance</b><div class="tiny">Bulbs, minor electrical work or small fitting changes if needed.</div></div><b>R500–R1,500</b></div>
+  </div>
+  <div class="renoTotal"><div><div class="tiny">WORKING ROOM BUDGET</div><strong>R58,582–R97,582</strong></div><span class="pill">Lean target ≈ R60k</span></div>
+  <div class="renoNotes">
+    <div class="renoNote"><b>Design direction:</b> charcoal sofas in the same colour family; warm woods; muted green walls; white ceiling; modern, quieter rug; richer colour accents without beige dominance.</div>
+    <div class="renoNote"><b>Room use:</b> no toy storage. Use closed adult storage / sideboard-media storage with practical space for cups, plates and trays after use.</div>
+    <div class="renoNote"><b>Styling:</b> hanging greenery + edited plants; family/kids photos; one strong painting; slightly more modern, grown-up and whimsical rather than floral-heavy.</div>
+  </div>
+</div>
+<div class="card"><h2>Harrison birth-record correction</h2><p class="muted">Later stages stay blocked until earlier gates are complete.</p><div id="docStages"></div></div></section>
 <section id="settings" class="panel"><div class="card"><h2>Connected capabilities</h2><div class="muted">One registry for what FamilyRoy owns, links to, or receives in the background.</div><div id="capabilityList"></div></div><div class="card" id="googleConnection"><h2>Google connection</h2><p class="muted">Load the OAuth JSON you already downloaded for <b>Homework Quest Imports</b>. Only the client ID is stored in this browser.</p><input type="file" id="oauthFile" accept="application/json,.json" onchange="loadOAuth(this.files[0])"><div id="oauthStatus" class="status warn" style="margin-top:9px">No Google client ID saved yet.</div><p class="muted">For Google sign-in to work, add <b>https://santsbabe.github.io</b> to that OAuth client's Authorised JavaScript origins.</p></div><div class="card"><h2>Local data</h2><button type="button" class="btn" onclick="resetData()">Reset Control Centre data</button></div></section>
 </div>
 <script>
