@@ -59,3 +59,27 @@ Desired outcome:
 - Changes made on one device are available on another.
 - State survives browser cache/site-data clearing.
 - The roadmap itself remains stable and separate from personal activity state.
+
+
+### 4. Full UI / UX redesign in Figma
+Status: Review after two weeks of real-world testing
+
+Use the live app and two weeks of actual usage evidence to redesign the interface in a proper visual design tool such as Figma before making further cosmetic code changes.
+
+Scope:
+- Rework visual hierarchy across Home, Mood, Queue, Browse, Review and Add-title flows
+- Design a coherent component system for cards, covers, badges, selectors, buttons and navigation
+- Improve information density and reduce repetitive UI
+- Reassess typography, spacing, iconography and colour hierarchy
+- Design mobile-first states for empty, loading, error, selected and completed conditions
+- Create high-fidelity screens and interaction states before implementation
+- Preserve the moody-library / jewel-tone direction while making the app feel more polished and less improvised
+- Validate the redesign against the user's actual two-week usage patterns before rebuilding the front end
+
+Preferred workflow:
+1. Audit the live app after two weeks
+2. Capture friction points and screenshots
+3. Build low-fidelity wireframes
+4. Refine in Figma (or equivalent)
+5. Approve high-fidelity screens
+6. Only then rebuild the front end
