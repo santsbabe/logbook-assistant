@@ -486,20 +486,55 @@ async function resolveCover(b){
   coverPending.set(k,p);
   return p;
 }
+function looksLikeImageUrl(url){
+  try{
+    const u=new URL(url);
+    return /\.(jpe?g|png|webp|gif|avif)(\?.*)?$/i.test(u.pathname+u.search)
+      || /covers\.openlibrary\.org|books\.googleusercontent\.com|googleusercontent\.com|images\.amazon\.com|m\.media-amazon\.com/i.test(u.hostname);
+  }catch(e){return false}
+}
+function proxyImageUrl(url){
+  return "https://images.weserv.nl/?url="+encodeURIComponent(url.replace(/^https?:\/\//i,""));
+}
+function tryImageSources(img,fallback,sources,onSuccess,onFail){
+  let i=0;
+  function next(){
+    if(i>=sources.length){onFail&&onFail();return}
+    const src=sources[i++];
+    img.onload=()=>{
+      img.style.display="block";
+      fallback.style.display="none";
+      fallback.classList.remove("manual-ready");
+      onSuccess&&onSuccess(src);
+    };
+    img.onerror=()=>next();
+    img.referrerPolicy="no-referrer";
+    img.src=src;
+  }
+  next();
+}
 function setManualCover(b,img,fallback){
   const current=coverSrc(coverCache[keyFor(b)])||"";
-  let url=prompt("Paste an image URL for the cover of “"+b.title+"”.",current);
+  let url=prompt("Paste the image address for the cover of “"+b.title+"” (not the webpage address).",current);
   if(!url)return;
   url=url.trim().replace(/^http:/i,"https:");
-  if(!/^https:\/\//i.test(url)){alert("Please paste a full https:// image URL.");return}
-  coverCache[keyFor(b)]={type:"url",value:url,manual:true};
-  saveCoverCache();
-  showCover(img,fallback,url);
+  if(!/^https:\/\//i.test(url)){alert("Please paste a full https:// image address.");return}
+  const sources=[url];
+  if(looksLikeImageUrl(url))sources.push(proxyImageUrl(url));
+  tryImageSources(img,fallback,sources,function(){
+    coverCache[keyFor(b)]={type:"url",value:url,manual:true};
+    saveCoverCache();
+  },function(){
+    fallback.classList.add("manual-ready");
+    alert("I couldn't load that as an image. Please copy the actual image address (usually ending in .jpg, .jpeg, .png or .webp), not the book's webpage URL.");
+  });
 }
 function showCover(img,fallback,src){
-  img.onload=()=>{img.style.display="block";fallback.style.display="none";fallback.classList.remove("manual-ready")};
-  img.onerror=()=>{img.style.display="none";fallback.style.display="flex";fallback.classList.add("manual-ready")};
-  img.src=src;
+  tryImageSources(img,fallback,[src,proxyImageUrl(src)],null,function(){
+    img.style.display="none";
+    fallback.style.display="flex";
+    fallback.classList.add("manual-ready");
+  });
 }
 const coverObserver="IntersectionObserver" in window?new IntersectionObserver(entries=>{
   entries.forEach(entry=>{
