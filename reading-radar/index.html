@@ -258,13 +258,8 @@ function card(b,opts){
   var d=document.createElement("div");d.className="book";
   var img=document.createElement("img");img.className="cover";img.alt="Cover of "+b.title;img.style.display="none";
   var f=document.createElement("div");f.className="fallback";f.textContent=b.title;
-  var m=document.createElement("div");m.innerHTML="<h3>"+b.title+"</h3><div class='author'>"+b.author+"</div><div class='badges'><span class='badge'>"+statusLabel(b.status)+"</span><span class='badge'>"+b.genre+"</span>"+(b.owned?"<span class='badge'>Owned</span>":"")+"</div>";m.appendChild(statusControl(b));
+  var m=document.createElement("div");m.innerHTML="<h3>"+b.title+"</h3><div class='author'>"+b.author+"</div><div class='badges'><span class='badge'>"+statusLabel(b.status)+"</span><span class='badge'>"+b.genre+"</span>"+(b.owned?"<span class='badge'>Owned</span>":"")+"</div>";m.appendChild(statusControl(b));if(!(opts&&opts.removeQueue)){var qa=document.createElement("button");qa.className="queueaction"+(isQueued(b)?" added":"");qa.textContent=isQueued(b)?"In queue":"Add to queue";qa.onclick=function(){if(isQueued(b)){qa.textContent="In queue";qa.classList.add("added");return}addToQueue(b);qa.textContent="In queue";qa.classList.add("added")};m.appendChild(qa);}
   d.appendChild(img);d.appendChild(f);d.appendChild(m);
-  if(opts&&opts.queueAction){
-    var q=document.createElement("button");q.className="queueaction"+(isQueued(b)?" added":"");q.textContent=isQueued(b)?"In queue":"Add to queue";
-    q.onclick=function(){if(isQueued(b)){q.textContent="In queue";q.classList.add("added");return}addToQueue(b);q.textContent="In queue";q.classList.add("added")};
-    m.appendChild(q);
-  }
   if(opts&&opts.removeQueue){
     var rm=document.createElement("button");rm.className="queueaction remove";rm.textContent="Remove from queue";
     rm.onclick=function(){removeFromQueue(b)};
