@@ -1,0 +1,1274 @@
+{
+  "updated": "2026-09-26T21:40:00+02:00",
+  "milestones": [
+    "defined",
+    "specified",
+    "built",
+    "integrated",
+    "tested",
+    "live"
+  ],
+  "projects": [
+    {
+      "id": "master-build-board",
+      "name": "Master Build Board",
+      "category": "Meta",
+      "parent": null,
+      "summary": "Live master index of every build, with milestone progress, blockers, next actions and links.",
+      "status": "Building now",
+      "health": "active",
+      "lastUpdated": "2026-09-18",
+      "blocker": "ChatGPT Sites publishing is not exposed in the current tool surface; a live GitHub Pages version is being used as the working board.",
+      "next": "Keep the project data file as the source of truth; update project states there so the board changes on refresh.",
+      "milestones": {
+        "defined": "done",
+        "specified": "done",
+        "built": "active",
+        "integrated": "active",
+        "tested": "todo",
+        "live": "todo"
+      },
+      "links": [],
+      "needsUser": false,
+      "readyToTest": false,
+      "quickWin": false,
+      "statusReviewed": "2026-09-26"
+    },
+    {
+      "id": "familyroy-control-centre",
+      "name": "FamilyRoy Control Centre",
+      "category": "Family / Home",
+      "parent": null,
+      "summary": "Phone-first family operating system for actions, school inputs, personal admin, contacts/services and day-to-day control.",
+      "status": "Live / OAuth polish",
+      "health": "active",
+      "lastUpdated": "2026-09-12",
+      "blocker": "Hosted Google sign-in still depends on the correct authorised JavaScript origin.",
+      "next": "Finish OAuth-origin configuration and restore/finish remaining modules without destabilising the live core.",
+      "milestones": {
+        "defined": "done",
+        "specified": "done",
+        "built": "done",
+        "integrated": "done",
+        "tested": "done",
+        "live": "active"
+      },
+      "links": [
+        {
+          "label": "Live",
+          "url": "https://santsbabe.github.io/logbook-assistant/familyroy-control-centre/"
+        },
+        {
+          "label": "GitHub",
+          "url": "https://github.com/santsbabe/logbook-assistant"
+        }
+      ],
+      "needsUser": false,
+      "readyToTest": false,
+      "quickWin": false,
+      "statusReviewed": "2026-09-26"
+    },
+    {
+      "id": "school-notice-action-extractor",
+      "name": "School Notice → Action Extractor",
+      "category": "Family / Home",
+      "parent": "FamilyRoy Control Centre",
+      "summary": "Turns school emails, WhatsApps, newsletters, PDFs and notes into child/date/item/shopping actions.",
+      "status": "Implemented",
+      "health": "active",
+      "lastUpdated": "2026-09-12",
+      "blocker": "Hosted Gmail sync shares the Control Centre OAuth-origin dependency.",
+      "next": "Test real school notices end-to-end after OAuth is stable.",
+      "milestones": {
+        "defined": "done",
+        "specified": "done",
+        "built": "done",
+        "integrated": "done",
+        "tested": "active",
+        "live": "active"
+      },
+      "links": [
+        {
+          "label": "Parent app",
+          "url": "https://santsbabe.github.io/logbook-assistant/familyroy-control-centre/"
+        }
+      ],
+      "needsUser": false,
+      "readyToTest": false,
+      "quickWin": false,
+      "statusReviewed": "2026-09-26"
+    },
+    {
+      "id": "contacts-services",
+      "name": "Contacts & Services Directory",
+      "category": "Family / Home",
+      "parent": "FamilyRoy Control Centre",
+      "summary": "Searchable household directory for contacts, service providers, WhatsApp and repairs.",
+      "status": "Prototype integrated",
+      "health": "active",
+      "lastUpdated": "2026-09-08",
+      "blocker": "ZIP import/merge still needs full backend-grade testing.",
+      "next": "Complete real ZIP parsing/merge and test service-provider lookup flows.",
+      "milestones": {
+        "defined": "done",
+        "specified": "done",
+        "built": "done",
+        "integrated": "done",
+        "tested": "active",
+        "live": "active"
+      },
+      "links": [],
+      "needsUser": false,
+      "readyToTest": false,
+      "quickWin": false,
+      "statusReviewed": "2026-09-26"
+    },
+    {
+      "id": "personal-admin-tracker",
+      "name": "Personal Admin / Identity Document Tracker",
+      "category": "Family / Home",
+      "parent": "FamilyRoy Control Centre",
+      "summary": "Dependency-aware tracker for identity/document cases, with staged actions, owners and follow-ups.",
+      "status": "Operational",
+      "health": "live",
+      "lastUpdated": "2026-09-18",
+      "blocker": "Current Harrison case is waiting on the underlying Home Affairs record correction.",
+      "next": "Keep dependency states current as external steps complete.",
+      "milestones": {
+        "defined": "done",
+        "specified": "done",
+        "built": "done",
+        "integrated": "done",
+        "tested": "done",
+        "live": "done"
+      },
+      "links": [
+        {
+          "label": "Parent app",
+          "url": "https://santsbabe.github.io/logbook-assistant/familyroy-control-centre/"
+        }
+      ],
+      "needsUser": false,
+      "readyToTest": false,
+      "quickWin": false,
+      "liveStage": "stable",
+      "statusReviewed": "2026-09-26"
+    },
+    {
+      "id": "before-we-leave",
+      "name": "Before We Leave",
+      "category": "Family / Home",
+      "parent": "FamilyRoy Control Centre",
+      "summary": "Context-aware leaving-the-house checklist integrated into the family dashboard.",
+      "status": "Built",
+      "health": "live",
+      "lastUpdated": "2026-09-12",
+      "blocker": "No material blocker recorded.",
+      "next": "Extend only when a repeated forgotten-item pattern justifies a new rule.",
+      "milestones": {
+        "defined": "done",
+        "specified": "done",
+        "built": "done",
+        "integrated": "done",
+        "tested": "done",
+        "live": "done"
+      },
+      "links": [
+        {
+          "label": "Parent app",
+          "url": "https://santsbabe.github.io/logbook-assistant/familyroy-control-centre/"
+        }
+      ],
+      "needsUser": false,
+      "readyToTest": false,
+      "quickWin": false,
+      "liveStage": "stable",
+      "statusReviewed": "2026-09-26"
+    },
+    {
+      "id": "electricity-usage-log",
+      "name": "Electricity Usage Log",
+      "category": "Family / Home",
+      "parent": "FamilyRoy Control Centre",
+      "summary": "Photo/date based electricity-meter usage log, intended to feed household tracking.",
+      "status": "Active build",
+      "health": "active",
+      "lastUpdated": "2026-09-13",
+      "blocker": "Automated number limiting/clean extraction and durable Control Centre ingestion are not fully closed.",
+      "next": "Finish meter-reading extraction rules and connect readings to the durable log.",
+      "milestones": {
+        "defined": "done",
+        "specified": "done",
+        "built": "active",
+        "integrated": "active",
+        "tested": "active",
+        "live": "todo"
+      },
+      "links": [],
+      "needsUser": false,
+      "readyToTest": false,
+      "quickWin": false,
+      "statusReviewed": "2026-09-26"
+    },
+    {
+      "id": "household-cashflow",
+      "name": "Household Cashflow & Receipt-Ingestion Tracker",
+      "category": "Money",
+      "parent": "FamilyRoy Control Centre",
+      "summary": "Actual-number family-finance view combining cashflow, debts, bills, school costs, receipts and missing-data gaps.",
+      "status": "Active design / partial build",
+      "health": "active",
+      "lastUpdated": "2026-09-18",
+      "blocker": "Actuals still need consistent ingestion from all family accounts and receipts.",
+      "next": "Normalise incoming statements/receipts and make the visual position reconcile to real balances.",
+      "milestones": {
+        "defined": "done",
+        "specified": "active",
+        "built": "active",
+        "integrated": "todo",
+        "tested": "todo",
+        "live": "todo"
+      },
+      "links": [],
+      "needsUser": false,
+      "readyToTest": false,
+      "quickWin": false,
+      "statusReviewed": "2026-09-26"
+    },
+    {
+      "id": "debt-workbook",
+      "name": "Debt Workbook Refresh",
+      "category": "Money",
+      "parent": "Household Cashflow & Receipt-Ingestion Tracker",
+      "summary": "Debt register and repayment-plan workbook with creditor deduplication, arrangements and weekly refresh logic.",
+      "status": "Running weekly",
+      "health": "live",
+      "lastUpdated": "2026-09-16",
+      "blocker": "Several creditor balances/arrangements still depend on external confirmations.",
+      "next": "Keep weekly reconciliation running and fold confirmed arrangements into cashflow.",
+      "milestones": {
+        "defined": "done",
+        "specified": "done",
+        "built": "done",
+        "integrated": "done",
+        "tested": "done",
+        "live": "done"
+      },
+      "links": [],
+      "needsUser": false,
+      "readyToTest": false,
+      "quickWin": false,
+      "liveStage": "stable",
+      "statusReviewed": "2026-09-26"
+    },
+    {
+      "id": "notion-life-toolkit",
+      "name": "Notion Life Management Toolkit",
+      "category": "Family / Home",
+      "parent": null,
+      "summary": "Older all-in-one life dashboard concept covering planning, medical/admin, travel, budget and family logistics.",
+      "status": "Dormant / superseded in parts",
+      "health": "paused",
+      "lastUpdated": "2025-06-16",
+      "blocker": "Much of its intended scope has since moved into FamilyRoy Control Centre.",
+      "next": "Decide which unique pieces still deserve migration rather than rebuilding duplicate systems.",
+      "milestones": {
+        "defined": "done",
+        "specified": "done",
+        "built": "active",
+        "integrated": "todo",
+        "tested": "todo",
+        "live": "todo"
+      },
+      "links": [],
+      "needsUser": true,
+      "userAction": "Decide whether any unique Notion pieces are still worth migrating.",
+      "readyToTest": false,
+      "quickWin": false,
+      "statusReviewed": "2026-09-26"
+    },
+    {
+      "id": "homework-quest",
+      "name": "Homework Quest",
+      "category": "Learning",
+      "parent": null,
+      "summary": "Child-facing homework game with learner profiles, quests, XP, badges and school-work support.",
+      "status": "Live / evolving",
+      "health": "live",
+      "lastUpdated": "2026-09-14",
+      "blocker": "New processing-side changes must not destabilise the live learner Site.",
+      "next": "Keep learner-game changes deliberate and feed it only reviewed/approved Quest Packages.",
+      "milestones": {
+        "defined": "done",
+        "specified": "done",
+        "built": "done",
+        "integrated": "done",
+        "tested": "done",
+        "live": "done"
+      },
+      "links": [
+        {
+          "label": "Live",
+          "url": "https://harrison-homework-quest.santsbabe.chatgpt.site"
+        },
+        {
+          "label": "GitHub",
+          "url": "https://github.com/santsbabe/homework-quest"
+        }
+      ],
+      "needsUser": false,
+      "readyToTest": false,
+      "quickWin": false,
+      "liveStage": "stable",
+      "statusReviewed": "2026-09-26"
+    },
+    {
+      "id": "homework-processing-system",
+      "name": "Homework Processing System",
+      "category": "Learning",
+      "parent": "Homework Quest",
+      "summary": "Modular intake, routing, archive, extraction, classification, resource verification and Quest Package pipeline.",
+      "status": "Built / acceptance testing",
+      "health": "active",
+      "lastUpdated": "2026-09-14",
+      "blocker": "Real Google-source acceptance testing and deployment hardening remain.",
+      "next": "Run real source sync acceptance tests and close remaining integration regressions.",
+      "milestones": {
+        "defined": "done",
+        "specified": "done",
+        "built": "done",
+        "integrated": "active",
+        "tested": "done",
+        "live": "active"
+      },
+      "links": [
+        {
+          "label": "GitHub",
+          "url": "https://github.com/santsbabe/homework-quest"
+        }
+      ],
+      "needsUser": true,
+      "userAction": "Run a real Google-source acceptance test when ready.",
+      "readyToTest": true,
+      "quickWin": false,
+      "statusReviewed": "2026-09-26"
+    },
+    {
+      "id": "parent-console",
+      "name": "Homework Quest Parent Console",
+      "category": "Learning",
+      "parent": "Homework Quest",
+      "summary": "Separate parent review/control surface for source intake, Needs Attention, approvals and learner-feed governance.",
+      "status": "Live preview / snagging",
+      "health": "active",
+      "lastUpdated": "2026-09-15",
+      "blocker": "Large snag backlog and real Google-sync acceptance remain.",
+      "next": "Work through the snag register and keep preview-first deployment discipline.",
+      "milestones": {
+        "defined": "done",
+        "specified": "done",
+        "built": "done",
+        "integrated": "done",
+        "tested": "active",
+        "live": "done"
+      },
+      "links": [
+        {
+          "label": "Live",
+          "url": "https://homework-quest-parent-console.netlify.app"
+        },
+        {
+          "label": "GitHub",
+          "url": "https://github.com/santsbabe/homework-quest"
+        }
+      ],
+      "needsUser": true,
+      "userAction": "Continue acceptance testing against the snag register.",
+      "readyToTest": true,
+      "quickWin": false,
+      "statusReviewed": "2026-09-26"
+    },
+    {
+      "id": "afrikaans-tutor",
+      "name": "Afrikaans Tutor",
+      "category": "Learning",
+      "parent": "Homework Quest",
+      "summary": "Bilingual Afrikaans support with pronunciation/practice, inline help and standalone tutoring modes.",
+      "status": "Source complete / not live",
+      "health": "active",
+      "lastUpdated": "2026-09-13",
+      "blocker": "Needs preview/testing before publication into the live learner experience.",
+      "next": "Preview against real homework tasks, test natural audio, then publish intentionally.",
+      "milestones": {
+        "defined": "done",
+        "specified": "done",
+        "built": "done",
+        "integrated": "done",
+        "tested": "active",
+        "live": "todo"
+      },
+      "links": [
+        {
+          "label": "GitHub",
+          "url": "https://github.com/santsbabe/homework-quest"
+        }
+      ],
+      "needsUser": true,
+      "userAction": "Preview the tutor against real homework and approve publication.",
+      "readyToTest": true,
+      "quickWin": false,
+      "statusReviewed": "2026-09-26"
+    },
+    {
+      "id": "bloom",
+      "name": "Bloom",
+      "category": "Personal / Health",
+      "parent": null,
+      "summary": "Private local-first mobile PWA for personal pattern tracking, check-ins, medication/cycle/history and health context.",
+      "status": "Live / production",
+      "health": "live",
+      "lastUpdated": "2026-09-26",
+      "blocker": "None — production build completed and launched.",
+      "next": "Use normally; record any amendments during the two-week trial rather than changing the app immediately.",
+      "milestones": {
+        "defined": "done",
+        "specified": "done",
+        "built": "done",
+        "integrated": "done",
+        "tested": "done",
+        "live": "done"
+      },
+      "links": [
+        {
+          "label": "Live",
+          "url": "https://bloom-health-app.netlify.app"
+        },
+        {
+          "label": "GitHub",
+          "url": "https://github.com/santsbabe/bloom"
+        }
+      ],
+      "needsUser": false,
+      "readyToTest": false,
+      "quickWin": false,
+      "liveStage": "testing",
+      "statusReviewed": "2026-09-26"
+    },
+    {
+      "id": "bloom-health-bridge",
+      "name": "Bloom Health Bridge",
+      "category": "Personal / Health",
+      "parent": "Bloom",
+      "summary": "iPhone Shortcut pipeline that writes daily Apple Health metrics to latest.json for Bloom to import locally.",
+      "status": "Core bridge built",
+      "health": "active",
+      "lastUpdated": "2026-09-16",
+      "blocker": "Missing-value handling and full Watch/device acceptance are not completely closed.",
+      "next": "Test repeatedly on device/Watch and verify Bloom consumes the resulting JSON safely.",
+      "milestones": {
+        "defined": "done",
+        "specified": "done",
+        "built": "done",
+        "integrated": "active",
+        "tested": "active",
+        "live": "todo"
+      },
+      "links": [
+        {
+          "label": "GitHub",
+          "url": "https://github.com/santsbabe/bloom"
+        }
+      ],
+      "needsUser": true,
+      "userAction": "Run the remaining device/Watch acceptance tests.",
+      "readyToTest": true,
+      "quickWin": false,
+      "statusReviewed": "2026-09-26"
+    },
+    {
+      "id": "home-design-mood-board",
+      "name": "Home Design Mood Board",
+      "category": "Home Design",
+      "parent": null,
+      "summary": "Mobile-first home-design app concept with Home, Room Detail and Style DNA views.",
+      "status": "Figma prototype",
+      "health": "active",
+      "lastUpdated": "2026-09-05",
+      "blocker": "Prototype has not yet become a working app.",
+      "next": "Build the Fix This Space flow using the Kitchen Corner as the first real use case.",
+      "milestones": {
+        "defined": "done",
+        "specified": "done",
+        "built": "active",
+        "integrated": "todo",
+        "tested": "todo",
+        "live": "todo"
+      },
+      "links": [
+        {
+          "label": "Figma",
+          "url": "https://www.figma.com/design/VblytMnvSAj27Iy5d5kQlx"
+        }
+      ],
+      "needsUser": false,
+      "readyToTest": false,
+      "quickWin": false,
+      "statusReviewed": "2026-09-26"
+    },
+    {
+      "id": "container-checker",
+      "name": "Container Checker",
+      "category": "Home Organisation",
+      "parent": null,
+      "summary": "Mobile app for photographing, measuring, pricing and judging whether storage containers deserve cupboard space.",
+      "status": "Live",
+      "health": "live",
+      "lastUpdated": "2026-09-18",
+      "blocker": "No material blocker recorded after the latest iOS icon and saved-container fixes.",
+      "next": "Use it in real shops; only add features that emerge from real use.",
+      "milestones": {
+        "defined": "done",
+        "specified": "done",
+        "built": "done",
+        "integrated": "done",
+        "tested": "done",
+        "live": "done"
+      },
+      "links": [
+        {
+          "label": "Live",
+          "url": "https://container-checker.netlify.app"
+        },
+        {
+          "label": "GitHub",
+          "url": "https://github.com/santsbabe/container-checker"
+        }
+      ],
+      "needsUser": false,
+      "readyToTest": false,
+      "quickWin": false,
+      "liveStage": "testing",
+      "statusReviewed": "2026-09-26"
+    },
+    {
+      "id": "logbook-assistant",
+      "name": "Logbook Assistant",
+      "category": "Mobility / iOS",
+      "parent": null,
+      "summary": "Hosted vehicle logbook with Shortcut URL handoff, trip matching, SARS-friendly CSV and business/private totals.",
+      "status": "Live / end-to-end polish",
+      "health": "active",
+      "lastUpdated": "2026-09-12",
+      "blocker": "The complete Shortcut → logbook → Rene evidence flow still needs final tidy-up.",
+      "next": "Finish the remaining Shortcut handoffs and run a full real-trip acceptance test.",
+      "milestones": {
+        "defined": "done",
+        "specified": "done",
+        "built": "done",
+        "integrated": "active",
+        "tested": "done",
+        "live": "done"
+      },
+      "links": [
+        {
+          "label": "Live",
+          "url": "https://santsbabe.github.io/logbook-assistant/"
+        },
+        {
+          "label": "GitHub",
+          "url": "https://github.com/santsbabe/logbook-assistant"
+        }
+      ],
+      "needsUser": true,
+      "userAction": "Run one full real-trip acceptance test.",
+      "readyToTest": true,
+      "quickWin": false,
+      "statusReviewed": "2026-09-26"
+    },
+    {
+      "id": "odo-start",
+      "name": "Odo Start Shortcut",
+      "category": "Mobility / iOS",
+      "parent": "Logbook Assistant",
+      "summary": "Take odometer photo, OCR/confirm reading and create the opening business-trip record.",
+      "status": "Built / operational",
+      "health": "live",
+      "lastUpdated": "2026-09-12",
+      "blocker": "No core blocker; only end-to-end ecosystem polish remains.",
+      "next": "Keep behaviour stable and verify against real-trip edge cases.",
+      "milestones": {
+        "defined": "done",
+        "specified": "done",
+        "built": "done",
+        "integrated": "done",
+        "tested": "done",
+        "live": "done"
+      },
+      "links": [
+        {
+          "label": "Parent app",
+          "url": "https://santsbabe.github.io/logbook-assistant/"
+        }
+      ],
+      "needsUser": false,
+      "readyToTest": false,
+      "quickWin": false,
+      "liveStage": "testing",
+      "statusReviewed": "2026-09-26"
+    },
+    {
+      "id": "odo-end",
+      "name": "Odo End Shortcut",
+      "category": "Mobility / iOS",
+      "parent": "Logbook Assistant",
+      "summary": "Capture ending odometer, match the most recent open trip, record arrival time and complete the trip.",
+      "status": "Built / tested",
+      "health": "live",
+      "lastUpdated": "2026-09-12",
+      "blocker": "No material blocker recorded.",
+      "next": "Use on live trips and only change if a matching edge case appears.",
+      "milestones": {
+        "defined": "done",
+        "specified": "done",
+        "built": "done",
+        "integrated": "done",
+        "tested": "done",
+        "live": "done"
+      },
+      "links": [
+        {
+          "label": "Parent app",
+          "url": "https://santsbabe.github.io/logbook-assistant/"
+        }
+      ],
+      "needsUser": false,
+      "readyToTest": false,
+      "quickWin": false,
+      "liveStage": "stable",
+      "statusReviewed": "2026-09-26"
+    },
+    {
+      "id": "odo-manual",
+      "name": "Odo Manual Entry Shortcut",
+      "category": "Mobility / iOS",
+      "parent": "Logbook Assistant",
+      "summary": "Simplified manual fallback for capturing odometer data when the automated path is unsuitable.",
+      "status": "Simplification in progress",
+      "health": "active",
+      "lastUpdated": "2026-09-12",
+      "blocker": "Final stripped-down action order was still being simplified.",
+      "next": "Finish the Current Date → Photo → OCR → manual-confirm path and test it once.",
+      "milestones": {
+        "defined": "done",
+        "specified": "active",
+        "built": "active",
+        "integrated": "todo",
+        "tested": "todo",
+        "live": "todo"
+      },
+      "links": [],
+      "needsUser": false,
+      "readyToTest": false,
+      "quickWin": false,
+      "statusReviewed": "2026-09-26"
+    },
+    {
+      "id": "mileage-to-rene",
+      "name": "Mileage → Rene Shortcut",
+      "category": "Mobility / iOS",
+      "parent": "Logbook Assistant",
+      "summary": "Send a dated mileage report plus odometer evidence photo to Rene; moved from unreliable WhatsApp to Apple Messages.",
+      "status": "Core workflow built",
+      "health": "active",
+      "lastUpdated": "2026-09-12",
+      "blocker": "Needs final consolidation with the Logbook Assistant so evidence is sent once, reliably.",
+      "next": "Run one real end-to-end trip and remove any obsolete duplicate actions.",
+      "milestones": {
+        "defined": "done",
+        "specified": "done",
+        "built": "done",
+        "integrated": "active",
+        "tested": "active",
+        "live": "active"
+      },
+      "links": [],
+      "needsUser": true,
+      "userAction": "Run one real end-to-end trip once the handoff is ready.",
+      "readyToTest": true,
+      "quickWin": false,
+      "statusReviewed": "2026-09-26"
+    },
+    {
+      "id": "meter-reading-shortcut",
+      "name": "Meter Reading Shortcut",
+      "category": "Utilities / iOS",
+      "parent": "Electricity Usage Log",
+      "summary": "Camera/OCR Shortcut for capturing household electricity meter readings into the tracking system.",
+      "status": "Built / refinement needed",
+      "health": "active",
+      "lastUpdated": "2026-09-12",
+      "blocker": "OCR number limiting still needs tightening.",
+      "next": "Add the number limiter/confirmation and connect the result to the durable usage log.",
+      "milestones": {
+        "defined": "done",
+        "specified": "done",
+        "built": "done",
+        "integrated": "active",
+        "tested": "active",
+        "live": "todo"
+      },
+      "links": [],
+      "needsUser": false,
+      "readyToTest": false,
+      "quickWin": false,
+      "statusReviewed": "2026-09-26"
+    },
+    {
+      "id": "invite-importer",
+      "name": "Invite Importer",
+      "category": "Utilities / iOS",
+      "parent": null,
+      "summary": "Image/PDF invitation → OCR → title/date/time/location/notes → Calendar event.",
+      "status": "Core wired / parsing repair",
+      "health": "active",
+      "lastUpdated": "2026-09-17",
+      "blocker": "OCR dates/times such as split dates and time ranges still need reliable regex/group extraction.",
+      "next": "Finish the start/end time group extraction, then run a full invitation-to-calendar test.",
+      "milestones": {
+        "defined": "done",
+        "specified": "done",
+        "built": "active",
+        "integrated": "done",
+        "tested": "active",
+        "live": "todo"
+      },
+      "links": [],
+      "needsUser": false,
+      "readyToTest": false,
+      "quickWin": false,
+      "statusReviewed": "2026-09-26"
+    },
+    {
+      "id": "clipboard-reminders-importer",
+      "name": "Clipboard → Reminders Importer",
+      "category": "Utilities / iOS",
+      "parent": null,
+      "summary": "Small importer for turning copied structured text into actionable iOS Reminders without retyping.",
+      "status": "Recovered project / state to restore",
+      "health": "paused",
+      "lastUpdated": "2026-09-18",
+      "blocker": "Exact latest Shortcut state was not recoverable from the retained artifacts.",
+      "next": "Restore the last action sequence from the Shortcut itself, then record it here as the canonical build state.",
+      "milestones": {
+        "defined": "done",
+        "specified": "active",
+        "built": "active",
+        "integrated": "todo",
+        "tested": "todo",
+        "live": "todo"
+      },
+      "links": [],
+      "needsUser": true,
+      "userAction": "Open the current Shortcut so its last action sequence can be recovered.",
+      "readyToTest": false,
+      "quickWin": false,
+      "statusReviewed": "2026-09-26"
+    },
+    {
+      "id": "factory-shop-detour",
+      "name": "10 km Factory-Shop Detour Shortcut",
+      "category": "Utilities / iOS",
+      "parent": null,
+      "summary": "Location-triggered driving alert with spoken prompt, accept/decline choice and Google Maps navigation to the factory shop.",
+      "status": "Build guide in progress",
+      "health": "active",
+      "lastUpdated": "2026-09-17",
+      "blocker": "iOS automation UI still needs to be assembled exactly and tested while driving.",
+      "next": "Complete the 10 km arrival automation and test spoken alert + navigation handoff.",
+      "milestones": {
+        "defined": "done",
+        "specified": "done",
+        "built": "active",
+        "integrated": "active",
+        "tested": "todo",
+        "live": "todo"
+      },
+      "links": [],
+      "needsUser": true,
+      "userAction": "Complete and test the iOS arrival automation on-device.",
+      "readyToTest": true,
+      "quickWin": false,
+      "statusReviewed": "2026-09-26"
+    },
+    {
+      "id": "morning-announcer",
+      "name": "Morning Announcer",
+      "category": "Utilities / iOS",
+      "parent": null,
+      "summary": "Spoken morning-information Shortcut/automation recovered from the build inventory.",
+      "status": "Recovered project / state to restore",
+      "health": "paused",
+      "lastUpdated": "2026-09-18",
+      "blocker": "The exact most recent action sequence and data sources still need to be recovered.",
+      "next": "Inspect the current Shortcut and record the canonical workflow before changing it.",
+      "milestones": {
+        "defined": "done",
+        "specified": "active",
+        "built": "active",
+        "integrated": "todo",
+        "tested": "todo",
+        "live": "todo"
+      },
+      "links": [],
+      "needsUser": true,
+      "userAction": "Open the current Shortcut so its canonical workflow can be recovered.",
+      "readyToTest": false,
+      "quickWin": false,
+      "statusReviewed": "2026-09-26"
+    },
+    {
+      "id": "carplay-quote-tracker",
+      "name": "CarPlay Quote Tracker",
+      "category": "Utilities / iOS",
+      "parent": null,
+      "summary": "CarPlay-oriented quote/capture utility recovered from the build inventory.",
+      "status": "Recovered project / state to restore",
+      "health": "paused",
+      "lastUpdated": "2026-09-18",
+      "blocker": "Retained context confirms the build name but not the exact latest implementation state.",
+      "next": "Recover the live Shortcut/app state before resuming design work.",
+      "milestones": {
+        "defined": "done",
+        "specified": "active",
+        "built": "active",
+        "integrated": "todo",
+        "tested": "todo",
+        "live": "todo"
+      },
+      "links": [],
+      "needsUser": true,
+      "userAction": "Recover the current live Shortcut/app state before resuming.",
+      "readyToTest": false,
+      "quickWin": false,
+      "statusReviewed": "2026-09-26"
+    },
+    {
+      "id": "directors-control-centre",
+      "name": "Director's Control Centre",
+      "category": "Work",
+      "parent": null,
+      "summary": "Power Platform work operating system for performance, Work/SLA, Institution 360, people/capacity, risks and executive attention.",
+      "status": "Prototype built / implementation active",
+      "health": "active",
+      "lastUpdated": "2026-09-05",
+      "blocker": "Microsoft 365 implementation, mobile view, mailbox ingestion and data-store decisions are not fully closed.",
+      "next": "Stabilise the minimum Power Apps/SharePoint MVP and feed it from the Outlook intelligence pipeline.",
+      "milestones": {
+        "defined": "done",
+        "specified": "done",
+        "built": "done",
+        "integrated": "active",
+        "tested": "active",
+        "live": "todo"
+      },
+      "links": [],
+      "needsUser": false,
+      "readyToTest": false,
+      "quickWin": false,
+      "statusReviewed": "2026-09-26"
+    },
+    {
+      "id": "outlook-scrubber",
+      "name": "Outlook Scrubber / Email Intelligence Ingestion",
+      "category": "Work",
+      "parent": "Director's Control Centre",
+      "summary": "F01–F06 style ingestion pipeline for incoming/sent mail, reconciliation, classification, entity extraction and evidence capture.",
+      "status": "First live capture tested",
+      "health": "active",
+      "lastUpdated": "2026-09-02",
+      "blocker": "Deduplication/upsert and final data-store/entity implementation remain unresolved.",
+      "next": "Finish InternetMessageId-based dedupe/upsert and run a representative-mail pilot.",
+      "milestones": {
+        "defined": "done",
+        "specified": "done",
+        "built": "active",
+        "integrated": "active",
+        "tested": "active",
+        "live": "todo"
+      },
+      "links": [],
+      "needsUser": false,
+      "readyToTest": false,
+      "quickWin": false,
+      "statusReviewed": "2026-09-26"
+    },
+    {
+      "id": "outlook-executive-assistant",
+      "name": "Outlook Executive Assistant / Attention Register",
+      "category": "Work",
+      "parent": "Director's Control Centre",
+      "summary": "Delegation/email attention system with EA-01 register population, EA-02 Executive Briefing and Needs Me / Risk / Waiting views.",
+      "status": "Specified / partial implementation",
+      "health": "active",
+      "lastUpdated": "2026-09-18",
+      "blocker": "Automation became overwhelming around the register upsert/deduplication and Power Automate build.",
+      "next": "Resume from the already-tested email→SharePoint capture; finish stable upsert first, then EA-02 briefing.",
+      "milestones": {
+        "defined": "done",
+        "specified": "done",
+        "built": "active",
+        "integrated": "active",
+        "tested": "active",
+        "live": "todo"
+      },
+      "links": [],
+      "needsUser": false,
+      "readyToTest": false,
+      "quickWin": false,
+      "statusReviewed": "2026-09-26"
+    },
+    {
+      "id": "rene-correspondence",
+      "name": "Rene Correspondence Tracker + Dashboard",
+      "category": "Work",
+      "parent": "Director's Control Centre",
+      "summary": "PA-aligned office correspondence register with 2-working-day SLA, due dates, escalation and auto-updating visual dashboard.",
+      "status": "Working workbook / automation pending",
+      "health": "active",
+      "lastUpdated": "2026-09-04",
+      "blocker": "Outlook/Power Automate auto-capture is still outstanding; Rene's signed PA also remained outstanding.",
+      "next": "Connect incoming correspondence to automatic register creation, preserving the working Excel logic.",
+      "milestones": {
+        "defined": "done",
+        "specified": "done",
+        "built": "done",
+        "integrated": "active",
+        "tested": "done",
+        "live": "done"
+      },
+      "links": [],
+      "needsUser": false,
+      "readyToTest": false,
+      "quickWin": false,
+      "statusReviewed": "2026-09-26"
+    },
+    {
+      "id": "matr-power-automate",
+      "name": "MATR Power Automate System",
+      "category": "Work",
+      "parent": null,
+      "summary": "MATR intake/allocation, draft review and SLA-monitoring flows using SharePoint, round-robin allocation, Planner and approvals.",
+      "status": "Build guide complete / implementation partial",
+      "health": "active",
+      "lastUpdated": "2026-09-03",
+      "blocker": "Power Automate implementation remains cognitively heavy and not all flows are confirmed live.",
+      "next": "Resume one card at a time from the clickable build guide, starting with the first incomplete tested action.",
+      "milestones": {
+        "defined": "done",
+        "specified": "done",
+        "built": "active",
+        "integrated": "active",
+        "tested": "todo",
+        "live": "todo"
+      },
+      "links": [],
+      "needsUser": false,
+      "readyToTest": false,
+      "quickWin": false,
+      "statusReviewed": "2026-09-26"
+    },
+    {
+      "id": "weekly-15-5",
+      "name": "Strategic Procurement Weekly 15-5 Reporting Application",
+      "category": "Work",
+      "parent": null,
+      "summary": "Weekly staff inputs, saved drafts, Nadia manager briefing/summary, invitation generation and Friday reporting workflow.",
+      "status": "Live prototype / M365 rebuild pending",
+      "health": "active",
+      "lastUpdated": "2026-09-18",
+      "blocker": "Power Apps/SharePoint implementation and automatic Friday delivery still need organisational rollout.",
+      "next": "Build/pilot the Microsoft 365 version with one manager group, then wire the Friday Power Automate invitation.",
+      "milestones": {
+        "defined": "done",
+        "specified": "done",
+        "built": "done",
+        "integrated": "active",
+        "tested": "active",
+        "live": "active"
+      },
+      "links": [],
+      "needsUser": false,
+      "readyToTest": false,
+      "quickWin": false,
+      "statusReviewed": "2026-09-26"
+    },
+    {
+      "id": "emuni-routing",
+      "name": "eMuni Monitor Routing Automation",
+      "category": "Work",
+      "parent": "Director's Control Centre",
+      "summary": "Outlook/Control Centre routing logic for eMuni Monitor items into the right work lane and attention state.",
+      "status": "Designed / partial",
+      "health": "active",
+      "lastUpdated": "2026-09-02",
+      "blocker": "Depends on the broader Outlook ingestion architecture being stable.",
+      "next": "Implement the routing rule after the core email upsert pipeline is dependable.",
+      "milestones": {
+        "defined": "done",
+        "specified": "done",
+        "built": "active",
+        "integrated": "todo",
+        "tested": "todo",
+        "live": "todo"
+      },
+      "links": [],
+      "needsUser": false,
+      "readyToTest": false,
+      "quickWin": false,
+      "statusReviewed": "2026-09-26"
+    },
+    {
+      "id": "stationery-price-monitor",
+      "name": "Stationery Price Monitor",
+      "category": "Shopping / Monitoring",
+      "parent": null,
+      "summary": "Long-horizon stationery procurement tracker with benchmarks, live retailer observations, stock planning and good-buy signals, feeding actionable decisions into Shopping Radar.",
+      "status": "Operational workbook / Shopping Radar integration pending",
+      "health": "active",
+      "lastUpdated": "2026-09-25",
+      "blocker": "The workbook now produces BUY WITH MASON / MONITOR / CHECK HOME FIRST decisions, but those outputs do not yet flow automatically into the live Shopping Radar; monthly inflation watch is also paused and stock ceilings still need formal limits.",
+      "next": "Implement the Shopping Radar handoff so stationery decisions automatically upsert BUY / WATCH / CHECK HOME items with child/grade, retailer/location, price/source/freshness and duplicate protection.",
+      "milestones": {
+        "defined": "done",
+        "specified": "done",
+        "built": "done",
+        "integrated": "active",
+        "tested": "done",
+        "live": "active"
+      },
+      "links": [],
+      "needsUser": false,
+      "readyToTest": false,
+      "quickWin": false,
+      "statusReviewed": "2026-09-26"
+    },
+    {
+      "id": "shopping-deal-monitor",
+      "name": "Shopping / Deal Monitor",
+      "category": "Shopping / Monitoring",
+      "parent": "FamilyRoy Control Centre",
+      "summary": "Unified wishlist, Shopping Radar and price-alert layer for groceries, household items, clothing, school items, Black Friday and recurring deals.",
+      "status": "Specified / partial build",
+      "health": "active",
+      "lastUpdated": "2026-09-25",
+      "blocker": "The live Shopping Radar is not yet ingesting outputs from item-specific monitors. Stationery BUY / WATCH / CHECK HOME decisions currently require manual UI updates; retailer freshness and source connectivity also vary.",
+      "next": "Make the shared watchlist the source of truth and add automatic upsert into Shopping Radar from stationery comparison outputs first, then generalise the same ingestion contract to other monitors. Preserve item status, child/grade, retailer/location, current price, source/freshness and duplicate protection.",
+      "milestones": {
+        "defined": "done",
+        "specified": "done",
+        "built": "active",
+        "integrated": "active",
+        "tested": "todo",
+        "live": "todo"
+      },
+      "links": [],
+      "needsUser": false,
+      "readyToTest": false,
+      "quickWin": false,
+      "statusReviewed": "2026-09-26"
+    },
+    {
+      "id": "grocery-price-comparator",
+      "name": "Food & Grocery Price Comparator / Red Star Adapter",
+      "category": "Shopping / Monitoring",
+      "parent": "Shopping / Deal Monitor",
+      "summary": "Unit-price comparison across retail, wholesale and homemade options, tied to shopping list and meal planning.",
+      "status": "Detailed specification",
+      "health": "active",
+      "lastUpdated": "2026-09-12",
+      "blocker": "Red Star has no stable anonymous OCC API; extraction must rely on rendered catalogue data.",
+      "next": "Implement the rendered-catalogue refresh sequence and stale-data handling.",
+      "milestones": {
+        "defined": "done",
+        "specified": "done",
+        "built": "active",
+        "integrated": "active",
+        "tested": "todo",
+        "live": "todo"
+      },
+      "links": [],
+      "needsUser": false,
+      "readyToTest": false,
+      "quickWin": false,
+      "statusReviewed": "2026-09-26"
+    },
+    {
+      "id": "sistema-bento",
+      "name": "Sistema Bento Price Tracker",
+      "category": "Shopping / Monitoring",
+      "parent": "Shopping / Deal Monitor",
+      "summary": "Exact-model/colour tracker for 1.65 L Bento To Go and 1.25 L Bento Cube boxes, with exclusions and hard price caps.",
+      "status": "Workbook operational / watch paused",
+      "health": "paused",
+      "lastUpdated": "2026-09-18",
+      "blocker": "The daily stock-watch automation is currently disabled.",
+      "next": "Keep the workbook as source of truth; reactivate targeted searches only when boxes remain outstanding.",
+      "milestones": {
+        "defined": "done",
+        "specified": "done",
+        "built": "done",
+        "integrated": "done",
+        "tested": "done",
+        "live": "active"
+      },
+      "links": [],
+      "needsUser": false,
+      "readyToTest": false,
+      "quickWin": false,
+      "statusReviewed": "2026-09-26"
+    },
+    {
+      "id": "robot-vac-watch",
+      "name": "Robot Vacuum Price, Spares & TCO Watch",
+      "category": "Shopping / Monitoring",
+      "parent": "Shopping / Deal Monitor",
+      "summary": "South African recurring comparison of robot vacuums by purchase price, mopping, spares, reviews and 3-year TCO.",
+      "status": "Monitoring system specified / automation paused",
+      "health": "paused",
+      "lastUpdated": "2026-09-18",
+      "blocker": "The weekly watch exists but is currently disabled.",
+      "next": "Reactivate when purchase timing becomes active and preserve SKU/condition/landed-price checks.",
+      "milestones": {
+        "defined": "done",
+        "specified": "done",
+        "built": "done",
+        "integrated": "active",
+        "tested": "active",
+        "live": "active"
+      },
+      "links": [],
+      "needsUser": false,
+      "readyToTest": false,
+      "quickWin": false,
+      "statusReviewed": "2026-09-26"
+    },
+    {
+      "id": "pinelands-village-watch",
+      "name": "Pinelands Village Watch",
+      "category": "Shopping / Monitoring",
+      "parent": null,
+      "summary": "Hourly watch for opening date, construction milestones/delays and newly announced Pinelands Village tenants.",
+      "status": "Active monitor",
+      "health": "live",
+      "lastUpdated": "2026-09-18",
+      "blocker": "No blocker; it only alerts on meaningful new public information.",
+      "next": "Leave running until opening/tenant uncertainty is resolved.",
+      "milestones": {
+        "defined": "done",
+        "specified": "done",
+        "built": "done",
+        "integrated": "done",
+        "tested": "done",
+        "live": "done"
+      },
+      "links": [],
+      "needsUser": false,
+      "readyToTest": false,
+      "quickWin": false,
+      "liveStage": "monitoring",
+      "statusReviewed": "2026-09-26"
+    },
+    {
+      "id": "haw-photo-watch",
+      "name": "HAW Corrected Photographer Order-Form Watch",
+      "category": "School / Monitoring",
+      "parent": "FamilyRoy Control Centre",
+      "summary": "Gmail watch for a corrected HAW photographer order form so Imogen's school photos can be ordered properly.",
+      "status": "Closed — no longer needed",
+      "health": "closed",
+      "lastUpdated": "2026-09-25",
+      "blocker": "None — the watch was deliberately retired as unnecessary.",
+      "next": "No further action.",
+      "milestones": {
+        "defined": "done",
+        "specified": "done",
+        "built": "todo",
+        "integrated": "todo",
+        "tested": "todo",
+        "live": "todo"
+      },
+      "links": [],
+      "needsUser": false,
+      "readyToTest": false,
+      "quickWin": false,
+      "statusReviewed": "2026-09-26"
+    },
+    {
+      "id": "homework-quest-snag-tracker",
+      "name": "Homework Quest Snag Tracker",
+      "category": "Learning",
+      "parent": "Homework Quest Parent Console",
+      "summary": "Canonical snag register for Homework Quest and Parent Console issues, dependencies, resolution state and acceptance follow-up.",
+      "status": "Live tracker — 131 snags",
+      "health": "live",
+      "lastUpdated": "2026-09-20",
+      "blocker": "128 snags remain pending; the tracker itself is operational and is the canonical resolution register.",
+      "next": "Work the dependency-aware backlog from Needs you / Blocked / Ready to test / Quick wins without replacing or collapsing the 131-item source register.",
+      "milestones": {
+        "defined": "done",
+        "specified": "done",
+        "built": "done",
+        "integrated": "done",
+        "tested": "done",
+        "live": "done"
+      },
+      "links": [
+        {
+          "label": "GitHub",
+          "url": "https://github.com/santsbabe/homework-quest"
+        }
+      ],
+      "needsUser": true,
+      "userAction": "Work the items explicitly assigned to you in the snag register.",
+      "readyToTest": true,
+      "quickWin": false,
+      "liveStage": "monitoring",
+      "statusReviewed": "2026-09-26"
+    },
+    {
+      "id": "reading-radar",
+      "name": "Reading Radar",
+      "category": "Personal / Reading",
+      "parent": null,
+      "summary": "Personal reading discovery and prioritisation app using the Master Reading Roadmap, ownership and mood matching to surface what to read next.",
+      "status": "Live / published",
+      "health": "live",
+      "lastUpdated": "2026-09-26",
+      "blocker": "None — published live.",
+      "next": "Use normally and capture later refinements as feedback rather than reopening the launch build.",
+      "milestones": {
+        "defined": "done",
+        "specified": "done",
+        "built": "done",
+        "integrated": "done",
+        "tested": "done",
+        "live": "done"
+      },
+      "links": [
+        {
+          "label": "Live",
+          "url": "https://santsbabe.github.io/logbook-assistant/reading-radar-preview/"
+        },
+        {
+          "label": "GitHub",
+          "url": "https://github.com/santsbabe/logbook-assistant"
+        }
+      ],
+      "needsUser": false,
+      "readyToTest": false,
+      "quickWin": false,
+      "liveStage": "testing",
+      "statusReviewed": "2026-09-26"
+    }
+  ]
+}
