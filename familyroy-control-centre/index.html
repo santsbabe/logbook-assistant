@@ -64,7 +64,7 @@ const CAPABILITIES=[
  {id:'electricity',name:'Electricity Log',kind:'native',status:'connected',panel:'electricity',note:'Meter readings → usage → exceptions'},
  {id:'emailwatch',name:'Email Attention Watch',kind:'native',status:'connected',panel:'attention',note:'Important email → action or waiting'},
  {id:'bloom',name:'Bloom',kind:'linked',status:'live',url:'https://bloom-health-app.netlify.app',note:'Private pattern tracking'},
- {id:'reading',name:'Reading Radar',kind:'linked',status:'planned',note:'Reading choices'}
+ {id:'reading',name:'Reading Radar',kind:'linked',status:'preview',url:'../reading-radar-preview/',note:'Reading choices · preview'}
 ];
 function normaliseAction(t={}){
   let state=t.state||'Next',due=t.due||'',source=t.source||'',module=t.module||t.cat||'General';
