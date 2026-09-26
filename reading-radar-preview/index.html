@@ -34,266 +34,481 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}*{box-sizing:border-box;mi
 <div class="modalback" id="addModal"><div class="modal"><button class="back" id="closeAdd">Close</button><div class="title">Add something new</div><div class="search"><input id="catalogSearch" placeholder="Search Open Library by title or author"></div><div id="catalogResults"></div><div class="formrow"><label>Title</label><input id="newTitle"></div><div class="formrow"><label>Author</label><input id="newAuthor"></div><div class="formrow"><label>Cover image URL <span style="font-weight:500">(optional)</span></label><input id="newCoverUrl" placeholder="https://…"></div><div class="formrow"><label>Status</label><select id="newStatus"><option>To assess</option><option>Unread</option><option>Started</option><option>Read</option><option>Read + loved</option><option>DNF</option></select></div><button class="primary" id="saveNew">Add to Reading Radar</button><div class="done" id="addDone">Added.</div></div></div>
 </div>
 <script>
-var seed=[
-{title:"Practical Magic",author:"Alice Hoffman",status:"To assess",genre:"Fantasy",mood:"Strange",owned:false,lane:"Alice Hoffman"},
-{title:"The Rules of Magic",author:"Alice Hoffman",status:"To assess",genre:"Fantasy",mood:"Strange",owned:false,lane:"Alice Hoffman"},
-{title:"Magic Lessons",author:"Alice Hoffman",status:"To assess",genre:"Fantasy",mood:"Strange",owned:false,lane:"Alice Hoffman"},
-{title:"The Book of Magic",author:"Alice Hoffman",status:"To assess",genre:"Fantasy",mood:"Strange",owned:false,lane:"Alice Hoffman"},
-{title:"Here on Earth",author:"Alice Hoffman",status:"To assess",genre:"Literary",mood:"Strange",owned:false,lane:"Alice Hoffman"},
-{title:"Local Girls",author:"Alice Hoffman",status:"To assess",genre:"Literary",mood:"Strange",owned:false,lane:"Alice Hoffman"},
-{title:"The River King",author:"Alice Hoffman",status:"To assess",genre:"Literary",mood:"Strange",owned:false,lane:"Alice Hoffman"},
-{title:"Blue Diary",author:"Alice Hoffman",status:"To assess",genre:"Literary",mood:"Strange",owned:false,lane:"Alice Hoffman"},
-{title:"The Probable Future",author:"Alice Hoffman",status:"To assess",genre:"Literary",mood:"Strange",owned:false,lane:"Alice Hoffman"},
-{title:"The Ice Queen",author:"Alice Hoffman",status:"To assess",genre:"Literary",mood:"Strange",owned:false,lane:"Alice Hoffman"},
-{title:"The Third Angel",author:"Alice Hoffman",status:"To assess",genre:"Literary",mood:"Strange",owned:false,lane:"Alice Hoffman"},
-{title:"The Red Garden",author:"Alice Hoffman",status:"To assess",genre:"Literary",mood:"Strange",owned:false,lane:"Alice Hoffman"},
-{title:"The Dovekeepers",author:"Alice Hoffman",status:"To assess",genre:"Literary",mood:"Immersive",owned:false,lane:"Alice Hoffman"},
-{title:"The Museum of Extraordinary Things",author:"Alice Hoffman",status:"To assess",genre:"Literary",mood:"Strange",owned:false,lane:"Alice Hoffman"},
-{title:"The Marriage of Opposites",author:"Alice Hoffman",status:"To assess",genre:"Literary",mood:"Fascinating",owned:false,lane:"Alice Hoffman"},
-{title:"Faithful",author:"Alice Hoffman",status:"To assess",genre:"Literary",mood:"Healing",owned:false,lane:"Alice Hoffman"},
-{title:"The Otherwhere Post",author:"Emily J. Taylor",status:"Read + loved",genre:"Fantasy",mood:"Strange",owned:true,lane:"Speculative"},
-{title:"The Safekeep",author:"Yael van der Wouden",status:"Read + loved",genre:"Literary",mood:"Immersive",owned:true,lane:"Literary"},
-{title:"The Coworker",author:"Freida McFadden",status:"Read + loved",genre:"Thriller",mood:"Tense",owned:true,lane:"Thrillers"},
-{title:"The Thursday Murder Club",author:"Richard Osman",status:"Read + loved",genre:"Thriller",mood:"Fun",owned:true,lane:"Thrillers"},
-{title:"All the Beautiful Lies",author:"Peter Swanson",status:"Read + loved",genre:"Thriller",mood:"Tense",owned:true,lane:"Thrillers"},
-{title:"Dark Places",author:"Gillian Flynn",status:"Read + loved",genre:"Thriller",mood:"Tense",owned:true,lane:"Thrillers"},
-{title:"Sharp Objects",author:"Gillian Flynn",status:"Read + loved",genre:"Thriller",mood:"Tense",owned:true,lane:"Thrillers"},
-{title:"The Kind Worth Killing",author:"Peter Swanson",status:"Read + loved",genre:"Thriller",mood:"Tense",owned:true,lane:"Thrillers"},
-{title:"The Woman in the Window",author:"A. J. Finn",status:"Read + loved",genre:"Thriller",mood:"Tense",owned:true,lane:"Thrillers"},
-{title:"Becoming",author:"Michelle Obama",status:"Read + loved",genre:"Memoir",mood:"Fascinating",owned:false,lane:"Memoir"},
-{title:"Born a Crime",author:"Trevor Noah",status:"Read + loved",genre:"Memoir",mood:"Fascinating",owned:false,lane:"Memoir"},
-{title:"Everything Is Tuberculosis",author:"John Green",status:"Read + loved",genre:"Nonfiction",mood:"Fascinating",owned:false,lane:"Nonfiction"},
-{title:"Home Is Where the Bodies Are",author:"Jeneva Rose",status:"Read + loved",genre:"Thriller",mood:"Tense",owned:false,lane:"Thrillers"},
-{title:"The Collapsing Empire",author:"John Scalzi",status:"Read + loved",genre:"Fantasy",mood:"Fun",owned:false,lane:"Speculative"},
-{title:"Starter Villain",author:"John Scalzi",status:"Read + loved",genre:"Fantasy",mood:"Fun",owned:false,lane:"Speculative"},
-{title:"The Kaiju Preservation Society",author:"John Scalzi",status:"Read + loved",genre:"Fantasy",mood:"Fun",owned:false,lane:"Speculative"},
-{title:"The Martian",author:"Andy Weir",status:"Read + loved",genre:"Fantasy",mood:"Fascinating",owned:false,lane:"Speculative"},
-{title:"Wicked",author:"Gregory Maguire",status:"Read + loved",genre:"Fantasy",mood:"Strange",owned:false,lane:"Fantasy"},
-{title:"Clean & Green",author:"Nancy Birtwhistle",status:"Read + loved",genre:"Practical",mood:"Fascinating",owned:false,lane:"Practical"},
-{title:"How to Keep House While Drowning",author:"KC Davis",status:"Read + loved",genre:"Practical",mood:"Gentle",owned:false,lane:"Reread"},
-{title:"The Color Purple",author:"Alice Walker",status:"Read",genre:"Literary",mood:"Heavy",owned:false,lane:"Reread"},
-{title:"Cute Kawaii Cross Stitch",author:"Sosae Caetano & Dennis Caetano",status:"Read",genre:"Practical",mood:"Gentle",owned:false,lane:"Craft"},
-{title:"Self-Care Cross-Stitch",author:"Stephanie Rohr",status:"Read + loved",genre:"Practical",mood:"Gentle",owned:false,lane:"Craft"},
-{title:"The Book With No Pictures",author:"B. J. Novak",status:"Read + loved",genre:"Family",mood:"Fun",owned:false,lane:"Family"},
-{title:"Hogfather",author:"Terry Pratchett",status:"Read + loved",genre:"Fantasy",mood:"Fun",owned:false,lane:"Fantasy"},
-{title:"Bossypants",author:"Tina Fey",status:"Read",genre:"Memoir",mood:"Fun",owned:false,lane:"Memoir"},
-{title:"Rita Hayworth and Shawshank Redemption",author:"Stephen King",status:"Read",genre:"Fiction",mood:"Immersive",owned:false,lane:"Fiction"},
-{title:"How to Talk So Kids Will Listen & Listen So Kids Will Talk",author:"Adele Faber & Elaine Mazlish",status:"Started",genre:"Parenting",mood:"Practical",owned:true,lane:"Parenting"},
-{title:"No-Drama Discipline",author:"Daniel J. Siegel & Tina Payne Bryson",status:"Started",genre:"Parenting",mood:"Practical",owned:true,lane:"Parenting"},
-{title:"Divergent Mind",author:"Jenara Nerenberg",status:"Started",genre:"Nonfiction",mood:"Fascinating",owned:false,lane:"Neurodivergence"},
-{title:"Forgiving What You Can't Forget",author:"Lysa TerKeurst",status:"Started",genre:"Nonfiction",mood:"Healing",owned:false,lane:"Healing"},
-{title:"The Man Who Died Twice",author:"Richard Osman",status:"Unread",genre:"Thriller",mood:"Fun",owned:true,lane:"Thrillers"},
-{title:"Adult Children of Emotionally Immature Parents",author:"Lindsay C. Gibson",status:"Unread",genre:"Nonfiction",mood:"Healing",owned:true,lane:"Healing Through Parenting"},
-{title:"What Happened to You?",author:"Bruce D. Perry & Oprah Winfrey",status:"Unread",genre:"Nonfiction",mood:"Healing",owned:false,lane:"Healing Through Parenting"},
-{title:"Parenting from the Inside Out",author:"Daniel J. Siegel & Mary Hartzell",status:"Unread",genre:"Parenting",mood:"Healing",owned:false,lane:"Healing Through Parenting"},
-{title:"Everyone in My Family Has Killed Someone",author:"Benjamin Stevenson",status:"Unread",genre:"Thriller",mood:"Fun",owned:false,lane:"Thrillers"},
-{title:"The Adventures of Amina al-Sirafi",author:"Shannon Chakraborty",status:"Unread",genre:"Fantasy",mood:"Strange",owned:false,lane:"Fantasy"},
-{title:"The Golden Thread",author:"Kassia St Clair",status:"Unread",genre:"Nonfiction",mood:"Fascinating",owned:false,lane:"Textiles"},
-{title:"A Radical Guide for Women with ADHD",author:"Sari Solden & Michelle Frank",status:"Unread",genre:"Nonfiction",mood:"Healing",owned:false,lane:"Neurodivergence"},
-{title:"The Soul's Guide to the After Death",author:"Gwenna Laithland",status:"Unread",genre:"Fantasy",mood:"Strange",owned:true,lane:"Fantasy"},
-{title:"The Language of Thorns",author:"Leigh Bardugo",status:"Unread",genre:"Fantasy",mood:"Strange",owned:true,lane:"Fantasy"},
-{title:"The Ballad of Songbirds and Snakes",author:"Suzanne Collins",status:"Unread",genre:"Fantasy",mood:"Tense",owned:true,lane:"Fantasy"},
-{title:"Vanya and the Wild Hunt",author:"Sangu Mandanna",status:"Unread",genre:"Fantasy",mood:"Strange",owned:false,lane:"Speculative"},
-{title:"Murder Your Employer",author:"Rupert Holmes",status:"Unread",genre:"Thriller",mood:"Fun",owned:false,lane:"Thrillers"},
-{title:"The Radium Girls",author:"Kate Moore",status:"Unread",genre:"Nonfiction",mood:"Fascinating",owned:false,lane:"Narrative Nonfiction"},
-{title:"A Memory of Light",author:"Robert Jordan & Brandon Sanderson",status:"Unread",genre:"Fantasy",mood:"Immersive",owned:false,lane:"Wheel of Time"},
-{title:"Verity Vox and the Curse of Fox Fire",author:"Don Martin",status:"Unread",genre:"Fantasy",mood:"Strange",owned:false,lane:"Witchy & Magical"},
-{title:"The Witch's Daughter",author:"Paula Brackston",status:"Unread",genre:"Fantasy",mood:"Strange",owned:false,lane:"Witchy & Magical"},
-{title:"The Winter Witch",author:"Paula Brackston",status:"Unread",genre:"Fantasy",mood:"Strange",owned:false,lane:"Witchy & Magical"},
-{title:"The Unfortunate Side Effects of Heartbreak and Magic",author:"Breanne Randall",status:"Unread",genre:"Fantasy",mood:"Gentle",owned:false,lane:"Witchy & Magical"},
-{title:"A Discovery of Witches",author:"Deborah Harkness",status:"Unread",genre:"Fantasy",mood:"Immersive",owned:false,lane:"Witchy & Magical"},
-{title:"The Fright Before Christmas",author:"Jeff Belanger",status:"Unread",genre:"Nonfiction",mood:"Strange",owned:false,lane:"Seasonal"},
-{title:"Hidden Valley Road",author:"Robert Kolker",status:"Unread",genre:"Nonfiction",mood:"Fascinating",owned:false,lane:"Narrative Nonfiction"},
-{title:"The Eyre Affair",author:"Jasper Fforde",status:"Unread",genre:"Fantasy",mood:"Fun",owned:false,lane:"Series Trials"},
-{title:"The Stranger Times",author:"C. K. McDonnell",status:"Unread",genre:"Fantasy",mood:"Fun",owned:false,lane:"Series Trials"},
-{title:"The Appeal",author:"Janice Hallett",status:"Unread",genre:"Thriller",mood:"Tense",owned:false,lane:"Thrillers"},
-{title:"The Ghost Map",author:"Steven Johnson",status:"Unread",genre:"Nonfiction",mood:"Fascinating",owned:false,lane:"Narrative Nonfiction"},
-{title:"The Feather Thief",author:"Kirk Wallace Johnson",status:"Unread",genre:"Nonfiction",mood:"Fascinating",owned:false,lane:"Narrative Nonfiction"},
-{title:"The Address Book",author:"Deirdre Mask",status:"Unread",genre:"Nonfiction",mood:"Fascinating",owned:false,lane:"Narrative Nonfiction"},
-{title:"The Rook",author:"Daniel O'Malley",status:"Unread",genre:"Fantasy",mood:"Strange",owned:false,lane:"Speculative"},
-{title:"The Seven Deaths of Evelyn Hardcastle",author:"Stuart Turton",status:"Unread",genre:"Thriller",mood:"Tense",owned:false,lane:"Thrillers"},
-{title:"The Poisoner's Handbook",author:"Deborah Blum",status:"Unread",genre:"Nonfiction",mood:"Fascinating",owned:false,lane:"Narrative Nonfiction"},
-{title:"The Library Book",author:"Susan Orlean",status:"Unread",genre:"Nonfiction",mood:"Fascinating",owned:false,lane:"Narrative Nonfiction"},
-{title:"The Secret Lives of Color",author:"Kassia St. Clair",status:"Unread",genre:"Nonfiction",mood:"Fascinating",owned:false,lane:"Textiles"},
-{title:"The Butchering Art",author:"Lindsey Fitzharris",status:"Unread",genre:"Nonfiction",mood:"Fascinating",owned:false,lane:"Narrative Nonfiction"},
-{title:"H Is for Hawk",author:"Helen Macdonald",status:"Unread",genre:"Memoir",mood:"Fascinating",owned:false,lane:"Memoir"},
-{title:"Rivers of London",author:"Ben Aaronovitch",status:"Unread",genre:"Fantasy",mood:"Fun",owned:false,lane:"Rivers of London"},
-{title:"Moon Over Soho",author:"Ben Aaronovitch",status:"Unread",genre:"Fantasy",mood:"Fun",owned:false,lane:"Rivers of London"},
-{title:"Whispers Under Ground",author:"Ben Aaronovitch",status:"Unread",genre:"Fantasy",mood:"Fun",owned:false,lane:"Rivers of London"},
-{title:"Broken Homes",author:"Ben Aaronovitch",status:"Unread",genre:"Fantasy",mood:"Fun",owned:false,lane:"Rivers of London"},
-{title:"Foxglove Summer",author:"Ben Aaronovitch",status:"Unread",genre:"Fantasy",mood:"Fun",owned:false,lane:"Rivers of London"},
-{title:"What Abigail Did That Summer",author:"Ben Aaronovitch",status:"Unread",genre:"Fantasy",mood:"Fun",owned:false,lane:"Rivers of London"},
-{title:"The Furthest Station",author:"Ben Aaronovitch",status:"Unread",genre:"Fantasy",mood:"Fun",owned:false,lane:"Rivers of London"},
-{title:"The Hanging Tree",author:"Ben Aaronovitch",status:"Unread",genre:"Fantasy",mood:"Fun",owned:false,lane:"Rivers of London"},
-{title:"The October Man",author:"Ben Aaronovitch",status:"Unread",genre:"Fantasy",mood:"Fun",owned:false,lane:"Rivers of London"},
-{title:"Lies Sleeping",author:"Ben Aaronovitch",status:"Unread",genre:"Fantasy",mood:"Fun",owned:false,lane:"Rivers of London"},
-{title:"False Value",author:"Ben Aaronovitch",status:"Unread",genre:"Fantasy",mood:"Fun",owned:false,lane:"Rivers of London"},
-{title:"Tales from the Folly",author:"Ben Aaronovitch",status:"Unread",genre:"Fantasy",mood:"Fun",owned:false,lane:"Rivers of London"},
-{title:"Amongst Our Weapons",author:"Ben Aaronovitch",status:"Unread",genre:"Fantasy",mood:"Fun",owned:false,lane:"Rivers of London"},
-{title:"Winter's Gifts",author:"Ben Aaronovitch",status:"Unread",genre:"Fantasy",mood:"Fun",owned:false,lane:"Rivers of London"},
-{title:"The Masquerades of Spring",author:"Ben Aaronovitch",status:"Unread",genre:"Fantasy",mood:"Fun",owned:false,lane:"Rivers of London"},
-{title:"Stone and Sky",author:"Ben Aaronovitch",status:"Unread",genre:"Fantasy",mood:"Fun",owned:false,lane:"Rivers of London"},
-{title:"Foxes for Christmas",author:"Ben Aaronovitch",status:"To assess",genre:"Fantasy",mood:"Fun",owned:false,lane:"Rivers of London"},
-{title:"Ledge",author:"Stacey McEwan",status:"No",genre:"Fantasy",mood:"Tense",owned:false,lane:"Do Not Recommend"},
-{title:"Untangled",author:"Mallory Thomas",status:"No",genre:"Romance",mood:"Gentle",owned:false,lane:"Do Not Recommend"},
-{title:"Love Is a War Song",author:"Danica Nava",status:"No",genre:"Romance",mood:"Emotional",owned:false,lane:"Do Not Recommend"},
-{title:"Becoming an Artist",author:"Scott Christian Sava",status:"No",genre:"Nonfiction",mood:"Fascinating",owned:false,lane:"Do Not Recommend"}
-]
-var added=JSON.parse(localStorage.getItem("rr-added")||"[]"),library=seed.concat(Array.isArray(added)?added:[]),filters={mood:null,genre:null,status:null,ownership:null},selectedReviewBook=null,queueKeys=JSON.parse(localStorage.getItem("rr-queue")||"[]");if(!Array.isArray(queueKeys))queueKeys=[];
-function qs(s){return document.querySelector(s)}function qsa(s){return Array.from(document.querySelectorAll(s))}function norm(s){return(s||"").toLowerCase().trim()}
-var statusOverrides=JSON.parse(localStorage.getItem("rr-status-overrides")||"{}");
-function bookKey(b){return norm(b.title+"|"+b.author)}
-library.forEach(function(b){if(statusOverrides[bookKey(b)])b.status=statusOverrides[bookKey(b)]});
-function statusLabel(s){if(s==="Started")return "In progress";if(s==="Read")return "Finished";return s}
-function statusValue(label){if(label==="In progress")return "Started";if(label==="Finished")return "Read";return label}
-function saveStatusOverride(b){
-  statusOverrides[bookKey(b)]=b.status;
-  localStorage.setItem("rr-status-overrides",JSON.stringify(statusOverrides));
-  if(b.userAdded)persist();
+const APP_VERSION="2026.09-cleanse-1";
+const seed=[{"title":"Practical Magic","author":"Alice Hoffman","status":"To assess","genre":"Fantasy","mood":"Strange","owned":false,"lane":"Alice Hoffman"},{"title":"The Rules of Magic","author":"Alice Hoffman","status":"To assess","genre":"Fantasy","mood":"Strange","owned":false,"lane":"Alice Hoffman"},{"title":"Magic Lessons","author":"Alice Hoffman","status":"To assess","genre":"Fantasy","mood":"Strange","owned":false,"lane":"Alice Hoffman"},{"title":"The Book of Magic","author":"Alice Hoffman","status":"To assess","genre":"Fantasy","mood":"Strange","owned":false,"lane":"Alice Hoffman"},{"title":"Here on Earth","author":"Alice Hoffman","status":"To assess","genre":"Literary","mood":"Strange","owned":false,"lane":"Alice Hoffman"},{"title":"Local Girls","author":"Alice Hoffman","status":"To assess","genre":"Literary","mood":"Strange","owned":false,"lane":"Alice Hoffman"},{"title":"The River King","author":"Alice Hoffman","status":"To assess","genre":"Literary","mood":"Strange","owned":false,"lane":"Alice Hoffman"},{"title":"Blue Diary","author":"Alice Hoffman","status":"To assess","genre":"Literary","mood":"Strange","owned":false,"lane":"Alice Hoffman"},{"title":"The Probable Future","author":"Alice Hoffman","status":"To assess","genre":"Literary","mood":"Strange","owned":false,"lane":"Alice Hoffman"},{"title":"The Ice Queen","author":"Alice Hoffman","status":"To assess","genre":"Literary","mood":"Strange","owned":false,"lane":"Alice Hoffman"},{"title":"The Third Angel","author":"Alice Hoffman","status":"To assess","genre":"Literary","mood":"Strange","owned":false,"lane":"Alice Hoffman"},{"title":"The Red Garden","author":"Alice Hoffman","status":"To assess","genre":"Literary","mood":"Strange","owned":false,"lane":"Alice Hoffman"},{"title":"The Dovekeepers","author":"Alice Hoffman","status":"To assess","genre":"Literary","mood":"Immersive","owned":false,"lane":"Alice Hoffman"},{"title":"The Museum of Extraordinary Things","author":"Alice Hoffman","status":"To assess","genre":"Literary","mood":"Strange","owned":false,"lane":"Alice Hoffman"},{"title":"The Marriage of Opposites","author":"Alice Hoffman","status":"To assess","genre":"Literary","mood":"Fascinating","owned":false,"lane":"Alice Hoffman"},{"title":"Faithful","author":"Alice Hoffman","status":"To assess","genre":"Literary","mood":"Healing","owned":false,"lane":"Alice Hoffman"},{"title":"The Otherwhere Post","author":"Emily J. Taylor","status":"Read + loved","genre":"Fantasy","mood":"Strange","owned":true,"lane":"Speculative"},{"title":"The Safekeep","author":"Yael van der Wouden","status":"Read + loved","genre":"Literary","mood":"Immersive","owned":true,"lane":"Literary"},{"title":"The Coworker","author":"Freida McFadden","status":"Read + loved","genre":"Thriller","mood":"Tense","owned":true,"lane":"Thrillers"},{"title":"The Thursday Murder Club","author":"Richard Osman","status":"Read + loved","genre":"Thriller","mood":"Fun","owned":true,"lane":"Thrillers"},{"title":"All the Beautiful Lies","author":"Peter Swanson","status":"Read + loved","genre":"Thriller","mood":"Tense","owned":true,"lane":"Thrillers"},{"title":"Dark Places","author":"Gillian Flynn","status":"Read + loved","genre":"Thriller","mood":"Tense","owned":true,"lane":"Thrillers"},{"title":"Sharp Objects","author":"Gillian Flynn","status":"Read + loved","genre":"Thriller","mood":"Tense","owned":true,"lane":"Thrillers"},{"title":"The Kind Worth Killing","author":"Peter Swanson","status":"Read + loved","genre":"Thriller","mood":"Tense","owned":true,"lane":"Thrillers"},{"title":"The Woman in the Window","author":"A. J. Finn","status":"Read + loved","genre":"Thriller","mood":"Tense","owned":true,"lane":"Thrillers"},{"title":"Becoming","author":"Michelle Obama","status":"Read + loved","genre":"Memoir","mood":"Fascinating","owned":false,"lane":"Memoir"},{"title":"Born a Crime","author":"Trevor Noah","status":"Read + loved","genre":"Memoir","mood":"Fascinating","owned":false,"lane":"Memoir"},{"title":"Everything Is Tuberculosis","author":"John Green","status":"Read + loved","genre":"Nonfiction","mood":"Fascinating","owned":false,"lane":"Nonfiction"},{"title":"Home Is Where the Bodies Are","author":"Jeneva Rose","status":"Read + loved","genre":"Thriller","mood":"Tense","owned":false,"lane":"Thrillers"},{"title":"The Collapsing Empire","author":"John Scalzi","status":"Read + loved","genre":"Fantasy","mood":"Fun","owned":false,"lane":"Speculative"},{"title":"Starter Villain","author":"John Scalzi","status":"Read + loved","genre":"Fantasy","mood":"Fun","owned":false,"lane":"Speculative"},{"title":"The Kaiju Preservation Society","author":"John Scalzi","status":"Read + loved","genre":"Fantasy","mood":"Fun","owned":false,"lane":"Speculative"},{"title":"The Martian","author":"Andy Weir","status":"Read + loved","genre":"Fantasy","mood":"Fascinating","owned":false,"lane":"Speculative"},{"title":"Wicked","author":"Gregory Maguire","status":"Read + loved","genre":"Fantasy","mood":"Strange","owned":false,"lane":"Fantasy"},{"title":"Clean & Green","author":"Nancy Birtwhistle","status":"Read + loved","genre":"Practical","mood":"Fascinating","owned":false,"lane":"Practical"},{"title":"How to Keep House While Drowning","author":"KC Davis","status":"Read + loved","genre":"Practical","mood":"Gentle","owned":false,"lane":"Reread"},{"title":"The Color Purple","author":"Alice Walker","status":"Finished","genre":"Literary","mood":"Heavy","owned":false,"lane":"Reread"},{"title":"Cute Kawaii Cross Stitch","author":"Sosae Caetano & Dennis Caetano","status":"Finished","genre":"Practical","mood":"Gentle","owned":false,"lane":"Craft"},{"title":"Self-Care Cross-Stitch","author":"Stephanie Rohr","status":"Read + loved","genre":"Practical","mood":"Gentle","owned":false,"lane":"Craft"},{"title":"The Book With No Pictures","author":"B. J. Novak","status":"Read + loved","genre":"Family","mood":"Fun","owned":false,"lane":"Family"},{"title":"Hogfather","author":"Terry Pratchett","status":"Read + loved","genre":"Fantasy","mood":"Fun","owned":false,"lane":"Fantasy"},{"title":"Bossypants","author":"Tina Fey","status":"Finished","genre":"Memoir","mood":"Fun","owned":false,"lane":"Memoir"},{"title":"Rita Hayworth and Shawshank Redemption","author":"Stephen King","status":"Finished","genre":"Fiction","mood":"Immersive","owned":false,"lane":"Fiction"},{"title":"How to Talk So Kids Will Listen & Listen So Kids Will Talk","author":"Adele Faber & Elaine Mazlish","status":"In progress","genre":"Parenting","mood":"Practical","owned":true,"lane":"Parenting"},{"title":"No-Drama Discipline","author":"Daniel J. Siegel & Tina Payne Bryson","status":"In progress","genre":"Parenting","mood":"Practical","owned":true,"lane":"Parenting"},{"title":"Divergent Mind","author":"Jenara Nerenberg","status":"In progress","genre":"Nonfiction","mood":"Fascinating","owned":false,"lane":"Neurodivergence"},{"title":"Forgiving What You Can't Forget","author":"Lysa TerKeurst","status":"In progress","genre":"Nonfiction","mood":"Healing","owned":false,"lane":"Healing"},{"title":"The Man Who Died Twice","author":"Richard Osman","status":"Unread","genre":"Thriller","mood":"Fun","owned":true,"lane":"Thrillers"},{"title":"Adult Children of Emotionally Immature Parents","author":"Lindsay C. Gibson","status":"Unread","genre":"Nonfiction","mood":"Healing","owned":true,"lane":"Healing Through Parenting"},{"title":"What Happened to You?","author":"Bruce D. Perry & Oprah Winfrey","status":"Unread","genre":"Nonfiction","mood":"Healing","owned":false,"lane":"Healing Through Parenting"},{"title":"Parenting from the Inside Out","author":"Daniel J. Siegel & Mary Hartzell","status":"Unread","genre":"Parenting","mood":"Healing","owned":false,"lane":"Healing Through Parenting"},{"title":"Everyone in My Family Has Killed Someone","author":"Benjamin Stevenson","status":"Unread","genre":"Thriller","mood":"Fun","owned":false,"lane":"Thrillers"},{"title":"The Adventures of Amina al-Sirafi","author":"Shannon Chakraborty","status":"Unread","genre":"Fantasy","mood":"Strange","owned":false,"lane":"Fantasy"},{"title":"The Golden Thread","author":"Kassia St Clair","status":"Unread","genre":"Nonfiction","mood":"Fascinating","owned":false,"lane":"Textiles"},{"title":"A Radical Guide for Women with ADHD","author":"Sari Solden & Michelle Frank","status":"Unread","genre":"Nonfiction","mood":"Healing","owned":false,"lane":"Neurodivergence"},{"title":"The Soul's Guide to the After Death","author":"Gwenna Laithland","status":"Unread","genre":"Fantasy","mood":"Strange","owned":true,"lane":"Fantasy"},{"title":"The Language of Thorns","author":"Leigh Bardugo","status":"Unread","genre":"Fantasy","mood":"Strange","owned":true,"lane":"Fantasy"},{"title":"The Ballad of Songbirds and Snakes","author":"Suzanne Collins","status":"Unread","genre":"Fantasy","mood":"Tense","owned":true,"lane":"Fantasy"},{"title":"Vanya and the Wild Hunt","author":"Sangu Mandanna","status":"Unread","genre":"Fantasy","mood":"Strange","owned":false,"lane":"Speculative"},{"title":"Murder Your Employer","author":"Rupert Holmes","status":"Unread","genre":"Thriller","mood":"Fun","owned":false,"lane":"Thrillers"},{"title":"The Radium Girls","author":"Kate Moore","status":"Unread","genre":"Nonfiction","mood":"Fascinating","owned":false,"lane":"Narrative Nonfiction"},{"title":"A Memory of Light","author":"Robert Jordan & Brandon Sanderson","status":"Unread","genre":"Fantasy","mood":"Immersive","owned":false,"lane":"Wheel of Time"},{"title":"Verity Vox and the Curse of Fox Fire","author":"Don Martin","status":"Unread","genre":"Fantasy","mood":"Strange","owned":false,"lane":"Witchy & Magical"},{"title":"The Witch's Daughter","author":"Paula Brackston","status":"Unread","genre":"Fantasy","mood":"Strange","owned":false,"lane":"Witchy & Magical"},{"title":"The Winter Witch","author":"Paula Brackston","status":"Unread","genre":"Fantasy","mood":"Strange","owned":false,"lane":"Witchy & Magical"},{"title":"The Unfortunate Side Effects of Heartbreak and Magic","author":"Breanne Randall","status":"Unread","genre":"Fantasy","mood":"Gentle","owned":false,"lane":"Witchy & Magical"},{"title":"A Discovery of Witches","author":"Deborah Harkness","status":"Unread","genre":"Fantasy","mood":"Immersive","owned":false,"lane":"Witchy & Magical"},{"title":"The Fright Before Christmas","author":"Jeff Belanger","status":"Unread","genre":"Nonfiction","mood":"Strange","owned":false,"lane":"Seasonal"},{"title":"Hidden Valley Road","author":"Robert Kolker","status":"Unread","genre":"Nonfiction","mood":"Fascinating","owned":false,"lane":"Narrative Nonfiction"},{"title":"The Eyre Affair","author":"Jasper Fforde","status":"Unread","genre":"Fantasy","mood":"Fun","owned":false,"lane":"Series Trials"},{"title":"The Stranger Times","author":"C. K. McDonnell","status":"Unread","genre":"Fantasy","mood":"Fun","owned":false,"lane":"Series Trials"},{"title":"The Appeal","author":"Janice Hallett","status":"Unread","genre":"Thriller","mood":"Tense","owned":false,"lane":"Thrillers"},{"title":"The Ghost Map","author":"Steven Johnson","status":"Unread","genre":"Nonfiction","mood":"Fascinating","owned":false,"lane":"Narrative Nonfiction"},{"title":"The Feather Thief","author":"Kirk Wallace Johnson","status":"Unread","genre":"Nonfiction","mood":"Fascinating","owned":false,"lane":"Narrative Nonfiction"},{"title":"The Address Book","author":"Deirdre Mask","status":"Unread","genre":"Nonfiction","mood":"Fascinating","owned":false,"lane":"Narrative Nonfiction"},{"title":"The Rook","author":"Daniel O'Malley","status":"Unread","genre":"Fantasy","mood":"Strange","owned":false,"lane":"Speculative"},{"title":"The Seven Deaths of Evelyn Hardcastle","author":"Stuart Turton","status":"Unread","genre":"Thriller","mood":"Tense","owned":false,"lane":"Thrillers"},{"title":"The Poisoner's Handbook","author":"Deborah Blum","status":"Unread","genre":"Nonfiction","mood":"Fascinating","owned":false,"lane":"Narrative Nonfiction"},{"title":"The Library Book","author":"Susan Orlean","status":"Unread","genre":"Nonfiction","mood":"Fascinating","owned":false,"lane":"Narrative Nonfiction"},{"title":"The Secret Lives of Color","author":"Kassia St. Clair","status":"Unread","genre":"Nonfiction","mood":"Fascinating","owned":false,"lane":"Textiles"},{"title":"The Butchering Art","author":"Lindsey Fitzharris","status":"Unread","genre":"Nonfiction","mood":"Fascinating","owned":false,"lane":"Narrative Nonfiction"},{"title":"H Is for Hawk","author":"Helen Macdonald","status":"Unread","genre":"Memoir","mood":"Fascinating","owned":false,"lane":"Memoir"},{"title":"Rivers of London","author":"Ben Aaronovitch","status":"Unread","genre":"Fantasy","mood":"Fun","owned":false,"lane":"Rivers of London"},{"title":"Moon Over Soho","author":"Ben Aaronovitch","status":"Unread","genre":"Fantasy","mood":"Fun","owned":false,"lane":"Rivers of London"},{"title":"Whispers Under Ground","author":"Ben Aaronovitch","status":"Unread","genre":"Fantasy","mood":"Fun","owned":false,"lane":"Rivers of London"},{"title":"Broken Homes","author":"Ben Aaronovitch","status":"Unread","genre":"Fantasy","mood":"Fun","owned":false,"lane":"Rivers of London"},{"title":"Foxglove Summer","author":"Ben Aaronovitch","status":"Unread","genre":"Fantasy","mood":"Fun","owned":false,"lane":"Rivers of London"},{"title":"What Abigail Did That Summer","author":"Ben Aaronovitch","status":"Unread","genre":"Fantasy","mood":"Fun","owned":false,"lane":"Rivers of London"},{"title":"The Furthest Station","author":"Ben Aaronovitch","status":"Unread","genre":"Fantasy","mood":"Fun","owned":false,"lane":"Rivers of London"},{"title":"The Hanging Tree","author":"Ben Aaronovitch","status":"Unread","genre":"Fantasy","mood":"Fun","owned":false,"lane":"Rivers of London"},{"title":"The October Man","author":"Ben Aaronovitch","status":"Unread","genre":"Fantasy","mood":"Fun","owned":false,"lane":"Rivers of London"},{"title":"Lies Sleeping","author":"Ben Aaronovitch","status":"Unread","genre":"Fantasy","mood":"Fun","owned":false,"lane":"Rivers of London"},{"title":"False Value","author":"Ben Aaronovitch","status":"Unread","genre":"Fantasy","mood":"Fun","owned":false,"lane":"Rivers of London"},{"title":"Tales from the Folly","author":"Ben Aaronovitch","status":"Unread","genre":"Fantasy","mood":"Fun","owned":false,"lane":"Rivers of London"},{"title":"Amongst Our Weapons","author":"Ben Aaronovitch","status":"Unread","genre":"Fantasy","mood":"Fun","owned":false,"lane":"Rivers of London"},{"title":"Winter's Gifts","author":"Ben Aaronovitch","status":"Unread","genre":"Fantasy","mood":"Fun","owned":false,"lane":"Rivers of London"},{"title":"The Masquerades of Spring","author":"Ben Aaronovitch","status":"Unread","genre":"Fantasy","mood":"Fun","owned":false,"lane":"Rivers of London"},{"title":"Stone and Sky","author":"Ben Aaronovitch","status":"Unread","genre":"Fantasy","mood":"Fun","owned":false,"lane":"Rivers of London"},{"title":"Foxes for Christmas","author":"Ben Aaronovitch","status":"To assess","genre":"Fantasy","mood":"Fun","owned":false,"lane":"Rivers of London"},{"title":"Ledge","author":"Stacey McEwan","status":"No","genre":"Fantasy","mood":"Tense","owned":false,"lane":"Do Not Recommend"},{"title":"Untangled","author":"Mallory Thomas","status":"No","genre":"Romance","mood":"Gentle","owned":false,"lane":"Do Not Recommend"},{"title":"Love Is a War Song","author":"Danica Nava","status":"No","genre":"Romance","mood":"Emotional","owned":false,"lane":"Do Not Recommend"},{"title":"Becoming an Artist","author":"Scott Christian Sava","status":"No","genre":"Nonfiction","mood":"Fascinating","owned":false,"lane":"Do Not Recommend"}];
+
+const STATUS_OPTIONS=["To assess","Unread","In progress","Finished","Read + loved","DNF","No"];
+const TERMINAL_STATUSES=new Set(["Finished","Read + loved","DNF","No"]);
+const MOOD_CANDIDATE_STATUSES=new Set(["To assess","Unread","In progress"]);
+
+function qs(s,root=document){return root.querySelector(s)}
+function qsa(s,root=document){return Array.from(root.querySelectorAll(s))}
+function norm(s){return String(s||"").toLowerCase().trim()}
+function keyFor(b){return norm((b.title||"")+"|"+(b.author||""))}
+function safeJSON(key,fallback){
+  try{const v=JSON.parse(localStorage.getItem(key));return v??fallback}catch(e){return fallback}
 }
-function setBookStatus(b,label){
-  b.status=statusValue(label);
-  saveStatusOverride(b);
-  renderBrowse();renderQueue();renderHome();
+function normalizeStatus(s){
+  if(s==="Started")return "In progress";
+  if(s==="Read")return "Finished";
+  return STATUS_OPTIONS.includes(s)?s:"To assess";
 }
-function statusControl(b){
-  var w=document.createElement("div");w.className="statuswrap";
-  var l=document.createElement("label");l.textContent="Reading status";
-  var s=document.createElement("select");s.className="statusselect";
-  ["To assess","Unread","In progress","Finished","Read + loved","DNF","No"].forEach(function(x){
-    var o=document.createElement("option");o.value=x;o.textContent=x;
-    if(statusLabel(b.status)===x)o.selected=true;
-    s.appendChild(o);
+function el(tag,className,textValue){
+  const n=document.createElement(tag);
+  if(className)n.className=className;
+  if(textValue!==undefined&&textValue!==null)n.textContent=String(textValue);
+  return n;
+}
+function uniqueValues(field){
+  return [...new Set(library.map(b=>b[field]).filter(Boolean))].sort((a,b)=>String(a).localeCompare(String(b)));
+}
+
+const addedRaw=safeJSON("rr-added",[]);
+const added=Array.isArray(addedRaw)?addedRaw:[];
+const libraryMap=new Map();
+seed.concat(added).forEach(raw=>{
+  const b={...raw,status:normalizeStatus(raw.status),owned:Boolean(raw.owned)};
+  const k=keyFor(b);
+  if(!k)return;
+  const prior=libraryMap.get(k);
+  libraryMap.set(k,prior?{...prior,...b,userAdded:Boolean(prior.userAdded||b.userAdded)}:b);
+});
+const library=[...libraryMap.values()];
+
+let statusOverrides=safeJSON("rr-status-overrides",{});
+if(!statusOverrides||Array.isArray(statusOverrides)||typeof statusOverrides!=="object")statusOverrides={};
+library.forEach(b=>{
+  const s=statusOverrides[keyFor(b)];
+  if(s)b.status=normalizeStatus(s);
+});
+
+let queueKeys=safeJSON("rr-queue",[]);
+if(!Array.isArray(queueKeys))queueKeys=[];
+queueKeys=[...new Set(queueKeys.map(norm))].filter(k=>libraryMap.has(k));
+
+let reviews=safeJSON("rr-reviews",[]);
+if(!Array.isArray(reviews))reviews=[];
+
+let filters={mood:null,genre:null,status:null,ownership:null};
+let selectedReviewBook=null;
+let openFilterKey=null;
+
+function saveQueue(){localStorage.setItem("rr-queue",JSON.stringify(queueKeys))}
+function saveAdded(){
+  localStorage.setItem("rr-added",JSON.stringify(library.filter(b=>b.userAdded)));
+}
+function saveOverrides(){localStorage.setItem("rr-status-overrides",JSON.stringify(statusOverrides))}
+function saveReviews(){localStorage.setItem("rr-reviews",JSON.stringify(reviews))}
+function isQueued(b){return queueKeys.includes(keyFor(b))}
+function queueBook(b,{front=false}={}){
+  const k=keyFor(b);
+  queueKeys=queueKeys.filter(x=>x!==k);
+  front?queueKeys.unshift(k):queueKeys.push(k);
+  saveQueue();
+  renderHome();renderQueue();
+}
+function unqueueBook(b){
+  const k=keyFor(b);
+  queueKeys=queueKeys.filter(x=>x!==k);
+  saveQueue();
+  renderHome();renderQueue();
+}
+function setBookStatus(b,status){
+  b.status=normalizeStatus(status);
+  statusOverrides[keyFor(b)]=b.status;
+  saveOverrides();
+  if(b.userAdded)saveAdded();
+
+  if(b.status==="In progress"){
+    queueBook(b,{front:true});
+  }else if(TERMINAL_STATUSES.has(b.status)&&isQueued(b)){
+    unqueueBook(b);
+  }
+  renderBrowse();
+  renderQueue();
+  renderHome();
+}
+
+function go(id){
+  qsa(".screen").forEach(x=>x.classList.toggle("active",x.id===id));
+  qsa(".tab").forEach(x=>x.classList.toggle("active",x.dataset.go===id));
+  window.scrollTo({top:0,behavior:"auto"});
+}
+document.addEventListener("click",e=>{
+  const n=e.target.closest("[data-go]");
+  if(!n)return;
+  e.preventDefault();
+  go(n.dataset.go);
+});
+
+qsa("[data-single]").forEach(group=>{
+  group.addEventListener("click",e=>{
+    const button=e.target.closest(".choice,.reviewbtn");
+    if(!button||!group.contains(button))return;
+    qsa(".choice,.reviewbtn",group).forEach(x=>x.classList.remove("selected"));
+    button.classList.add("selected");
   });
-  s.onchange=function(e){e.stopPropagation();setBookStatus(b,s.value)};
-  s.onclick=function(e){e.stopPropagation()};
-  w.appendChild(l);w.appendChild(s);return w;
-}
-function go(id){qsa(".screen").forEach(function(x){x.classList.toggle("active",x.id===id)});qsa(".tab").forEach(function(x){x.classList.toggle("active",x.dataset.go===id)});scrollTo(0,0)}
-document.addEventListener("click",function(e){var n=e.target.closest("[data-go]");if(n){e.preventDefault();go(n.dataset.go)}})
-qsa("[data-single]").forEach(function(g){g.addEventListener("click",function(e){var b=e.target.closest(".choice,.reviewbtn");if(!b)return;g.querySelectorAll(".choice,.reviewbtn").forEach(function(x){x.classList.remove("selected")});b.classList.add("selected")})})
-var coverCache=JSON.parse(localStorage.getItem("rr-cover-cache")||"{}");
-function coverKey(b){return norm(b.title+"|"+b.author)}
+});
+
+/* ---------- Covers ---------- */
+let coverCache=safeJSON("rr-cover-cache",{});
+if(!coverCache||Array.isArray(coverCache)||typeof coverCache!=="object")coverCache={};
+const coverPending=new Map();
+const COVER_RETRY_MS=7*24*60*60*1000;
+
 function saveCoverCache(){localStorage.setItem("rr-cover-cache",JSON.stringify(coverCache))}
-function openLibraryCoverUrl(id){return "https://covers.openlibrary.org/b/id/"+id+"-L.jpg"}
 function normalizeCoverValue(v){
   if(!v)return null;
   if(typeof v==="number")return {type:"openlibrary",value:v};
   if(typeof v==="string"){
     if(/^https?:\/\//i.test(v))return {type:"url",value:v.replace(/^http:/i,"https:")};
     if(/^\d+$/.test(v))return {type:"openlibrary",value:Number(v)};
+    return null;
   }
-  if(v&&typeof v==="object"&&v.type&&v.value)return v;
+  if(typeof v==="object"&&v.type)return v;
   return null;
 }
 function coverSrc(v){
-  var x=normalizeCoverValue(v);
-  if(!x)return null;
-  return x.type==="openlibrary"?openLibraryCoverUrl(x.value):x.value;
-}
-function setManualCover(b,img,fallback){
-  var current=coverSrc(coverCache[coverKey(b)])||"";
-  var url=prompt("Paste an image URL for the cover of “"+b.title+"”.",current);
-  if(!url)return;
-  url=url.trim().replace(/^http:/i,"https:");
-  if(!/^https:\/\//i.test(url)){alert("Please paste a full https:// image URL.");return}
-  coverCache[coverKey(b)]={type:"url",value:url,manual:true};
-  saveCoverCache();
-  img.src=url;
-  img.onload=function(){img.style.display="block";fallback.style.display="none";fallback.classList.remove("manual-ready")};
-  img.onerror=function(){alert("That image could not be loaded. Try a different image URL.");img.style.display="none";fallback.style.display="flex";fallback.classList.add("manual-ready")};
-}
-function showCover(img,fallback,src){
-  if(!src)return false;
-  img.src=src;
-  img.onload=function(){img.style.display="block";fallback.style.display="none";fallback.classList.remove("manual-ready")};
-  img.onerror=function(){img.style.display="none";fallback.style.display="flex";fallback.classList.add("manual-ready")};
-  return true;
+  const x=normalizeCoverValue(v);
+  if(!x||x.type==="none")return null;
+  return x.type==="openlibrary"
+    ?"https://covers.openlibrary.org/b/id/"+x.value+"-L.jpg"
+    :String(x.value||"").replace(/^http:/i,"https:");
 }
 function bestOpenLibraryHit(data,b){
-  var docs=(data&&data.docs)||[];
-  var nt=norm(b.title),na=norm(b.author);
-  return docs.find(function(d){
-    var dt=norm(d.title),authors=(d.author_name||[]).map(norm);
-    return dt===nt && authors.some(function(a){return na.includes(a)||a.includes(na)});
-  }) || docs.find(function(d){return norm(d.title)===nt}) || docs.find(function(d){return d.cover_i}) || null;
+  const docs=(data&&data.docs)||[];
+  const nt=norm(b.title),na=norm(b.author);
+  const withCover=docs.filter(d=>d.cover_i);
+  return withCover.find(d=>{
+    const authors=(d.author_name||[]).map(norm);
+    return norm(d.title)===nt&&authors.some(a=>na.includes(a)||a.includes(na));
+  })||withCover.find(d=>norm(d.title)===nt)||null;
 }
 function googleCover(data){
-  var items=(data&&data.items)||[];
-  for(var i=0;i<items.length;i++){
-    var links=items[i].volumeInfo&&items[i].volumeInfo.imageLinks;
-    if(links){
-      var u=links.extraLarge||links.large||links.medium||links.thumbnail||links.smallThumbnail;
-      if(u)return u.replace(/^http:/i,"https:");
-    }
+  for(const item of (data&&data.items)||[]){
+    const links=item.volumeInfo&&item.volumeInfo.imageLinks;
+    if(!links)continue;
+    const u=links.extraLarge||links.large||links.medium||links.thumbnail||links.smallThumbnail;
+    if(u)return u.replace(/^http:/i,"https:");
   }
   return null;
 }
-function hydrateCover(b,img,fallback){
-  var key=coverKey(b),known=b.coverUrl?{type:"url",value:b.coverUrl}:b.coverId?{type:"openlibrary",value:b.coverId}:normalizeCoverValue(coverCache[key]);
-  fallback.onclick=function(){setManualCover(b,img,fallback)};
-  if(known&&showCover(img,fallback,coverSrc(known)))return;
+async function resolveCover(b){
+  const k=keyFor(b);
+  if(b.coverUrl)return {type:"url",value:b.coverUrl};
+  if(b.coverId)return {type:"openlibrary",value:b.coverId};
 
-  var ol="https://openlibrary.org/search.json?title="+encodeURIComponent(b.title)+"&author="+encodeURIComponent(b.author)+"&limit=8";
-  fetch(ol).then(function(r){return r.json()}).then(function(data){
-    var hit=bestOpenLibraryHit(data,b);
-    if(hit&&hit.cover_i){
-      coverCache[key]={type:"openlibrary",value:hit.cover_i};saveCoverCache();
-      showCover(img,fallback,openLibraryCoverUrl(hit.cover_i));return;
-    }
-    throw new Error("no-openlibrary-cover");
-  }).catch(function(){
-    var q='intitle:"'+b.title+'" inauthor:"'+b.author+'"';
-    return fetch("https://www.googleapis.com/books/v1/volumes?q="+encodeURIComponent(q)+"&maxResults=5")
-      .then(function(r){return r.json()})
-      .then(function(data){
-        var u=googleCover(data);
-        if(u){coverCache[key]={type:"url",value:u};saveCoverCache();showCover(img,fallback,u)}
-        else{fallback.classList.add("manual-ready")}
-      })
-      .catch(function(){fallback.classList.add("manual-ready")});
+  const cached=normalizeCoverValue(coverCache[k]);
+  if(cached){
+    if(cached.type!=="none")return cached;
+    if(Date.now()-(cached.checkedAt||0)<COVER_RETRY_MS)return null;
+  }
+  if(coverPending.has(k))return coverPending.get(k);
+
+  const p=(async()=>{
+    try{
+      const olUrl="https://openlibrary.org/search.json?title="+encodeURIComponent(b.title)+"&author="+encodeURIComponent(b.author)+"&limit=8";
+      const ol=await fetch(olUrl);
+      if(ol.ok){
+        const hit=bestOpenLibraryHit(await ol.json(),b);
+        if(hit&&hit.cover_i){
+          const value={type:"openlibrary",value:hit.cover_i};
+          coverCache[k]=value;saveCoverCache();return value;
+        }
+      }
+    }catch(e){}
+    try{
+      const q='intitle:"'+b.title+'" inauthor:"'+b.author+'"';
+      const gr=await fetch("https://www.googleapis.com/books/v1/volumes?q="+encodeURIComponent(q)+"&maxResults=5");
+      if(gr.ok){
+        const u=googleCover(await gr.json());
+        if(u){
+          const value={type:"url",value:u};
+          coverCache[k]=value;saveCoverCache();return value;
+        }
+      }
+    }catch(e){}
+    coverCache[k]={type:"none",checkedAt:Date.now()};saveCoverCache();return null;
+  })().finally(()=>coverPending.delete(k));
+  coverPending.set(k,p);
+  return p;
+}
+function setManualCover(b,img,fallback){
+  const current=coverSrc(coverCache[keyFor(b)])||"";
+  let url=prompt("Paste an image URL for the cover of “"+b.title+"”.",current);
+  if(!url)return;
+  url=url.trim().replace(/^http:/i,"https:");
+  if(!/^https:\/\//i.test(url)){alert("Please paste a full https:// image URL.");return}
+  coverCache[keyFor(b)]={type:"url",value:url,manual:true};
+  saveCoverCache();
+  showCover(img,fallback,url);
+}
+function showCover(img,fallback,src){
+  img.onload=()=>{img.style.display="block";fallback.style.display="none";fallback.classList.remove("manual-ready")};
+  img.onerror=()=>{img.style.display="none";fallback.style.display="flex";fallback.classList.add("manual-ready")};
+  img.src=src;
+}
+const coverObserver="IntersectionObserver" in window?new IntersectionObserver(entries=>{
+  entries.forEach(entry=>{
+    if(!entry.isIntersecting)return;
+    coverObserver.unobserve(entry.target);
+    const job=entry.target._coverJob;
+    if(job)job();
+  });
+},{rootMargin:"250px"}):null;
+
+function hydrateCover(b,img,fallback){
+  fallback.onclick=e=>{e.stopPropagation();setManualCover(b,img,fallback)};
+  const run=async()=>{
+    const value=await resolveCover(b);
+    const src=coverSrc(value);
+    if(src)showCover(img,fallback,src);
+    else fallback.classList.add("manual-ready");
+  };
+  if(coverObserver){
+    fallback._coverJob=run;
+    coverObserver.observe(fallback);
+  }else run();
+}
+
+/* ---------- Reusable controls ---------- */
+function statusControl(b){
+  const wrap=el("div","statuswrap");
+  const label=el("label",null,"Reading status");
+  const select=el("select","statusselect");
+  STATUS_OPTIONS.forEach(status=>{
+    const option=el("option",null,status);
+    option.value=status;
+    option.selected=b.status===status;
+    select.appendChild(option);
+  });
+  select.addEventListener("click",e=>e.stopPropagation());
+  select.addEventListener("change",e=>{e.stopPropagation();setBookStatus(b,select.value)});
+  wrap.append(label,select);
+  return wrap;
+}
+function queueControl(b){
+  const button=el("button","queueaction");
+  const refresh=()=>{
+    const queued=isQueued(b);
+    button.textContent=queued?"Remove from queue":"Add to queue";
+    button.classList.toggle("added",queued);
+  };
+  refresh();
+  button.onclick=e=>{
+    e.stopPropagation();
+    isQueued(b)?unqueueBook(b):queueBook(b);
+    refresh();
+  };
+  return button;
+}
+function bookCoverNodes(b,sizeClass="cover"){
+  const img=el("img",sizeClass);
+  img.alt="Cover of "+b.title;
+  img.style.display="none";
+  const fallback=el("div","fallback",b.title);
+  if(sizeClass==="miniCover"){
+    fallback.style.width="42px";
+    fallback.style.cssFloat="left";
+    fallback.style.margin="0 9px 7px 0";
+  }
+  hydrateCover(b,img,fallback);
+  return {img,fallback};
+}
+function card(b,opts={}){
+  const d=el("div","book");
+  const {img,fallback}=bookCoverNodes(b);
+  const meta=el("div");
+  meta.append(
+    el("h3",null,b.title),
+    el("div","author",b.author)
+  );
+  const badges=el("div","badges");
+  badges.append(el("span","badge",b.status),el("span","badge",b.genre));
+  if(b.owned)badges.append(el("span","badge","Owned"));
+  meta.append(badges,statusControl(b));
+  if(opts.removeQueue){
+    const rm=el("button","queueaction remove","Remove from queue");
+    rm.onclick=e=>{e.stopPropagation();unqueueBook(b)};
+    meta.append(rm);
+  }else{
+    meta.append(queueControl(b));
+  }
+  d.append(img,fallback,meta);
+  return d;
+}
+
+/* ---------- Home ---------- */
+function renderHome(){
+  const wrap=qs("#homeReading"),current=qs("#homeCurrent"),next=qs("#homeNext"),label=qs("#nextLabel");
+  if(!wrap||!current||!next)return;
+  const books=queueKeys.map(k=>libraryMap.get(k)).filter(Boolean);
+  current.innerHTML="";next.innerHTML="";
+  if(!books.length){
+    wrap.style.display="none";label.style.display="none";return;
+  }
+  wrap.style.display="block";
+
+  const b=books[0];
+  const box=el("div","homeCurrent");
+  box.onclick=()=>go("queue");
+  const {img,fallback}=bookCoverNodes(b);
+  img.style.width="92px";fallback.style.width="92px";
+  const meta=el("div");
+  meta.append(el("h2",null,b.title),el("div","author",b.author));
+  const badges=el("div","badges");
+  badges.append(el("span","badge",b.status),el("span","badge","In queue"));
+  meta.append(badges,statusControl(b));
+  box.append(img,fallback,meta);
+  current.appendChild(box);
+
+  const upcoming=books.slice(1,3);
+  label.style.display=upcoming.length?"block":"none";
+  upcoming.forEach(x=>{
+    const d=el("div","nextCard");
+    d.onclick=()=>go("queue");
+    const {img:im,fallback:fb}=bookCoverNodes(x,"miniCover");
+    const info=el("div");
+    info.append(el("h3",null,x.title),el("div","author",x.author));
+    d.append(im,fb,info);
+    next.appendChild(d);
   });
 }
-function card(b,opts){
-  var d=document.createElement("div");d.className="book";
-  var img=document.createElement("img");img.className="cover";img.alt="Cover of "+b.title;img.style.display="none";
-  var f=document.createElement("div");f.className="fallback";f.textContent=b.title;
-  var m=document.createElement("div");m.innerHTML="<h3>"+b.title+"</h3><div class='author'>"+b.author+"</div><div class='badges'><span class='badge'>"+statusLabel(b.status)+"</span><span class='badge'>"+b.genre+"</span>"+(b.owned?"<span class='badge'>Owned</span>":"")+"</div>";m.appendChild(statusControl(b));if(!(opts&&opts.removeQueue)){var qa=document.createElement("button");qa.className="queueaction"+(isQueued(b)?" added":"");qa.textContent=isQueued(b)?"In queue":"Add to queue";qa.onclick=function(){if(isQueued(b)){qa.textContent="In queue";qa.classList.add("added");return}addToQueue(b);qa.textContent="In queue";qa.classList.add("added")};m.appendChild(qa);}
-  d.appendChild(img);d.appendChild(f);d.appendChild(m);
-  if(opts&&opts.removeQueue){
-    var rm=document.createElement("button");rm.className="queueaction remove";rm.textContent="Remove from queue";
-    rm.onclick=function(){removeFromQueue(b)};
-    m.appendChild(rm);
-  }
-  hydrateCover(b,img,f);return d
+
+/* ---------- Search and browse ---------- */
+function matchesText(b,q){
+  if(!q)return true;
+  return norm([b.title,b.author,b.genre,b.mood,b.lane,b.status].join(" ")).includes(norm(q));
 }
-function match(b,q){var h=norm(b.title+" "+b.author+" "+b.status+" "+b.genre+" "+b.mood+" "+b.lane);if(q&&!h.includes(norm(q)))return false;if(filters.mood&&b.mood!==filters.mood)return false;if(filters.genre&&b.genre!==filters.genre)return false;if(filters.status&&b.status!==statusValue(filters.status))return false;if(filters.ownership&&(b.owned?"Owned":"Not owned")!==filters.ownership)return false;return true}
-function renderBrowse(){var q=qs('[data-search="browse"]').value,rows=library.filter(function(b){return match(b,q)}),out=qs("#browseList"),lanes={};qs("#browseCount").textContent=rows.length+" book"+(rows.length===1?"":"s")+" shown";out.innerHTML="";rows.forEach(function(b){(lanes[b.lane]||(lanes[b.lane]=[])).push(b)});Object.keys(lanes).forEach(function(l){var h=document.createElement("div");h.className="lane";h.textContent=l;out.appendChild(h);lanes[l].forEach(function(b){out.appendChild(card(b))})})}
+function matchesBrowseFilters(b){
+  if(filters.mood&&b.mood!==filters.mood)return false;
+  if(filters.genre&&b.genre!==filters.genre)return false;
+  if(filters.status&&b.status!==filters.status)return false;
+  if(filters.ownership&&((b.owned?"Owned":"Not owned")!==filters.ownership))return false;
+  return true;
+}
+function renderBrowse(){
+  const input=qs('[data-search="browse"]');
+  const q=input?input.value:"";
+  const rows=library.filter(b=>matchesText(b,q)&&matchesBrowseFilters(b));
+  const out=qs("#browseList");
+  if(!out)return;
+  qs("#browseCount").textContent=rows.length+" book"+(rows.length===1?"":"s")+" shown";
+  out.innerHTML="";
+  const lanes=new Map();
+  rows.forEach(b=>{
+    if(!lanes.has(b.lane||"Other"))lanes.set(b.lane||"Other",[]);
+    lanes.get(b.lane||"Other").push(b);
+  });
+  lanes.forEach((books,lane)=>{
+    out.appendChild(el("div","lane",lane));
+    books.forEach(b=>out.appendChild(card(b)));
+  });
+  const clear=qs("#clearBrowse");
+  if(clear)clear.style.display=q?"block":"none";
+}
 function renderQueue(){
-  var q=qs('[data-search="queue"]').value,out=qs("#queueList");out.innerHTML="";
-  var rows=library.filter(function(b){return isQueued(b)&&match(b,q)});
+  const input=qs('[data-search="queue"]');
+  const q=input?input.value:"";
+  const out=qs("#queueList");
+  if(!out)return;
+  out.innerHTML="";
+  const rows=queueKeys.map(k=>libraryMap.get(k)).filter(Boolean).filter(b=>matchesText(b,q));
   if(!rows.length){
-    var empty=document.createElement("div");empty.className="note";
-    empty.style.padding="14px 2px";empty.textContent=queueKeys.length?"No queued books match this search.":"Your queue is empty. Add a recommendation from Mood.";
-    out.appendChild(empty);return;
+    out.appendChild(el("div","note",queueKeys.length?"No queued books match this search.":"Your queue is empty. Add a book from Browse or Mood."));
+    return;
   }
-  rows.forEach(function(b){out.appendChild(card(b,{removeQueue:true}))})
+  rows.forEach(b=>out.appendChild(card(b,{removeQueue:true})));
 }
-function search(scope,input){var box=qs('[data-results="'+scope+'"]'),q=norm(input.value);if(!box)return;box.innerHTML="";if(!q){box.style.display="none";return}var rows=library.filter(function(b){return norm(b.title+" "+b.author).includes(q)}).slice(0,8);box.style.display="block";if(!rows.length){box.innerHTML="<div class='note'>No matches.</div>";return}rows.forEach(function(b){var r=document.createElement("div");r.className="searchitem";r.innerHTML="<strong>"+b.title+"</strong><span>"+b.author+" · "+b.status+"</span>";r.onclick=function(){if(scope==="review"){selectedReviewBook=b;input.value=b.title;qs("#reviewing").textContent="Reviewing: "+b.title+" — "+b.author;box.style.display="none"}else if(scope==="home"){qs('[data-search="browse"]').value=b.title;box.style.display="none";go("browse");renderBrowse()}};box.appendChild(r)})}
-qsa("[data-search]").forEach(function(i){i.addEventListener("input",function(){var s=i.dataset.search;if(s==="browse"){qs("#clearBrowse").style.display=i.value?"block":"none";renderBrowse();return}if(s==="queue"){renderQueue();return}if(["home","review"].includes(s))search(s,i)})})
-qs("#clearBrowse").onclick=function(){var i=qs('[data-search="browse"]');i.value="";this.style.display="none";renderBrowse();i.focus()};
-var fd={mood:["Fun","Tense","Strange","Gentle","Fascinating","Healing"],genre:["Thriller","Fantasy","Nonfiction","Parenting","Literary"],status:["To assess","Unread","In progress","Finished","Read + loved","DNF","No"],ownership:["Owned","Not owned"]};
-qs("#clearFilters").onclick=function(){filters={mood:null,genre:null,status:null,ownership:null};qsa(".filter").forEach(function(x){x.classList.remove("active")});qs("#filterPanel").style.display="none";renderBrowse()};
-qsa(".filter").forEach(function(btn){btn.onclick=function(){qsa(".filter").forEach(function(x){x.classList.remove("active")});btn.classList.add("active");var k=btn.dataset.filter,c=qs("#filterChoices");qs("#filterTitle").textContent=k.charAt(0).toUpperCase()+k.slice(1);c.innerHTML="";qs("#filterPanel").style.display="block";fd[k].forEach(function(label){var o=document.createElement("button");o.className="choice"+(filters[k]===label?" selected":"");o.textContent=label;o.onclick=function(){Array.from(c.children).forEach(function(x){x.classList.remove("selected")});o.classList.add("selected");filters[k]=label;renderBrowse()};c.appendChild(o)})}})
+function showSearch(scope,input){
+  const box=qs('[data-results="'+scope+'"]');
+  if(!box)return;
+  const q=norm(input.value);
+  box.innerHTML="";
+  if(!q){box.style.display="none";return}
+  const rows=library.filter(b=>norm(b.title+" "+b.author).includes(q)).slice(0,10);
+  box.style.display="block";
+  if(!rows.length){box.appendChild(el("div","note","No matches."));return}
+  rows.forEach(b=>{
+    const row=el("div","searchitem");
+    row.append(el("strong",null,b.title),el("span",null,b.author+" · "+b.status));
+    row.onclick=()=>{
+      if(scope==="review"){
+        selectedReviewBook=b;
+        input.value=b.title;
+        qs("#reviewing").textContent="Reviewing: "+b.title+" — "+b.author;
+        box.style.display="none";
+      }else if(scope==="home"){
+        const browseInput=qs('[data-search="browse"]');
+        browseInput.value=b.title;
+        box.style.display="none";
+        go("browse");
+        renderBrowse();
+      }
+    };
+    box.appendChild(row);
+  });
+}
+qsa("[data-search]").forEach(input=>{
+  input.addEventListener("input",()=>{
+    const scope=input.dataset.search;
+    if(scope==="browse"){renderBrowse();return}
+    if(scope==="queue"){renderQueue();return}
+    if(scope==="home"||scope==="review")showSearch(scope,input);
+  });
+});
+const clearBrowse=qs("#clearBrowse");
+if(clearBrowse)clearBrowse.onclick=()=>{
+  const input=qs('[data-search="browse"]');
+  input.value="";
+  renderBrowse();
+  input.focus();
+};
+
+const filterValues={
+  mood:()=>uniqueValues("mood"),
+  genre:()=>uniqueValues("genre"),
+  status:()=>STATUS_OPTIONS,
+  ownership:()=>["Owned","Not owned"]
+};
+qsa(".filter").forEach(btn=>{
+  btn.onclick=()=>{
+    openFilterKey=btn.dataset.filter;
+    qsa(".filter").forEach(x=>x.classList.toggle("active",x===btn));
+    const choices=qs("#filterChoices");
+    qs("#filterTitle").textContent=openFilterKey.charAt(0).toUpperCase()+openFilterKey.slice(1);
+    choices.innerHTML="";
+    qs("#filterPanel").style.display="block";
+    filterValues[openFilterKey]().forEach(label=>{
+      const option=el("button","choice"+(filters[openFilterKey]===label?" selected":""),label);
+      option.onclick=()=>{
+        filters[openFilterKey]=filters[openFilterKey]===label?null:label;
+        renderBrowse();
+        btn.click();
+      };
+      choices.appendChild(option);
+    });
+  };
+});
+const clearFilters=qs("#clearFilters");
+if(clearFilters)clearFilters.onclick=()=>{
+  filters={mood:null,genre:null,status:null,ownership:null};
+  openFilterKey=null;
+  qsa(".filter").forEach(x=>x.classList.remove("active"));
+  qs("#filterPanel").style.display="none";
+  renderBrowse();
+};
+
+/* ---------- Mood matching ---------- */
 function moodScore(b,brain,emotion,commitment){
-  var s=0;
+  let s=0;
   if(b.mood===emotion)s+=8;
-  if(b.status==="Started")s+=1;
+  if(b.status==="In progress")s+=1;
   if(b.owned)s+=1;
 
   if(brain==="Fried"){
     if(["Gentle","Fun","Healing","Practical"].includes(b.mood))s+=4;
-    if(["Tense","Heavy"].includes(b.mood))s-=3;
+    if(["Tense","Heavy"].includes(b.mood))s-=4;
     if(["Practical","Parenting"].includes(b.genre))s+=1;
   }else if(brain==="Feed me"){
     if(["Fascinating","Strange","Tense"].includes(b.mood))s+=4;
@@ -306,57 +521,152 @@ function moodScore(b,brain,emotion,commitment){
   }
 
   if(commitment==="Light"){
-    if(b.status==="Started")s+=3;
+    if(b.status==="In progress")s+=3;
     if(["Fun","Gentle","Practical"].includes(b.mood))s+=2;
-    if(["Thriller","Practical","Parenting"].includes(b.genre))s+=1;
   }else if(commitment==="Immerse me"){
     if(["Fantasy","Literary"].includes(b.genre))s+=3;
-    if(["Strange","Fascinating","Tense","Healing"].includes(b.mood))s+=2;
+    if(["Strange","Fascinating","Tense","Healing","Immersive"].includes(b.mood))s+=2;
   }else if(commitment==="Continue something"){
-    if(b.status==="Started")s+=8; else s-=2;
-  }else if(commitment==="Normal"){
+    if(b.status==="In progress")s+=10;else s-=3;
+  }else{
     s+=1;
   }
   return s;
 }
-qs("#findMood").onclick=function(){
-  var gs=qsa("#mood [data-single]");
-  if(gs.some(function(g){return!g.querySelector(".selected")})){alert("Choose one option in each section first.");return}
-  var brain=gs[0].querySelector(".selected").textContent;
-  var emotion=gs[1].querySelector(".selected").textContent;
-  var commitment=gs[2].querySelector(".selected").textContent;
-  var candidates=library.filter(function(b){return ["Unread","Started","To assess"].includes(b.status)});
-  var rows=candidates.map(function(b){return {book:b,score:moodScore(b,brain,emotion,commitment)}})
-    .sort(function(a,b){return b.score-a.score || a.book.title.localeCompare(b.book.title)})
-    .slice(0,3).map(function(x){return x.book});
-  var out=qs("#moodResults");out.innerHTML="";
-  rows.forEach(function(b){out.appendChild(card(b,{queueAction:true}))});
+const findMood=qs("#findMood");
+if(findMood)findMood.onclick=()=>{
+  const groups=qsa("#mood [data-single]");
+  if(groups.some(g=>!qs(".selected",g))){alert("Choose one option in each section first.");return}
+  const brain=qs(".selected",groups[0]).textContent;
+  const emotion=qs(".selected",groups[1]).textContent;
+  const commitment=qs(".selected",groups[2]).textContent;
+  const candidates=library.filter(b=>MOOD_CANDIDATE_STATUSES.has(b.status));
+  const rows=candidates
+    .map(b=>({b,score:moodScore(b,brain,emotion,commitment)}))
+    .sort((a,b)=>b.score-a.score||a.b.title.localeCompare(b.b.title))
+    .slice(0,3).map(x=>x.b);
+  const out=qs("#moodResults");
+  out.innerHTML="";
+  rows.forEach(b=>out.appendChild(card(b)));
   out.style.display="block";
   out.scrollIntoView({behavior:"smooth",block:"start"});
-}
-qs("#resetMood").onclick=function(){
-  qsa("#mood [data-single] .selected").forEach(function(x){x.classList.remove("selected")});
-  qs("#moodResults").innerHTML="";
-  qs("#moodResults").style.display="none";
-}
+};
+const resetMood=qs("#resetMood");
+if(resetMood)resetMood.onclick=()=>{
+  qsa("#mood [data-single] .selected").forEach(x=>x.classList.remove("selected"));
+  const out=qs("#moodResults");
+  out.innerHTML="";out.style.display="none";
+};
 
-qs("#saveReview").onclick=function(){
+/* ---------- Review ---------- */
+const saveReview=qs("#saveReview");
+if(saveReview)saveReview.onclick=()=>{
   if(!selectedReviewBook){alert("Choose a book first.");return}
-  var rating=qs("#reviewRating .selected"),reread=qs("#reviewReread .selected");
+  const rating=qs("#reviewRating .selected");
+  const reread=qs("#reviewReread .selected");
   if(!rating||!reread){alert("Choose a rating and whether you would reread it.");return}
-  var reviews=JSON.parse(localStorage.getItem("rr-reviews")||"[]");
-  reviews=reviews.filter(function(r){return !(norm(r.title)===norm(selectedReviewBook.title)&&norm(r.author)===norm(selectedReviewBook.author))});
-  reviews.push({title:selectedReviewBook.title,author:selectedReviewBook.author,rating:rating.textContent,reread:reread.textContent,savedAt:new Date().toISOString()});
-  localStorage.setItem("rr-reviews",JSON.stringify(reviews));
-  selectedReviewBook.status=rating.textContent==="Loved"?"Read + loved":"Read";
-  saveStatusOverride(selectedReviewBook);
-  renderBrowse();renderQueue();renderHome();
+  const k=keyFor(selectedReviewBook);
+  reviews=reviews.filter(r=>keyFor(r)!==k);
+  reviews.push({
+    title:selectedReviewBook.title,
+    author:selectedReviewBook.author,
+    rating:rating.textContent,
+    reread:reread.textContent,
+    savedAt:new Date().toISOString()
+  });
+  saveReviews();
+  setBookStatus(selectedReviewBook,rating.textContent==="Loved"?"Read + loved":"Finished");
   qs("#reviewDone").style.display="block";
-  setTimeout(function(){qs("#reviewDone").style.display="none"},1200)
+  setTimeout(()=>qs("#reviewDone").style.display="none",1200);
+};
+
+/* ---------- Add titles ---------- */
+function addBook(raw){
+  const b={
+    title:String(raw.title||"").trim(),
+    author:String(raw.author||"").trim(),
+    status:normalizeStatus(raw.status),
+    genre:raw.genre||"Unclassified",
+    mood:raw.mood||"Unclassified",
+    owned:Boolean(raw.owned),
+    lane:raw.lane||"New additions",
+    coverId:raw.coverId||null,
+    coverUrl:raw.coverUrl||null,
+    userAdded:true
+  };
+  if(!b.title||!b.author)return false;
+  const k=keyFor(b);
+  if(libraryMap.has(k))return false;
+  library.push(b);libraryMap.set(k,b);
+  saveAdded();
+  renderBrowse();renderQueue();renderHome();
+  return true;
 }
-qs("#openAdd").onclick=function(){qs("#addModal").style.display="flex"};qs("#closeAdd").onclick=function(){qs("#addModal").style.display="none"}
-function persist(){localStorage.setItem("rr-added",JSON.stringify(library.filter(function(b){return b.userAdded})))}function addBook(b){if(!library.some(function(x){return norm(x.title)===norm(b.title)&&norm(x.author)===norm(b.author)})){b.userAdded=true;library.push(b);persist();renderBrowse();renderQueue()}qs("#addDone").style.display="block";setTimeout(function(){qs("#addDone").style.display="none"},900)}
-qs("#saveNew").onclick=function(){var t=qs("#newTitle").value.trim(),a=qs("#newAuthor").value.trim();if(!t||!a){alert("Add a title and author.");return}addBook({title:t,author:a,status:qs("#newStatus").value,genre:"Unclassified",mood:"Unclassified",owned:false,lane:"New additions",coverUrl:qs("#newCoverUrl").value.trim()||null});qs("#newTitle").value="";qs("#newAuthor").value="";qs("#newCoverUrl").value=""}
-var timer;qs("#catalogSearch").addEventListener("input",function(e){clearTimeout(timer);var q=e.target.value.trim(),box=qs("#catalogResults");if(q.length<2){box.innerHTML="";return}timer=setTimeout(function(){box.innerHTML="<div class='note'>Searching…</div>";fetch("https://openlibrary.org/search.json?q="+encodeURIComponent(q)+"&limit=6").then(function(r){return r.json()}).then(function(data){box.innerHTML="";(data.docs||[]).slice(0,6).forEach(function(d){var t=d.title||"Untitled",a=(d.author_name&&d.author_name[0])||"Unknown author",exists=library.some(function(x){return norm(x.title)===norm(t)&&norm(x.author)===norm(a)}),row=document.createElement("div");row.className="searchitem";row.style.display="grid";row.style.gridTemplateColumns="1fr auto";row.style.gap="10px";row.style.alignItems="center";var info=document.createElement("div");info.innerHTML="<strong>"+t+"</strong><span>"+a+"</span>";var add=document.createElement("button");add.className="addbtn";add.style.margin="0";add.style.padding="8px 10px";add.textContent=exists?"Added":"Add";add.disabled=exists;if(exists){add.style.opacity=".45"}add.onclick=function(ev){ev.stopPropagation();addBook({title:t,author:a,status:"To assess",genre:"Unclassified",mood:"Unclassified",owned:false,lane:"New additions",coverId:d.cover_i||null});add.textContent="Added";add.disabled=true;add.style.opacity=".45"};row.appendChild(info);row.appendChild(add);box.appendChild(row)})}).catch(function(){box.innerHTML="<div class='note'>Online lookup unavailable. Use Manual add.</div>"})},300)})
-renderBrowse();renderQueue();renderHome();
+const openAdd=qs("#openAdd"),closeAdd=qs("#closeAdd"),addModal=qs("#addModal");
+if(openAdd)openAdd.onclick=()=>addModal.style.display="flex";
+if(closeAdd)closeAdd.onclick=()=>addModal.style.display="none";
+if(addModal)addModal.addEventListener("click",e=>{if(e.target===addModal)addModal.style.display="none"});
+
+const saveNew=qs("#saveNew");
+if(saveNew)saveNew.onclick=()=>{
+  const title=qs("#newTitle").value.trim(),author=qs("#newAuthor").value.trim();
+  if(!title||!author){alert("Add a title and author.");return}
+  const ok=addBook({
+    title,author,status:qs("#newStatus").value,
+    coverUrl:qs("#newCoverUrl").value.trim()||null
+  });
+  const done=qs("#addDone");
+  done.textContent=ok?"Added.":"That title is already in Reading Radar.";
+  done.style.display="block";
+  setTimeout(()=>done.style.display="none",1200);
+  if(ok){
+    qs("#newTitle").value="";qs("#newAuthor").value="";qs("#newCoverUrl").value="";
+  }
+};
+
+let catalogTimer=null,catalogController=null;
+const catalogSearch=qs("#catalogSearch");
+if(catalogSearch)catalogSearch.addEventListener("input",e=>{
+  clearTimeout(catalogTimer);
+  if(catalogController)catalogController.abort();
+  const q=e.target.value.trim(),box=qs("#catalogResults");
+  if(q.length<2){box.innerHTML="";return}
+  catalogTimer=setTimeout(async()=>{
+    box.innerHTML="";box.appendChild(el("div","note","Searching…"));
+    catalogController=new AbortController();
+    try{
+      const r=await fetch("https://openlibrary.org/search.json?q="+encodeURIComponent(q)+"&limit=8",{signal:catalogController.signal});
+      const data=await r.json();
+      box.innerHTML="";
+      (data.docs||[]).slice(0,8).forEach(d=>{
+        const title=d.title||"Untitled";
+        const author=(d.author_name&&d.author_name[0])||"Unknown author";
+        const exists=libraryMap.has(norm(title+"|"+author));
+        const row=el("div","searchitem");
+        row.style.display="grid";row.style.gridTemplateColumns="1fr auto";row.style.gap="10px";row.style.alignItems="center";
+        const info=el("div");
+        info.append(el("strong",null,title),el("span",null,author));
+        const add=el("button","addbtn",exists?"Added":"Add");
+        add.style.margin="0";add.style.padding="8px 10px";add.disabled=exists;
+        if(exists)add.style.opacity=".45";
+        add.onclick=ev=>{
+          ev.stopPropagation();
+          if(addBook({title,author,status:"To assess",coverId:d.cover_i||null})){
+            add.textContent="Added";add.disabled=true;add.style.opacity=".45";
+          }
+        };
+        row.append(info,add);box.appendChild(row);
+      });
+      if(!box.children.length)box.appendChild(el("div","note","No catalogue matches. Use Manual add."));
+    }catch(err){
+      if(err.name!=="AbortError"){box.innerHTML="";box.appendChild(el("div","note","Online lookup unavailable. Use Manual add."))}
+    }
+  },300);
+});
+
+/* ---------- Initial render ---------- */
+saveQueue();
+renderHome();
+renderBrowse();
+renderQueue();
 </script></body></html>
