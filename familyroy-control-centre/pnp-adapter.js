@@ -5,14 +5,16 @@ function pack(name){let s=text(name),multi=s.match(/(\d+)\s*[x×]\s*(\d+(?:[.,]\
 function packaging(name,description){let s=(text(name)+' '+text(description)).toLowerCase();if(/\bbox\b|boxed/.test(s))return'box';if(/\bbag\b|bagged/.test(s))return'bag';if(/punnet/.test(s))return'punnet';if(/tray/.test(s))return'tray';if(/bunch/.test(s))return'bunch';if(/loose/.test(s))return'loose';return'unknown'}
 function promotion(raw){
  let label=text(raw.promotion||raw.promotionLabel||raw.promotionType),u=label.toUpperCase(),m;
- let out={kind:'none',label,eligibleQuantity:1,memberOnly:!!raw.smartShopperOnly,discountPercent:null,discountAmount:null,bundlePrice:null};
- if((m=u.match(/(?:ANY\s+)?(\d+)\s+FOR\s+R?\s*([0-9]+(?:[.,][0-9]+)?)/))){out.kind='bundle-price';out.eligibleQuantity=Number(m[1]);out.bundlePrice=Number(m[2].replace(',','.'))}
+ let out={kind:'none',label,eligibleQuantity:1,memberOnly:!!raw.smartShopperOnly,discountPercent:null,discountAmount:null,bundlePrice:null,promotionGroupId:text(raw.promotionGroupId),participatingSkus:Array.isArray(raw.participatingSkus)?raw.participatingSkus.map(text).filter(Boolean):[],mixAndMatch:false};
+ if((m=u.match(/(ANY\s+)?(\d+)\s+FOR\s+R?\s*([0-9]+(?:[.,][0-9]+)?)/))){out.kind='bundle-price';out.mixAndMatch=!!m[1];out.eligibleQuantity=Number(m[2]);out.bundlePrice=Number(m[3].replace(',','.'))}
  else if((m=u.match(/BUY\s+(\d+)\s*,?\s*SAVE\s+([0-9]+(?:[.,][0-9]+)?)%/))){out.kind='quantity-percent';out.eligibleQuantity=Number(m[1]);out.discountPercent=Number(m[2])}
  else if((m=u.match(/BUY\s+(\d+)\s*,?\s*SAVE\s+R?\s*([0-9]+(?:[.,][0-9]+)?)/))){out.kind='quantity-save';out.eligibleQuantity=Number(m[1]);out.discountAmount=Number(m[2].replace(',','.'))}
- else if((m=u.match(/ANY\s+(\d+)\s+SAVE\s+R?\s*([0-9]+(?:[.,][0-9]+)?)/))){out.kind='mix-save';out.eligibleQuantity=Number(m[1]);out.discountAmount=Number(m[2].replace(',','.'))}
- else if((m=u.match(/ANY\s+(\d+)\s+SAVE\s+([0-9]+(?:[.,][0-9]+)?)%/))){out.kind='mix-percent';out.eligibleQuantity=Number(m[1]);out.discountPercent=Number(m[2])}
+ else if((m=u.match(/ANY\s+(\d+)\s+SAVE\s+R?\s*([0-9]+(?:[.,][0-9]+)?)/))){out.kind='mix-save';out.mixAndMatch=true;out.eligibleQuantity=Number(m[1]);out.discountAmount=Number(m[2].replace(',','.'))}
+ else if((m=u.match(/ANY\s+(\d+)\s+SAVE\s+([0-9]+(?:[.,][0-9]+)?)%/))){out.kind='mix-percent';out.mixAndMatch=true;out.eligibleQuantity=Number(m[1]);out.discountPercent=Number(m[2])}
  return out
 }
+function promotionGroupKey(p){return p?.promotionGroupId||''}
+function canPoolPromotions(a,b,skuA='',skuB=''){if(!a?.mixAndMatch||!b?.mixAndMatch)return false;let ga=promotionGroupKey(a),gb=promotionGroupKey(b);if(ga&&gb)return ga===gb;if(ga||gb)return false;let as=new Set(a.participatingSkus||[]),bs=new Set(b.participatingSkus||[]);return !!(skuA&&skuB&&as.has(skuB)&&bs.has(skuA))}
 function promotionMath(basePrice,promo,requestedQuantity=1){
  let base=num(basePrice),q=Math.max(1,Number(requestedQuantity)||1);
  if(base===null)return{eligible:false,reason:'Base price unavailable'};
@@ -36,5 +38,5 @@ function adapt(raw){
  return{listing,observation};
 }
 function adaptMany(rows){let listings=[],observations=[];(rows||[]).forEach(r=>{let x=adapt(r);if(!x)return;listings.push(x.listing);if(x.observation)observations.push(x.observation)});return{listings,observations}}
-return{adapt,adaptMany,promotion,promotionMath};
+return{adapt,adaptMany,promotion,promotionMath,canPoolPromotions,promotionGroupKey};
 })();
