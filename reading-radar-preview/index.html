@@ -607,38 +607,23 @@ body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,
 <style id="rrHeroCropFix">
 .hero,.visualHero{
   background-repeat:no-repeat!important;
+  background-size:cover!important;
   background-color:#2b171f!important;
 }
-#home .hero{
-  background-size:255% auto!important;
-  background-position:100% 58%!important;
-}
-#mood .visualHero{
-  background-size:260% auto!important;
-  background-position:100% 58%!important;
-}
-#queue .visualHero{
-  background-size:270% auto!important;
-  background-position:100% 58%!important;
-}
-#browse .hero{
-  background-size:290% auto!important;
-  background-position:100% 58%!important;
-}
-#review .hero{
-  background-size:255% auto!important;
-  background-position:100% 58%!important;
-}
+#home .hero{background-position:center 52%!important}
+#mood .visualHero{background-position:center 54%!important}
+#queue .visualHero{background-position:center 52%!important}
+#browse .hero{background-position:center 48%!important}
+#review .hero{background-position:center 54%!important}
 .hero:before,.visualHero:before{
-  background:linear-gradient(90deg,rgba(20,10,15,.78) 0%,rgba(20,10,15,.58) 38%,rgba(20,10,15,.20) 76%,rgba(20,10,15,.10) 100%)!important;
+  background:linear-gradient(90deg,rgba(20,10,15,.74) 0%,rgba(20,10,15,.48) 38%,rgba(20,10,15,.16) 74%,rgba(20,10,15,.08) 100%)!important;
 }
-#home .brand,#mood h1,#queue h1,#browse .brand,#review .brand{
-  position:relative;z-index:3;
-}
+#home .brand,#mood h1,#queue h1,#browse .brand,#review .brand,
 #home .subtitle,#mood .heroSub,#queue .heroSub,#browse .subtitle,#review .subtitle{
-  position:relative;z-index:3;
+  position:relative;
+  z-index:3;
 }
-#browse .hero{background-position:center 48%!important}\n#mood .visualHero{background-position:center 52%!important}\n#queue .visualHero{background-position:center 50%!important}\n#home .hero{background-position:center 50%!important}\n</style>\n</head>
+</style>\n</head>
 <body><div class="app">
 <section class="screen active" id="home">
 <div class="hero"><div class="brand">Reading Radar</div><div class="subtitle">A little library that knows your taste.</div><div class="search"><input data-search="home" placeholder="Search title or author"></div><div class="searchresults" data-results="home"></div></div>
@@ -652,7 +637,7 @@ body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,
 <section class="screen" id="mood"><div class="visualHero"><h1>Match<br>my mood</h1><div class="heroSub">Find a book for right now.</div></div>
 <div class="panel moodPanel"><h3>1. How’s your brain today?</h3><div class="choices" data-single><button class="choice" data-value="Fried">I need something easy</button><button class="choice" data-value="Fine">I want a bit of a challenge</button><button class="choice" data-value="Feed me">I’m ready for something complex</button><button class="choice" data-value="Restless">Surprise me</button></div></div>
 <div class="panel moodPanel"><h3>2. What kind of mood are you in?</h3><div class="choices" data-single id="emotion"><button class="choice" data-value="Fun">Happy</button><button class="choice" data-value="Gentle">Calm</button><button class="choice" data-value="Tense">Stressed</button><button class="choice" data-value="Fascinating">Reflective</button><button class="choice" data-value="Strange">Adventurous</button><button class="choice" data-value="Healing">Mellow</button></div></div>
-<div class="panel moodPanel"><h3>3. How much commitment?</h3><div class="choices" data-single><button class="choice" data-value="Light">Short and sweet</button><button class="choice" data-value="Normal">Medium length</button><button class="choice" data-value="Immerse me">A real time investment</button><button class="choice" data-value="Continue something">No preference</button></div></div>
+<div class="panel moodPanel"><h3>3. How much commitment?</h3><div class="choices" data-single><button class="choice" data-value="Light">Short and sweet</button><button class="choice" data-value="Normal">Medium length</button><button class="choice" data-value="Immerse me">A real time investment</button><button class="choice" data-value="Continue something">Continue something</button></div></div>
 <button class="primary" id="findMood">Find my books <span aria-hidden="true">→</span></button><button class="choice" id="resetMood" style="width:100%;margin-top:8px">Reset selections</button><div id="moodResults" class="results"></div></section>
 <section class="screen" id="queue"><div class="visualHero"><h1>My Queue</h1><div class="heroSub">Your reading plan at a glance.</div></div><div class="search queueSearch"><input data-search="queue" placeholder="Search queue"></div><div id="queueList"></div></section>
 <section class="screen" id="browse"><div class="hero"><div class="brand">Browse<br>my shelves</div><div class="subtitle">Explore your collection.</div><div class="search"><input data-search="browse" placeholder="Search title or author"><button type="button" id="clearBrowse" aria-label="Clear search" style="display:none;border:0;background:transparent;color:var(--plum);font-weight:900;font-size:18px;cursor:pointer">×</button></div></div>
