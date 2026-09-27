@@ -603,6 +603,42 @@ body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,
 .tab{min-height:54px;font-size:9px;color:#f1dfe8;border-radius:13px;gap:2px}.tab.active{background:#8b2458;color:#fff}.navIcon{width:19px;height:19px}
 @media(max-width:360px){.hero,.visualHero{background-size:205% auto!important}.brand,.visualHero h1{font-size:39px!important}#browseList .cover,#browseList .fallback{height:180px}}
 </style>
+
+<style id="rrHeroCropFix">
+.hero,.visualHero{
+  background-repeat:no-repeat!important;
+  background-color:#2b171f!important;
+}
+#home .hero{
+  background-size:255% auto!important;
+  background-position:100% 58%!important;
+}
+#mood .visualHero{
+  background-size:260% auto!important;
+  background-position:100% 58%!important;
+}
+#queue .visualHero{
+  background-size:270% auto!important;
+  background-position:100% 58%!important;
+}
+#browse .hero{
+  background-size:290% auto!important;
+  background-position:100% 58%!important;
+}
+#review .hero{
+  background-size:255% auto!important;
+  background-position:100% 58%!important;
+}
+.hero:before,.visualHero:before{
+  background:linear-gradient(90deg,rgba(20,10,15,.78) 0%,rgba(20,10,15,.58) 38%,rgba(20,10,15,.20) 76%,rgba(20,10,15,.10) 100%)!important;
+}
+#home .brand,#mood h1,#queue h1,#browse .brand,#review .brand{
+  position:relative;z-index:3;
+}
+#home .subtitle,#mood .heroSub,#queue .heroSub,#browse .subtitle,#review .subtitle{
+  position:relative;z-index:3;
+}
+</style>
 </head>
 <body><div class="app">
 <section class="screen active" id="home">
