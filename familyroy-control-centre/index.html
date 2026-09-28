@@ -191,9 +191,11 @@ function retailerSlug(s){return String(s||'').toLowerCase().trim().replace(/&/g,
 function shopHtml(x,drive=false){let legacy=x.retailer?('<span class="pill">'+esc(x.retailer)+'</span>'):'';let diet=x.diet==='default'||!x.diet?'Household dietary default':x.diet.charAt(0).toUpperCase()+x.diet.slice(1);let sub=x.substitution==='exact'?'Exact product':x.substitution==='sameProduct'?'Same product · any size':'Comparable alternatives okay';return `<div class="task shopItem"><strong>${esc(x.title)}</strong>${legacy}<span class="pill">${esc(diet)}</span><span class="pill">${esc(sub)}</span>${x.quantity?`<span class="pill">${esc(x.quantity)}</span>`:''}${x.source?`<div class="tiny">Source: ${esc(x.source)}</div>`:''}<div class="row" style="margin-top:8px"><button type="button" class="btn" onclick="markShopGot('${x.id}')">Mark as bought</button>${drive?'':`<button type="button" class="btn shopRemove" onclick="deleteShopItem('${x.id}')">Remove from list</button>`}</div></div>`}
 function completedShopHtml(x){return `<div class="task shopItem done"><strong>${esc(x.title)}</strong><span class="pill">${esc(x.retailer)}</span><div class="tiny">Bought${x.completedAt?' · '+esc(x.completedAt.slice(0,10)):''}</div><div class="row" style="margin-top:8px"><button type="button" class="btn" onclick="restoreShopItem('${x.id}')">Not bought — return to list</button></div></div>`}
 function mapsUrl(address){return 'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(address)}
+function localDateKey(){let d=new Date(),y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');return y+'-'+m+'-'+day}
+function money(v){return 'R'+Number(v||0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2})}
 function renderBranches(){let el=document.getElementById('branchRegistry');if(!el)return;el.innerHTML=(db.branches||[]).map(b=>`<div class="branchBox"><b>${esc(b.retailer)} · ${esc(b.name)}</b><div class="tiny">${esc(b.address)}</div><div class="row" style="margin-top:7px"><button type="button" class="btn ${b.dayContext==='planned'?'primary':''}" onclick="setBranchDayContext('${b.id}','planned')">Already going</button><button type="button" class="btn ${b.dayContext==='nearby'?'primary':''}" onclick="setBranchDayContext('${b.id}','nearby')">Nearby today</button><button type="button" class="btn" onclick="setBranchDayContext('${b.id}','')">Clear</button><a class="btn" style="text-decoration:none" href="${mapsUrl(b.address)}" target="_blank" rel="noopener">Map</a></div></div>`).join('')||'<div class="muted">No saved branches yet.</div>'}
-function setBranchDayContext(id,value){let b=(db.branches||[]).find(x=>x.id===id);if(!b)return;b.dayContext=b.dayContext===value?'':value;b.dayContextDate=value?new Date().toISOString().slice(0,10):'';save();renderBranches();renderBasketComparison()}
-function retailerDayContext(retailer){let today=new Date().toISOString().slice(0,10),bs=(db.branches||[]).filter(b=>b.retailer===retailer&&b.dayContext&&b.dayContextDate===today);if(bs.some(b=>b.dayContext==='planned'))return{rank:0,label:'already on today’s route'};if(bs.some(b=>b.dayContext==='nearby'))return{rank:1,label:'nearby today'};return{rank:2,label:'extra stop'}}
+function setBranchDayContext(id,value){let b=(db.branches||[]).find(x=>x.id===id);if(!b)return;b.dayContext=b.dayContext===value?'':value;b.dayContextDate=value?localDateKey():'';save();renderBranches();renderBasketComparison()}
+function retailerDayContext(retailer){let today=localDateKey(),bs=(db.branches||[]).filter(b=>b.retailer===retailer&&b.dayContext&&b.dayContextDate===today);if(bs.some(b=>b.dayContext==='planned'))return{rank:0,label:'already on today’s route'};if(bs.some(b=>b.dayContext==='nearby'))return{rank:1,label:'nearby today'};return{rank:2,label:'extra stop'}}
 
 function addBranch(){let retailer=document.getElementById('branchRetailer').value.trim(),name=document.getElementById('branchName').value.trim(),address=document.getElementById('branchAddress').value.trim();if(!retailer||!name||!address)return;db.branches.push({id:'branch-'+Date.now(),retailer,name,address});save();document.getElementById('branchRetailer').value='';document.getElementById('branchName').value='';document.getElementById('branchAddress').value='';renderBranches()}
 const SHOP_RETAILERS=['Checkers','Pick n Pay','Woolworths','Food Lover’s Market'];
@@ -260,17 +262,27 @@ function optimiseVerifiedMix(retailer,items,base){
  });
  return{total:Math.max(0,total),notes}
 }
+function assignmentTotal(assignments,items){
+ let total=assignments.reduce((n,a)=>n+a.c.total,0),notes=[];
+ SHOP_RETAILERS.forEach(r=>{let mine=assignments.filter(a=>a.r===r);if(!mine.length)return;
+  // Verified cross-item promotion maths must only see items actually assigned to this retailer.
+  let mix=optimiseVerifiedMix(r,mine.map(a=>a.x),{total:mine.reduce((n,a)=>n+a.c.total,0)});
+  let raw=mine.reduce((n,a)=>n+a.c.total,0);total-=Math.max(0,raw-mix.total);notes.push(...mix.notes)
+ });
+ return{total,notes}
+}
 function retailerSubsetPlans(items){
  let plans=[];
  for(let mask=1;mask<(1<<SHOP_RETAILERS.length);mask++){
-  let retailers=SHOP_RETAILERS.filter((_,i)=>mask&(1<<i)),assignments=[],complete=true;
-  for(const x of items){let opts=retailers.map(r=>({r,c:basketChoice(x,r)})).filter(z=>z.c);if(!opts.length){complete=false;break}assignments.push({x,...opts.sort((a,b)=>a.c.total-b.c.total)[0]})}
-  if(!complete)continue;
-  let total=assignments.reduce((n,a)=>n+a.c.total,0),notes=[];
-  // Re-price a single-retailer plan with verified cross-item mix-and-match promotions.
-  if(retailers.length===1){let mix=optimiseVerifiedMix(retailers[0],items,{total});total=mix.total;notes=mix.notes}
-  let used=[...new Set(assignments.map(a=>a.r))],contexts=used.map(retailerDayContext),extraStops=contexts.filter(c=>c.rank===2).length,routeRank=contexts.reduce((n,c)=>n+c.rank,0);
-  plans.push({retailers:used,total,assignments,notes,extraStops,routeRank});
+  let retailers=SHOP_RETAILERS.filter((_,i)=>mask&(1<<i)),options=items.map(x=>retailers.map(r=>({r,c:basketChoice(x,r)})).filter(z=>z.c).map(z=>({x,...z})));
+  if(options.some(o=>!o.length))continue;
+  let candidates=[];
+  // Exact assignment search for ordinary household lists; bounded fallback prevents combinatorial lockups.
+  let combinations=options.reduce((n,o)=>n*o.length,1);
+  if(combinations<=20000){
+   let walk=(i,acc)=>{if(i===options.length){candidates.push(acc.slice());return}options[i].forEach(o=>{acc.push(o);walk(i+1,acc);acc.pop()})};walk(0,[])
+  }else candidates.push(options.map(o=>o.slice().sort((x,y)=>x.c.total-y.c.total)[0]));
+  candidates.forEach(assignments=>{let priced=assignmentTotal(assignments,items),used=[...new Set(assignments.map(a=>a.r))],contexts=used.map(retailerDayContext),extraStops=contexts.filter(c=>c.rank===2).length,routeRank=contexts.reduce((n,c)=>n+c.rank,0);plans.push({retailers:used,total:priced.total,assignments,notes:priced.notes,extraStops,routeRank,exact:combinations<=20000})})
  }
  let unique=new Map();plans.forEach(p=>{let k=p.retailers.slice().sort().join('|');let old=unique.get(k);if(!old||p.total<old.total)unique.set(k,p)});
  return [...unique.values()].sort((a,b)=>a.total-b.total||a.extraStops-b.extraStops)
