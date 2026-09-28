@@ -22,5 +22,17 @@
     "conceptId": "concept-bananas-lunchbox",
     "query": "Kidz Bananas",
     "purpose": "discovery-acceptance"
+  },
+  {
+    "retailer": "Woolworths",
+    "conceptId": "test-strawberries-250g",
+    "url": "https://www.woolworths.co.za/prod/_/A-20017279",
+    "purpose": "acceptance-test"
+  },
+  {
+    "retailer": "Food Lover’s Market",
+    "conceptId": "flm-specials-monitor",
+    "url": "https://foodloversmarket.co.za/specials/",
+    "purpose": "first-party-specials-acceptance"
   }
 ]
