@@ -84,7 +84,7 @@ function parseCheckersSpecial(html,url,conceptId){
  if(!needle)return null;
  let terms=needle.toLowerCase().split(/\s+/).filter(x=>x.length>2),idx=page.toLowerCase().indexOf(needle.toLowerCase());
  if(idx<0&&terms.length)idx=page.toLowerCase().indexOf(terms[0]);if(idx<0)return null;
- let snippet=page.slice(Math.max(0,idx-180),idx+360),prices=[...snippet.matchAll(/(?:ANY\s+\d+\s+FOR\s+)?R?\s*([0-9]{1,4}(?:[.,][0-9]{2}))/gi)].map(m=>Number(m[1].replace(',','.'))).filter(n=>n>0);
+ let snippet=page.slice(Math.max(0,idx-180),idx+360),prices=[...snippet.matchAll(/R\s*([0-9]{1,4}(?:[.,][0-9]{2}))/gi)].map(m=>Number(m[1].replace(',','.'))).filter(n=>n>0);
  let price=prices[0];if(!Number.isFinite(price))return null;
  let promo=clean((snippet.match(/(BUY\s+ANY\s+\d+\s+&?\s*SAVE\s+\d+%|ANY\s+\d+\s+FOR\s+R?\s*[0-9.,]+|BUY\s+\d+\s+FOR\s+R?\s*[0-9.,]+|SAVE\s+R?\s*[0-9.,]+|WITH CARD)/i)||[])[1]);
  return{conceptId,retailer:'Checkers',name:q.name||q.query,sku:'',barcode:'',url,price,promotion:promo,memberOnly:/WITH CARD/i.test(snippet),validFrom:clean(valid[1]||''),validTo:clean(valid[2]||''),region:clean(region),checkedAt:now,source:'Checkers official Western Cape specials'}
