@@ -39,7 +39,8 @@ jobs:
             ['ANY 2 FOR R60','bundle-price',2],
             ['BUY ANY 2 & SAVE 20%','mix-percent',2],
             ['BUY 3, PAY FOR 2','buy-n-pay-m',3],
-            ['BUY 2, SAVE R10','quantity-save',2]
+            ['BUY 2, SAVE R10','quantity-save',2],
+            ['BUY ANY 2 & SAVE R10','mix-save',2]
           ];
           for(const [label,kind,q] of cases){
             const p=A.promotion({promotion:label,promotionGroupId:label.includes('ANY')?'test-pool':''});
@@ -49,5 +50,7 @@ jobs:
           if(bundle.total!==60) throw new Error('bundle maths failed');
           const b3p2=A.promotionMath(30,A.promotion({promotion:'BUY 3, PAY FOR 2'}),3);
           if(b3p2.total!==60) throw new Error('buy 3 pay 2 maths failed');
+          const card=A.promotion({promotion:'ANY 2 FOR R50 WITH CARD'});
+          if(!card.memberOnly) throw new Error('loyalty marker failed');
           console.log('Promotion contract smoke tests passed');
           NODE
