@@ -109,11 +109,11 @@ for(const retailer of ['Woolworths','Food Lover’s Market','Checkers']){
   if(!q.url){re.push({conceptId:q.conceptId,error:'Discovery not yet verified for '+retailer});continue}
   try{let r=await fetchFirstParty(q);if(r.ok){observations.push(r.row);ro.push(r.row)}else re.push({conceptId:q.conceptId,url:q.url,error:r.error})}catch(e){re.push({conceptId:q.conceptId,url:q.url,error:String(e?.message||e)})}
  }
- retailerState[retailer==='Woolworths'?'woolworths':retailer==='Checkers'?'checkers':'foodloversmarket']={status:ro.length?'refreshed':queries.some(x=>x.retailer===retailer)?'refresh-failed-or-no-safe-data':'awaiting-verified-product-urls',checkedAt:now,observations:ro.length,errors:re};
+ retailerState[retailer==='Woolworths'?'woolworths':retailer==='Checkers'?'checkers':'foodloversmarket']={status:ro.length?(re.length?'refreshed-partial':'refreshed'):queries.some(x=>x.retailer===retailer)?'refresh-failed-or-no-safe-data':'awaiting-verified-product-urls',checkedAt:now,observations:ro.length,errors:re};
  errors.push(...re)
 }
-retailerState.picknpay.status=retailerState.picknpay.observations?'refreshed':queries.some(x=>x.retailer==='Pick n Pay')?'refresh-failed-or-no-safe-data':'awaiting-verified-product-urls';
-const feed={version:2,generatedAt:now,status:queries.length?'refreshed':'awaiting-verified-product-urls',retailers:retailerState,observations};
+retailerState.picknpay.status=retailerState.picknpay.observations?(retailerState.picknpay.errors.length?'refreshed-partial':'refreshed'):queries.some(x=>x.retailer==='Pick n Pay')?'refresh-failed-or-no-safe-data':'awaiting-verified-product-urls';
+const feed={version:2,generatedAt:now,status:observations.length?(errors.length?'refreshed-partial':'refreshed'):queries.length?'refresh-failed-or-no-safe-data':'awaiting-verified-product-urls',retailers:retailerState,observations};
 await fs.mkdir(new URL('../data/',import.meta.url),{recursive:true});
 await fs.writeFile(feedPath,JSON.stringify(feed,null,2)+'\n');
 console.log(`FamilyRoy retailer refresh: ${observations.length} observations, ${errors.length} errors. First-party only; no inferred prices emitted.`);
