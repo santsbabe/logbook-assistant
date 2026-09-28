@@ -34,5 +34,30 @@
     "conceptId": "flm-specials-monitor",
     "url": "https://foodloversmarket.co.za/specials/",
     "purpose": "first-party-specials-acceptance"
+  },
+  {
+    "retailer": "Checkers",
+    "conceptId": "checkers-western-cape-current",
+    "query": "WITH CARD",
+    "name": "Western Cape current specials",
+    "url": "https://specials.checkers.co.za/deals/wccheckersmonthend21sep11oct/",
+    "purpose": "first-party-specials-acceptance",
+    "region": "Western Cape"
+  },
+  {
+    "retailer": "Checkers",
+    "conceptId": "concept-citrus",
+    "query": "citrus",
+    "url": "https://specials.checkers.co.za/deals/wccheckersmonthend21sep11oct/",
+    "purpose": "shopping-special-match",
+    "region": "Western Cape"
+  },
+  {
+    "retailer": "Checkers",
+    "conceptId": "concept-bananas-lunchbox",
+    "query": "banana",
+    "url": "https://specials.checkers.co.za/deals/wccheckersmonthend21sep11oct/",
+    "purpose": "shopping-special-match",
+    "region": "Western Cape"
   }
 ]
