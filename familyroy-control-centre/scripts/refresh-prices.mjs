@@ -49,6 +49,39 @@ async function fetchProduct(q){
  return row?{ok:true,row}:{ok:false,error:'Could not safely parse product page'};
 }
 
+
+const HOSTS={
+ 'Pick n Pay':'www.pnp.co.za',
+ 'Woolworths':'www.woolworths.co.za',
+ 'Food Lover’s Market':'foodloversmarket.co.za'
+};
+async function fetchHtml(url,retailer){
+ let host=HOSTS[retailer];if(!host||!url||new URL(url).hostname!==host)return{ok:false,error:'URL is not an approved first-party '+retailer+' host'};
+ let r=await fetch(url,{headers:{'user-agent':'FamilyRoy-Control-Centre/1.0 (+personal price monitor; low frequency)','accept':'text/html'}});
+ return r.ok?{ok:true,html:await r.text()}:{ok:false,error:'HTTP '+r.status}
+}
+function jsonLd(html){
+ let rows=[];for(const m of html.matchAll(/<script[^>]+type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi)){try{let j=JSON.parse(m[1]);rows.push(...(Array.isArray(j)?j:[j]))}catch{}}
+ return rows.flatMap(x=>x?.['@graph']||[x])
+}
+function parseWoolworths(html,url,conceptId){
+ let ld=jsonLd(html).find(x=>x?.['@type']==='Product')||{},title=clean(ld.name||(html.match(/<h1[^>]*>([\s\S]*?)<\/h1>/i)||[])[1]||(html.match(/<title[^>]*>([\s\S]*?)<\/title>/i)||[])[1]);
+ let code=clean((html.match(/Product code:\s*<[^>]*>?\s*([0-9]{5,14})/i)||[])[1]||(url.match(/A-(\d+)/)||[])[1]),offer=Array.isArray(ld.offers)?ld.offers[0]:ld.offers||{},price=Number(offer.price);
+ if(!Number.isFinite(price)){let vals=[...html.matchAll(/R\s*([0-9]+(?:[.,][0-9]{2}))/gi)].map(m=>Number(m[1].replace(',','.')));price=vals[0]}
+ if(!title||!code||!Number.isFinite(price))return null;
+ return{conceptId,retailer:'Woolworths',name:title,sku:code,barcode:'',url,price,checkedAt:now,source:'Woolworths first-party product page'}
+}
+function parseFLM(html,url,conceptId){
+ let ld=jsonLd(html).find(x=>x?.['@type']==='Product')||{},title=clean(ld.name||(html.match(/<h1[^>]*>([\s\S]*?)<\/h1>/i)||[])[1]),offer=Array.isArray(ld.offers)?ld.offers[0]:ld.offers||{},price=Number(offer.price);
+ if(!Number.isFinite(price)){let vals=[...html.matchAll(/R\s*([0-9]+(?:[.,][0-9]{2}))/gi)].map(m=>Number(m[1].replace(',','.')));price=vals[0]}
+ if(!title||!Number.isFinite(price))return null;
+ return{conceptId,retailer:'Food Lover’s Market',name:title,sku:clean(ld.sku||''),barcode:clean(ld.gtin13||ld.gtin||''),url,price,promotion:clean((html.match(/(?:special|deal)[\s\S]{0,160}?(R\s*[0-9.,]+)/i)||[])[0]),checkedAt:now,source:'Food Lover’s Market first-party specials page'}
+}
+async function fetchFirstParty(q){
+ let got=await fetchHtml(q.url,q.retailer);if(!got.ok)return got;
+ let row=q.retailer==='Woolworths'?parseWoolworths(got.html,q.url,q.conceptId):q.retailer==='Food Lover’s Market'?parseFLM(got.html,q.url,q.conceptId):null;
+ return row?{ok:true,row}:{ok:false,error:'Could not safely parse '+q.retailer+' first-party page'}
+}
 let observations=[],errors=[];
 for(const q of queries.filter(x=>x.retailer==='Pick n Pay')){
  try{
@@ -57,7 +90,19 @@ for(const q of queries.filter(x=>x.retailer==='Pick n Pay')){
   for(const url of targets){let r=await fetchProduct({...q,url});if(r.ok)observations.push(r.row);else errors.push({conceptId:q.conceptId,url,error:r.error})}
  }catch(e){errors.push({conceptId:q.conceptId,url:q.url,query:q.query,error:String(e?.message||e)})}
 }
-const feed={version:1,generatedAt:now,status:queries.length?'refreshed':'awaiting-verified-product-urls',retailers:{picknpay:{status:observations.length?'refreshed':queries.length?'refresh-failed-or-no-safe-data':'awaiting-verified-product-urls',checkedAt:now,observations:observations.length,errors}},observations};
+let retailerState={picknpay:{checkedAt:now,observations:observations.length,errors:[...errors]}};
+for(const retailer of ['Woolworths','Food Lover’s Market']){
+ let ro=[],re=[];
+ for(const q of queries.filter(x=>x.retailer===retailer)){
+  if(!q.url){re.push({conceptId:q.conceptId,error:'Discovery not yet verified for '+retailer});continue}
+  try{let r=await fetchFirstParty(q);if(r.ok){observations.push(r.row);ro.push(r.row)}else re.push({conceptId:q.conceptId,url:q.url,error:r.error})}catch(e){re.push({conceptId:q.conceptId,url:q.url,error:String(e?.message||e)})}
+ }
+ retailerState[retailer==='Woolworths'?'woolworths':'foodloversmarket']={status:ro.length?'refreshed':queries.some(x=>x.retailer===retailer)?'refresh-failed-or-no-safe-data':'awaiting-verified-product-urls',checkedAt:now,observations:ro.length,errors:re};
+ errors.push(...re)
+}
+retailerState.picknpay.status=retailerState.picknpay.observations?'refreshed':queries.some(x=>x.retailer==='Pick n Pay')?'refresh-failed-or-no-safe-data':'awaiting-verified-product-urls';
+retailerState.checkers={status:'researching-first-party-ingestion',checkedAt:now,observations:0,errors:[]};
+const feed={version:2,generatedAt:now,status:queries.length?'refreshed':'awaiting-verified-product-urls',retailers:retailerState,observations};
 await fs.mkdir(new URL('../data/',import.meta.url),{recursive:true});
 await fs.writeFile(feedPath,JSON.stringify(feed,null,2)+'\n');
-console.log(`FamilyRoy PnP refresh: ${observations.length} observations, ${errors.length} errors. No inferred prices emitted.`);
+console.log(`FamilyRoy retailer refresh: ${observations.length} observations, ${errors.length} errors. First-party only; no inferred prices emitted.`);
