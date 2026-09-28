@@ -1,0 +1,14 @@
+[
+  {
+    "retailer": "Pick n Pay",
+    "conceptId": "test-sunlight-750ml",
+    "url": "https://www.pnp.co.za/p/000000000001007088_EA",
+    "purpose": "acceptance-test"
+  },
+  {
+    "retailer": "Pick n Pay",
+    "conceptId": "test-bonnisan-120ml",
+    "url": "https://www.pnp.co.za/himalaya-wellness-bonnisan-syrup-120ml/p/000000000000460598_EA",
+    "purpose": "acceptance-test"
+  }
+]
