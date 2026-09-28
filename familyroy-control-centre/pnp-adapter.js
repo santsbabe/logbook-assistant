@@ -14,6 +14,7 @@ function promotion(raw){
  else if((m=u.match(/BUY\s+(\d+)\s*,?\s*SAVE\s+R?\s*([0-9]+(?:[.,][0-9]+)?)/))){out.kind='quantity-save';out.eligibleQuantity=Number(m[1]);out.discountAmount=Number(m[2].replace(',','.'))}
  else if((m=u.match(/ANY\s+(\d+)\s+SAVE\s+R?\s*([0-9]+(?:[.,][0-9]+)?)/))){out.kind='mix-save';out.mixAndMatch=true;out.eligibleQuantity=Number(m[1]);out.discountAmount=Number(m[2].replace(',','.'))}
  else if((m=u.match(/ANY\s+(\d+)\s+SAVE\s+([0-9]+(?:[.,][0-9]+)?)%/))){out.kind='mix-percent';out.mixAndMatch=true;out.eligibleQuantity=Number(m[1]);out.discountPercent=Number(m[2])}
+ if(/WITH CARD|XTRA SAVINGS|SMART SHOPPER|WREWARDS/.test(u))out.memberOnly=true;
  return out
 }
 function promotionGroupKey(p){return p?.promotionGroupId||''}
