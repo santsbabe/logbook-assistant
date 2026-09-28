@@ -5,8 +5,7 @@ function pack(name){let s=text(name),multi=s.match(/(\d+)\s*[x×]\s*(\d+(?:[.,]\
 function packaging(name,description){let s=(text(name)+' '+text(description)).toLowerCase();if(/\bbox\b|boxed/.test(s))return'box';if(/\bbag\b|bagged/.test(s))return'bag';if(/punnet/.test(s))return'punnet';if(/tray/.test(s))return'tray';if(/bunch/.test(s))return'bunch';if(/loose/.test(s))return'loose';return'unknown'}
 function promotion(raw){
  let label=text(raw.promotion||raw.promotionLabel||raw.promotionType),u=label.toUpperCase(),m;
- if(raw.memberOnly)raw.smartShopperOnly=true;
- let out={kind:'none',label,eligibleQuantity:1,memberOnly:!!raw.smartShopperOnly,discountPercent:null,discountAmount:null,bundlePrice:null,promotionGroupId:text(raw.promotionGroupId),participatingSkus:Array.isArray(raw.participatingSkus)?raw.participatingSkus.map(text).filter(Boolean):[],mixAndMatch:false};
+ let out={kind:'none',label,eligibleQuantity:1,memberOnly:!!(raw.smartShopperOnly||raw.memberOnly),discountPercent:null,discountAmount:null,bundlePrice:null,promotionGroupId:text(raw.promotionGroupId),participatingSkus:Array.isArray(raw.participatingSkus)?raw.participatingSkus.map(text).filter(Boolean):[],mixAndMatch:false};
  if((m=u.match(/(ANY\s+|BUY\s+ANY\s+)?(\d+)\s+FOR\s+R?\s*([0-9]+(?:[.,][0-9]+)?)/))){out.kind='bundle-price';out.mixAndMatch=!!m[1];out.eligibleQuantity=Number(m[2]);out.bundlePrice=Number(m[3].replace(',','.'))}
  else if((m=u.match(/BUY\s+(\d+)\s*,?\s*PAY\s+(?:FOR\s+)?(\d+)/))){out.kind='buy-n-pay-m';out.eligibleQuantity=Number(m[1]);out.payQuantity=Number(m[2]);out.mixAndMatch=/ANY|ASSORTED/.test(u)}
  else if((m=u.match(/BUY\s+ANY\s+(\d+)\s+(?:AND\s+|&\s*)?SAVE\s+([0-9]+(?:[.,][0-9]+)?)%/))){out.kind='mix-percent';out.mixAndMatch=true;out.eligibleQuantity=Number(m[1]);out.discountPercent=Number(m[2])}
