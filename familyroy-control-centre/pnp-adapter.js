@@ -37,6 +37,14 @@ function adapt(raw){
  let observation=(price!==null||loyalty!==null)?{listingId,price:price??loyalty,loyaltyPrice:loyalty,promotion:promo,checkedAt:raw.checkedAt||new Date().toISOString(),source:'Pick n Pay public product page',url:text(raw.url)}:null;
  return{listing,observation};
 }
+function fromPublicProductPage(page={}){
+ let name=text(page.name||page.title),sku=text(page.sku||page.code),barcode=text(page.barcode);
+ return adapt({name,sku,barcode,brand:page.brand,description:page.description,price:page.regularPrice??page.price,smartShopperPrice:page.smartShopperPrice??page.promoPrice,promotion:page.promotion||page.promotionLabel,smartShopperOnly:!!page.smartShopperOnly,validFrom:page.validFrom,validTo:page.validTo,stock:page.stock||page.availability,url:page.url,checkedAt:page.checkedAt})
+}
+function ingestPayload(payload={}){
+ let rows=Array.isArray(payload)?payload:(payload.products||payload.results||payload.items||[]);
+ return adaptMany(rows.map(r=>({name:r.name||r.title,sku:r.sku||r.code,barcode:r.barcode||r.gtin,brand:r.brand,description:r.description,price:r.regularPrice??r.oldPrice??r.price,smartShopperPrice:r.smartShopperPrice??r.promoPrice??r.specialPrice,promotion:r.promotion||r.promotionLabel||r.promoText,smartShopperOnly:!!r.smartShopperOnly,validFrom:r.validFrom,validTo:r.validTo,stock:r.stock??r.available,url:r.url,checkedAt:r.checkedAt})))
+}
 function adaptMany(rows){let listings=[],observations=[];(rows||[]).forEach(r=>{let x=adapt(r);if(!x)return;listings.push(x.listing);if(x.observation)observations.push(x.observation)});return{listings,observations}}
-return{adapt,adaptMany,promotion,promotionMath,canPoolPromotions,promotionGroupKey};
+return{adapt,adaptMany,fromPublicProductPage,ingestPayload,promotion,promotionMath,canPoolPromotions,promotionGroupKey};
 })();
