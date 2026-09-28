@@ -4,11 +4,13 @@ function num(v){if(v===null||v===undefined||v==='')return null;let raw=String(v)
 function pack(name){let s=text(name),multi=s.match(/(\d+)\s*[x×]\s*(\d+(?:[.,]\d+)?)\s*(kg|g|l|ml)\b/i),m=multi||s.match(/(\d+(?:[.,]\d+)?)\s*(kg|g|l|ml)\b/i);if(!m)return{};let count=multi?Number(m[1]):1,q=Number(m[multi?2:1].replace(',','.')),u=m[multi?3:2].toLowerCase();if(u==='g'){q=q/1000;u='kg'}if(u==='ml'){q=q/1000;u='l'}return{netQuantity:q*count,unit:u,packCount:count}}
 function packaging(name,description){let s=(text(name)+' '+text(description)).toLowerCase();if(/\bbox\b|boxed/.test(s))return'box';if(/\bbag\b|bagged/.test(s))return'bag';if(/punnet/.test(s))return'punnet';if(/tray/.test(s))return'tray';if(/bunch/.test(s))return'bunch';if(/loose/.test(s))return'loose';return'unknown'}
 function promotion(raw){
- let label=text(raw.promotion||raw.promotionLabel||raw.promotionType),u=label.toUpperCase(),m;\n if(raw.memberOnly)raw.smartShopperOnly=true;
+ let label=text(raw.promotion||raw.promotionLabel||raw.promotionType),u=label.toUpperCase(),m;
+ if(raw.memberOnly)raw.smartShopperOnly=true;
  let out={kind:'none',label,eligibleQuantity:1,memberOnly:!!raw.smartShopperOnly,discountPercent:null,discountAmount:null,bundlePrice:null,promotionGroupId:text(raw.promotionGroupId),participatingSkus:Array.isArray(raw.participatingSkus)?raw.participatingSkus.map(text).filter(Boolean):[],mixAndMatch:false};
  if((m=u.match(/(ANY\s+|BUY\s+ANY\s+)?(\d+)\s+FOR\s+R?\s*([0-9]+(?:[.,][0-9]+)?)/))){out.kind='bundle-price';out.mixAndMatch=!!m[1];out.eligibleQuantity=Number(m[2]);out.bundlePrice=Number(m[3].replace(',','.'))}
  else if((m=u.match(/BUY\s+(\d+)\s*,?\s*PAY\s+(?:FOR\s+)?(\d+)/))){out.kind='buy-n-pay-m';out.eligibleQuantity=Number(m[1]);out.payQuantity=Number(m[2]);out.mixAndMatch=/ANY|ASSORTED/.test(u)}
- else if((m=u.match(/BUY\s+ANY\s+(\d+)\s+(?:AND\s+|&\s*)?SAVE\s+([0-9]+(?:[.,][0-9]+)?)%/))){out.kind='mix-percent';out.mixAndMatch=true;out.eligibleQuantity=Number(m[1]);out.discountPercent=Number(m[2])}\n else if((m=u.match(/BUY\s+(\d+)\s*,?\s*SAVE\s+([0-9]+(?:[.,][0-9]+)?)%/))){out.kind='quantity-percent';out.eligibleQuantity=Number(m[1]);out.discountPercent=Number(m[2])}
+ else if((m=u.match(/BUY\s+ANY\s+(\d+)\s+(?:AND\s+|&\s*)?SAVE\s+([0-9]+(?:[.,][0-9]+)?)%/))){out.kind='mix-percent';out.mixAndMatch=true;out.eligibleQuantity=Number(m[1]);out.discountPercent=Number(m[2])}
+ else if((m=u.match(/BUY\s+(\d+)\s*,?\s*SAVE\s+([0-9]+(?:[.,][0-9]+)?)%/))){out.kind='quantity-percent';out.eligibleQuantity=Number(m[1]);out.discountPercent=Number(m[2])}
  else if((m=u.match(/BUY\s+(\d+)\s*,?\s*SAVE\s+R?\s*([0-9]+(?:[.,][0-9]+)?)/))){out.kind='quantity-save';out.eligibleQuantity=Number(m[1]);out.discountAmount=Number(m[2].replace(',','.'))}
  else if((m=u.match(/ANY\s+(\d+)\s+SAVE\s+R?\s*([0-9]+(?:[.,][0-9]+)?)/))){out.kind='mix-save';out.mixAndMatch=true;out.eligibleQuantity=Number(m[1]);out.discountAmount=Number(m[2].replace(',','.'))}
  else if((m=u.match(/ANY\s+(\d+)\s+SAVE\s+([0-9]+(?:[.,][0-9]+)?)%/))){out.kind='mix-percent';out.mixAndMatch=true;out.eligibleQuantity=Number(m[1]);out.discountPercent=Number(m[2])}
