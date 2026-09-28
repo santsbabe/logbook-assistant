@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "generatedAt": null,
+  "status": "not-yet-refreshed",
+  "retailers": {
+    "picknpay": {
+      "status": "adapter-ready-fetch-not-configured",
+      "checkedAt": null
+    }
+  },
+  "observations": []
+}
