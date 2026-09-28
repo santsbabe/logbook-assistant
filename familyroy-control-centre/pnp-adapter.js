@@ -7,6 +7,7 @@ function promotion(raw){
  let label=text(raw.promotion||raw.promotionLabel||raw.promotionType),u=label.toUpperCase(),m;
  let out={kind:'none',label,eligibleQuantity:1,memberOnly:!!raw.smartShopperOnly,discountPercent:null,discountAmount:null,bundlePrice:null,promotionGroupId:text(raw.promotionGroupId),participatingSkus:Array.isArray(raw.participatingSkus)?raw.participatingSkus.map(text).filter(Boolean):[],mixAndMatch:false};
  if((m=u.match(/(ANY\s+)?(\d+)\s+FOR\s+R?\s*([0-9]+(?:[.,][0-9]+)?)/))){out.kind='bundle-price';out.mixAndMatch=!!m[1];out.eligibleQuantity=Number(m[2]);out.bundlePrice=Number(m[3].replace(',','.'))}
+ else if((m=u.match(/BUY\s+(\d+)\s*,?\s*PAY\s+(?:FOR\s+)?(\d+)/))){out.kind='buy-n-pay-m';out.eligibleQuantity=Number(m[1]);out.payQuantity=Number(m[2]);out.mixAndMatch=/ANY|ASSORTED/.test(u)}
  else if((m=u.match(/BUY\s+(\d+)\s*,?\s*SAVE\s+([0-9]+(?:[.,][0-9]+)?)%/))){out.kind='quantity-percent';out.eligibleQuantity=Number(m[1]);out.discountPercent=Number(m[2])}
  else if((m=u.match(/BUY\s+(\d+)\s*,?\s*SAVE\s+R?\s*([0-9]+(?:[.,][0-9]+)?)/))){out.kind='quantity-save';out.eligibleQuantity=Number(m[1]);out.discountAmount=Number(m[2].replace(',','.'))}
  else if((m=u.match(/ANY\s+(\d+)\s+SAVE\s+R?\s*([0-9]+(?:[.,][0-9]+)?)/))){out.kind='mix-save';out.mixAndMatch=true;out.eligibleQuantity=Number(m[1]);out.discountAmount=Number(m[2].replace(',','.'))}
@@ -23,6 +24,7 @@ function promotionMath(basePrice,promo,requestedQuantity=1){
  let groups=Math.floor(q/promo.eligibleQuantity),remainder=q%promo.eligibleQuantity,total;
  if(promo.kind==='bundle-price')total=groups*promo.bundlePrice+remainder*base;
  else if(['quantity-save','mix-save'].includes(promo.kind))total=base*q-groups*promo.discountAmount;
+ else if(promo.kind==='buy-n-pay-m')total=base*remainder+(base*promo.payQuantity)*groups;
  else if(['quantity-percent','mix-percent'].includes(promo.kind))total=base*remainder+(base*promo.eligibleQuantity*(1-promo.discountPercent/100))*groups;
  else total=base*q;
  return{eligible:true,quantity:q,total:Math.max(0,total),effectiveUnitPrice:Math.max(0,total)/q,memberOnly:!!promo.memberOnly}
