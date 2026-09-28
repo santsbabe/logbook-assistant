@@ -1,0 +1,534 @@
+{
+  "tracker": "Stationery Price Tracker",
+  "updated": "2026-09-28",
+  "methodology": "Historical observations recovered from the user's Stationery.pdf are retained with their actual period and retailer. Mason 2027 PNPS prices are current school-order benchmarks. Generic/near-equivalent products are not treated as exact like-for-like comparisons.",
+  "observations": [
+    {
+      "concept": "A4 72-page exercise book, soft cover",
+      "comparability": "COMPARABLE_NOT_ALWAYS_EXACT_RULE",
+      "observations": [
+        {
+          "period": "2024",
+          "retailer": "Checkers",
+          "detail": "Irish ruled",
+          "price_each": 7
+        },
+        {
+          "period": "2024",
+          "retailer": "Checkers/Spar",
+          "detail": "normal ruling",
+          "price_each": 5
+        },
+        {
+          "period": "2025",
+          "retailer": "Checkers",
+          "price_each": 5
+        },
+        {
+          "period": "2025",
+          "retailer": "Checkers",
+          "price_each": 5.99
+        },
+        {
+          "period": "2025-07",
+          "retailer": "TakealotMore",
+          "detail": "20 for R100",
+          "price_each": 5
+        },
+        {
+          "period": "2025-07",
+          "retailer": "Checkers",
+          "price_each": 7.99
+        },
+        {
+          "period": "2025-10",
+          "retailer": "Checkers",
+          "price_each": 4.99
+        },
+        {
+          "period": "2026-01",
+          "retailer": "Pick n Pay",
+          "detail": "10 for R45",
+          "price_each": 4.5
+        },
+        {
+          "period": "2026-09",
+          "retailer": "Mason PNPS 2027",
+          "detail": "Irish & Margin / Feint & Margin",
+          "price_each": 6
+        }
+      ]
+    },
+    {
+      "concept": "A4 hard-cover/counter book",
+      "comparability": "NOT_EXACT_MATCH_TO_MASON_2_QUIRE",
+      "observations": [
+        {
+          "period": "2024",
+          "retailer": "Checkers",
+          "detail": "A4 288pg hard cover feint ruled",
+          "price_each": 25
+        },
+        {
+          "period": "2025-01",
+          "retailer": "Checkers",
+          "detail": "A4 288pg hard cover feint ruled",
+          "price_each": 25
+        },
+        {
+          "period": "2025-07",
+          "retailer": "Checkers",
+          "detail": "A4 288pg hard cover feint ruled",
+          "price_each": 27.99
+        },
+        {
+          "period": "2025-07",
+          "retailer": "Takealot",
+          "detail": "A4 288pg hard cover feint ruled",
+          "price_each": 75
+        },
+        {
+          "period": "2025-10",
+          "retailer": "Checkers",
+          "detail": "A4 288pg hard cover feint ruled",
+          "price_each": 29.99
+        },
+        {
+          "period": "2026-09",
+          "retailer": "Mason PNPS 2027",
+          "detail": "Croxley A4 2-quire Feint & Margin",
+          "price_each": 20.5
+        }
+      ]
+    },
+    {
+      "concept": "Glue stick ~40-43g",
+      "comparability": "BRAND_DIFFERS",
+      "observations": [
+        {
+          "period": "2024",
+          "retailer": "Checkers",
+          "detail": "Bostik 2x40g R35",
+          "price_each": 17.5
+        },
+        {
+          "period": "2025",
+          "retailer": "Checkers",
+          "detail": "Bostik 2x40g R37",
+          "price_each": 18.5
+        },
+        {
+          "period": "2025-07",
+          "retailer": "Amazon",
+          "detail": "Pritt 5x43g R145",
+          "price_each": 29
+        },
+        {
+          "period": "2025-07",
+          "retailer": "Checkers",
+          "detail": "Bostik 2x40g R49.99",
+          "price_each": 25
+        },
+        {
+          "period": "2025-10",
+          "retailer": "Checkers",
+          "detail": "Bostik 2x40g R49.99",
+          "price_each": 25
+        },
+        {
+          "period": "2025-10",
+          "retailer": "Checkers",
+          "detail": "Bostik 3x40g R109.99",
+          "price_each": 36.66
+        },
+        {
+          "period": "2026-09",
+          "retailer": "Mason PNPS 2027",
+          "detail": "Amos 40g",
+          "price_each": 21
+        }
+      ]
+    },
+    {
+      "concept": "Erasers",
+      "comparability": "GENERIC_OR_BRAND_DIFFERS",
+      "observations": [
+        {
+          "period": "2024",
+          "retailer": "Checkers",
+          "detail": "NNB",
+          "price_pack": 10
+        },
+        {
+          "period": "2024",
+          "retailer": "Crazy Store",
+          "detail": "Khoki 3-pack",
+          "price_pack": 16
+        },
+        {
+          "period": "2024",
+          "retailer": "PNA",
+          "detail": "Nexx",
+          "price_each": 4
+        },
+        {
+          "period": "2024",
+          "retailer": "Takealot",
+          "detail": "36-pack",
+          "price_pack": 85
+        },
+        {
+          "period": "2025",
+          "retailer": "Checkers",
+          "detail": "NNB 2-pack",
+          "price_pack": 10
+        },
+        {
+          "period": "2025",
+          "retailer": "Amazon",
+          "detail": "Marlin 5-pack",
+          "price_pack": 15.94
+        },
+        {
+          "period": "2025-07",
+          "retailer": "Checkers",
+          "detail": "NNB 2-pack",
+          "price_pack": 11.99
+        },
+        {
+          "period": "2026-09",
+          "retailer": "Mason PNPS 2027",
+          "detail": "Croxley Create Large",
+          "price_each": 3.5
+        }
+      ]
+    },
+    {
+      "concept": "HB pencils",
+      "comparability": "GENERIC_VS_EXACT_GOLDFABER",
+      "observations": [
+        {
+          "period": "2024",
+          "retailer": "Checkers",
+          "detail": "10-pack",
+          "price_pack": 18
+        },
+        {
+          "period": "2025",
+          "retailer": "Checkers",
+          "detail": "10-pack",
+          "price_pack": 19
+        },
+        {
+          "period": "2025-07",
+          "retailer": "Checkers",
+          "detail": "10-pack",
+          "price_pack": 18.99
+        },
+        {
+          "period": "2025-10",
+          "retailer": "TakealotMore",
+          "detail": "50-pack",
+          "price_pack": 99.99
+        },
+        {
+          "period": "2026-09",
+          "retailer": "Mason PNPS 2027",
+          "detail": "Goldfaber 1221 HB individual",
+          "price_each": 7
+        }
+      ]
+    },
+    {
+      "concept": "Colouring pencils 12-pack",
+      "comparability": "SOME_EXACT_BIC_SOME_ALTERNATIVES",
+      "observations": [
+        {
+          "period": "2024",
+          "retailer": "Checkers",
+          "detail": "BIC 12-pack",
+          "price_pack": 23
+        },
+        {
+          "period": "2025",
+          "retailer": "Checkers",
+          "detail": "Bright Colours 12-pack",
+          "price_pack": 18
+        },
+        {
+          "period": "2025",
+          "retailer": "Checkers",
+          "detail": "Staedtler 12-pack",
+          "price_pack": 20
+        },
+        {
+          "period": "2025-07",
+          "retailer": "Checkers",
+          "detail": "NNB 12-pack",
+          "price_pack": 18.99
+        },
+        {
+          "period": "2025-10",
+          "retailer": "Checkers",
+          "detail": "Bright Colours 12-pack",
+          "price_pack": 20
+        },
+        {
+          "period": "2026-09",
+          "retailer": "Mason PNPS 2027",
+          "detail": "BIC Tropicolour 12-pack",
+          "price_pack": 35.65
+        }
+      ]
+    },
+    {
+      "concept": "30cm ruler",
+      "comparability": "COMPARABLE",
+      "observations": [
+        {
+          "period": "2024",
+          "retailer": "Checkers",
+          "detail": "Penflex",
+          "price_each": 4
+        },
+        {
+          "period": "2024",
+          "retailer": "Spar",
+          "detail": "Good Living",
+          "price_each": 3.5
+        },
+        {
+          "period": "2025",
+          "retailer": "Checkers",
+          "price_each": 4.29
+        },
+        {
+          "period": "2025",
+          "retailer": "Amazon",
+          "detail": "Marlin 10-pack R24.34",
+          "price_pack": 24.34
+        },
+        {
+          "period": "2025",
+          "retailer": "Checkers",
+          "detail": "Penflex",
+          "price_each": 4.99
+        },
+        {
+          "period": "2026-09",
+          "retailer": "Mason PNPS 2027",
+          "detail": "Assorted shatterproof",
+          "price_each": 2.5
+        }
+      ]
+    },
+    {
+      "concept": "Double-hole sharpener",
+      "comparability": "COMPARABLE_BRAND_DIFFERS",
+      "observations": [
+        {
+          "period": "2025",
+          "retailer": "Checkers",
+          "price_each": 15
+        },
+        {
+          "period": "2025",
+          "retailer": "Spar",
+          "price_each": 11
+        },
+        {
+          "period": "2025",
+          "retailer": "PNA",
+          "detail": "Treeline",
+          "price_each": 6
+        },
+        {
+          "period": "2025-07",
+          "retailer": "Checkers",
+          "detail": "NNB",
+          "price_each": 16.99
+        },
+        {
+          "period": "2025-10",
+          "retailer": "Checkers",
+          "detail": "NNB",
+          "price_each": 16.99
+        },
+        {
+          "period": "2026-09",
+          "retailer": "Mason PNPS 2027",
+          "detail": "Maped double-hole",
+          "price_each": 15.5
+        }
+      ]
+    },
+    {
+      "concept": "A4 20-pocket/page display book",
+      "comparability": "SOME_EXACT_BUTTERFLY",
+      "observations": [
+        {
+          "period": "2024",
+          "retailer": "Checkers",
+          "detail": "Butterfly",
+          "price_each": 18
+        },
+        {
+          "period": "2025",
+          "retailer": "Checkers",
+          "detail": "Butterfly",
+          "price_each": 20
+        },
+        {
+          "period": "2025-07",
+          "retailer": "Checkers",
+          "detail": "Alpha Orange",
+          "price_each": 22.99
+        },
+        {
+          "period": "2025-07",
+          "retailer": "Checkers",
+          "detail": "Butterfly",
+          "price_each": 26.99
+        },
+        {
+          "period": "2026-09",
+          "retailer": "Mason PNPS 2027",
+          "detail": "Butterfly A4 20-page",
+          "price_each": 22
+        }
+      ]
+    },
+    {
+      "concept": "Scissors ~130mm/school scissors",
+      "comparability": "COMPARABLE_BRAND_DIFFERS",
+      "observations": [
+        {
+          "period": "2024",
+          "retailer": "Checkers",
+          "detail": "Staedtler",
+          "price_each": 19
+        },
+        {
+          "period": "2024",
+          "retailer": "Spar",
+          "detail": "Good Living",
+          "price_each": 11
+        },
+        {
+          "period": "2025",
+          "retailer": "Checkers",
+          "detail": "Dashing",
+          "price_each": 15
+        },
+        {
+          "period": "2025-07",
+          "retailer": "Checkers",
+          "detail": "Dashing",
+          "price_each": 14.99
+        },
+        {
+          "period": "2025-10",
+          "retailer": "Checkers",
+          "detail": "Dashing",
+          "price_each": 14.99
+        },
+        {
+          "period": "2026-09",
+          "retailer": "Mason PNPS 2027",
+          "detail": "Ambi scissors",
+          "price_each": 18
+        }
+      ]
+    },
+    {
+      "concept": "Felt-tip/koki pens 12-pack",
+      "comparability": "SOME_EXACT_BIC",
+      "observations": [
+        {
+          "period": "2024",
+          "retailer": "Checkers",
+          "detail": "Staedtler",
+          "price_pack": 30
+        },
+        {
+          "period": "2024",
+          "retailer": "Checkers",
+          "detail": "BIC",
+          "price_pack": 27
+        },
+        {
+          "period": "2024",
+          "retailer": "Crazy Store",
+          "detail": "Khoki",
+          "price_pack": 25
+        },
+        {
+          "period": "2025",
+          "retailer": "Checkers",
+          "detail": "NNB",
+          "price_pack": 33
+        },
+        {
+          "period": "2025",
+          "retailer": "Checkers",
+          "detail": "BIC",
+          "price_pack": 28
+        },
+        {
+          "period": "2025-07",
+          "retailer": "Checkers",
+          "detail": "BIC",
+          "price_pack": 36.99
+        },
+        {
+          "period": "2025-10",
+          "retailer": "Checkers",
+          "detail": "NNB",
+          "price_pack": 15
+        },
+        {
+          "period": "2025-10",
+          "retailer": "Checkers",
+          "detail": "BIC",
+          "price_pack": 35
+        },
+        {
+          "period": "2026-09",
+          "retailer": "Mason PNPS 2027",
+          "detail": "BIC Kids Visa 12-pack",
+          "price_pack": 30
+        }
+      ]
+    },
+    {
+      "concept": "Croxley Create oil pastels 12-pack",
+      "comparability": "EXACT_MASON_BASELINE_WITH_OTHER_QUOTES_TO_VERIFY",
+      "observations": [
+        {
+          "period": "2026-09",
+          "retailer": "Mason PNPS 2027",
+          "detail": "Croxley Create 12-pack",
+          "price_pack": 24.5
+        },
+        {
+          "period": "2026-09",
+          "retailer": "Checkers",
+          "detail": "Generic 12-pack; rejected as non-equivalent",
+          "price_pack": 19.99
+        }
+      ]
+    },
+    {
+      "concept": "Pentel MW5S black whiteboard marker",
+      "comparability": "EXACT_MASON_BASELINE",
+      "observations": [
+        {
+          "period": "2026-09",
+          "retailer": "Mason PNPS 2027",
+          "detail": "Pentel MW5S black",
+          "price_each": 16
+        }
+      ]
+    }
+  ]
+}
