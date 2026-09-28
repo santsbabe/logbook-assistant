@@ -1,0 +1,53 @@
+name: FamilyRoy Shopping QA
+on:
+  push:
+    branches: [familyroy-operational-core-v1]
+    paths:
+      - 'familyroy-control-centre/**'
+      - '.github/workflows/familyroy-shopping-qa.yml'
+  workflow_dispatch:
+jobs:
+  syntax-and-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Check JavaScript syntax
+        run: |
+          node --check familyroy-control-centre/pnp-adapter.js
+          node --check familyroy-control-centre/scripts/refresh-prices.mjs
+      - name: Check inline Control Centre script syntax
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          s=Path('familyroy-control-centre/index.html').read_text()
+          blocks=re.findall(r'<script(?:\s[^>]*)?>([\s\S]*?)</script>',s,re.I)
+          inline=[b for b in blocks if b.strip()]
+          Path('/tmp/familyroy-inline.js').write_text('\n'.join(inline))
+          PY
+          node --check /tmp/familyroy-inline.js
+      - name: Promotion contract smoke test
+        run: |
+          node - <<'NODE'
+          global.window={};
+          require('./familyroy-control-centre/pnp-adapter.js');
+          const A=window.FamilyRoyPnP;
+          const cases=[
+            ['ANY 2 FOR R60','bundle-price',2],
+            ['BUY ANY 2 & SAVE 20%','mix-percent',2],
+            ['BUY 3, PAY FOR 2','buy-n-pay-m',3],
+            ['BUY 2, SAVE R10','quantity-save',2]
+          ];
+          for(const [label,kind,q] of cases){
+            const p=A.promotion({promotion:label,promotionGroupId:label.includes('ANY')?'test-pool':''});
+            if(p.kind!==kind||p.eligibleQuantity!==q) throw new Error(label+' parsed incorrectly: '+JSON.stringify(p));
+          }
+          const bundle=A.promotionMath(40,A.promotion({promotion:'2 FOR R60'}),2);
+          if(bundle.total!==60) throw new Error('bundle maths failed');
+          const b3p2=A.promotionMath(30,A.promotion({promotion:'BUY 3, PAY FOR 2'}),3);
+          if(b3p2.total!==60) throw new Error('buy 3 pay 2 maths failed');
+          console.log('Promotion contract smoke tests passed');
+          NODE
