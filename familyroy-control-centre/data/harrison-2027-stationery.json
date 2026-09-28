@@ -155,8 +155,8 @@
       "qty": 1,
       "mason_each": 69,
       "mason_total": 69,
-      "status": "HOLD",
-      "note": "Await Mason reply confirming brand/model, fingering system, ABS/3-piece and case/bag; then compare with Yamaha YRS-24B R85."
+      "status": "BUY_MASON",
+      "note": "Mason confirmed 28 Sep 2026: Yamaha, 3-piece, ABS resin, supplied in material pouch. Shaun described fingering as 'German Baroque', so fingering wording remains ambiguous; no need to hold purchase."
     }
   ],
   "exclusions": [
