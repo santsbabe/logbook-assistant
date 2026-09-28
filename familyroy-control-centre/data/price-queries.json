@@ -30,21 +30,6 @@
     "purpose": "acceptance-test"
   },
   {
-    "retailer": "Food Lover’s Market",
-    "conceptId": "flm-specials-monitor",
-    "url": "https://foodloversmarket.co.za/specials/",
-    "purpose": "first-party-specials-acceptance"
-  },
-  {
-    "retailer": "Checkers",
-    "conceptId": "checkers-western-cape-current",
-    "query": "WITH CARD",
-    "name": "Western Cape current specials",
-    "url": "https://specials.checkers.co.za/deals/wccheckersmonthend21sep11oct/",
-    "purpose": "first-party-specials-acceptance",
-    "region": "Western Cape"
-  },
-  {
     "retailer": "Checkers",
     "conceptId": "concept-citrus",
     "query": "citrus",
