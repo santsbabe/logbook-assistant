@@ -225,7 +225,44 @@ function renderValueOpportunities(){
 function offerPromoView(o,x){let p=o.promotion;if(!p||p.kind==='none'||!window.FamilyRoyPnP||o.retailer!=='Pick n Pay')return null;if(p.mixAndMatch&&!p.promotionGroupId&&!(p.participatingSkus||[]).length)return{eligible:false,unverifiedPool:true,label:p.label,memberOnly:p.memberOnly,reason:'Mix-and-match pool not verified'};let calc=FamilyRoyPnP.promotionMath(Number(o.loyaltyPrice||o.price),p,requestedShopQty(x));return{...calc,label:p.label,memberOnly:p.memberOnly}}
 function offerHtml(o,best=false){let l=o.listing||{},stale=priceObservationStatus(o)!=='current',unit=o.unitPrice!==null&&o.unitPrice!==undefined?` · R${o.unitPrice.toFixed(2)}/${esc(l.unit)}`:'';return `<div class="task"><strong>${best?'★ ':''}${esc(o.retailer)} · R${o.effectivePrice.toFixed(2)}${unit}</strong><span class="pill">${esc(l.displayName||o.product||'Matched product')}</span>${l.packaging?`<span class="pill">${esc(l.packaging)}</span>`:''}${l.netQuantity?`<span class="pill">${esc(l.netQuantity+' '+(l.unit||''))}</span>`:''}<span class="pill">${esc(o.match?.label||'Comparable')}</span>${o.loyaltyPrice?`<span class="pill">Loyalty price</span>`:''}${o.pref?.note?`<div class="tiny">${esc(o.pref.note)}</div>`:''}<div class="tiny">${stale?'Last known price':'Checked'} · ${esc(String(o.checkedAt||'').slice(0,10))}${o.source?' · '+esc(o.source):''}</div></div>`}
 function renderShoppingComparisons(){let el=document.getElementById('shoppingComparisons');if(!el)return;let health=priceFeedHealthHtml();let xs=(db.shopping||[]).filter(x=>!x.done);el.innerHTML=health+xs.map(x=>{let offers=eligibleOffers(x),c=conceptFor(x);return `<div class="task"><strong>${esc(x.title)}</strong><div class="tiny">Packaging: ${esc(c.packagingRule||'irrelevant')} · Identity and comparability are kept separate.</div>${offers.length?'<div class="tiny">★ Best known eligible value. Alternatives remain visible; route context does not get silently overridden.</div>'+offers.slice(0,4).map((o,i)=>{let pv=offerPromoView(o,x),extra=pv?`<div class="tiny">${esc(pv.label||'Multi-buy')}: ${pv.unverifiedPool?'mix-and-match products not yet verified':pv.eligible?'eligible at your quantity · effective R'+pv.effectiveUnitPrice.toFixed(2)+' each':'not eligible at your quantity'}${pv.memberOnly?' · Smart Shopper':''}</div>`:'';return offerHtml(o,i===0)+extra}).join(''):'<div class="muted">No verified comparable price observations yet. Ambiguous products are not merged automatically.</div>'}</div>`}).join('')||'<div class="muted">Add an active shopping item to compare prices.</div>'}
-function renderBasketComparison(){let el=document.getElementById('basketComparison');if(!el)return;let xs=(db.shopping||[]).filter(x=>!x.done),rows=SHOP_RETAILERS.map(r=>{let total=0,found=0;xs.forEach(x=>{let o=eligibleOffers(x).find(o=>o.retailer===r);if(o){total+=o.effectivePrice;found++}});return{r,total,found}}),split=xs.map(x=>eligibleOffers(x)[0]).filter(Boolean),splitTotal=split.reduce((n,o)=>n+o.effectivePrice,0);el.innerHTML=rows.map(x=>`<div class="task"><strong>${esc(x.r)}</strong><div>${x.found===xs.length&&xs.length?'R'+x.total.toFixed(2):x.found+' of '+xs.length+' items priced'}</div></div>`).join('')+(xs.length?`<div class="task"><strong>Cheapest split basket</strong><div>${split.length===xs.length?'R'+splitTotal.toFixed(2):split.length+' of '+xs.length+' items priced'}</div></div>`:'')}
+function basketChoice(x,retailer){
+ let offers=eligibleOffers(x).filter(o=>o.retailer===retailer),wanted=requestedShopQty(x),choices=[];
+ offers.forEach(o=>{
+  let base=Number(o.loyaltyPrice||o.price);if(!Number.isFinite(base))return;
+  choices.push({o,qty:wanted,total:base*wanted,kind:'requested',saving:0});
+  let v=valueOpportunity(o,x);if(v&&v.sensible)choices.push({o,qty:v.threshold,total:v.total,kind:'value',saving:v.saving,extra:v.extra});
+ });
+ return choices.sort((a,b)=>a.total-b.total)[0]||null
+}
+function verifiedMixPools(retailer,items){
+ let pools=new Map();
+ items.forEach(x=>eligibleOffers(x).filter(o=>o.retailer===retailer).forEach(o=>{let p=o.promotion,g=p?.promotionGroupId;if(!p?.mixAndMatch||!g)return;let key=g+'|'+(p.kind||'');if(!pools.has(key))pools.set(key,{promotion:p,entries:[]});pools.get(key).entries.push({x,o})}));
+ return [...pools.values()]
+}
+function optimiseVerifiedMix(retailer,items,base){
+ let total=base.total,notes=[];
+ verifiedMixPools(retailer,items).forEach(pool=>{
+  let p=pool.promotion,n=Number(p.eligibleQuantity||0);if(n<2||pool.entries.length<2)return;
+  let units=[];pool.entries.forEach(({x,o})=>{let q=requestedShopQty(x),price=Number(o.loyaltyPrice||o.price);for(let i=0;i<q;i++)if(Number.isFinite(price))units.push({x,o,price})});
+  if(units.length<n)return;
+  units.sort((a,b)=>b.price-a.price);
+  let groups=Math.floor(units.length/n),saving=0;
+  for(let g=0;g<groups;g++){let group=units.slice(g*n,(g+1)*n),sum=group.reduce((z,u)=>z+u.price,0);
+   if(p.kind==='bundle-price')saving+=Math.max(0,sum-Number(p.bundlePrice||sum));
+   else if(p.kind==='mix-save')saving+=Number(p.discountAmount||0);
+   else if(p.kind==='mix-percent')saving+=sum*Number(p.discountPercent||0)/100;
+   else if(p.kind==='buy-n-pay-m'){let free=Math.max(0,n-Number(p.payQuantity||n));saving+=group.slice().sort((a,b)=>a.price-b.price).slice(0,free).reduce((z,u)=>z+u.price,0)}
+  }
+  if(saving>0){total-=saving;notes.push((p.label||'Verified mix-and-match')+' saves R'+saving.toFixed(2))}
+ });
+ return{total:Math.max(0,total),notes}
+}
+function renderBasketComparison(){
+ let el=document.getElementById('basketComparison');if(!el)return;let xs=(db.shopping||[]).filter(x=>!x.done);
+ let rows=SHOP_RETAILERS.map(r=>{let choices=xs.map(x=>basketChoice(x,r)),found=choices.filter(Boolean),baseTotal=found.reduce((n,c)=>n+c.total,0),mix=optimiseVerifiedMix(r,xs,{total:baseTotal});return{r,total:mix.total,found:found.length,choices:found,notes:mix.notes}});
+ let splitChoices=xs.map(x=>{let opts=SHOP_RETAILERS.map(r=>basketChoice(x,r)).filter(Boolean);return opts.sort((a,b)=>a.total-b.total)[0]||null}),splitTotal=splitChoices.filter(Boolean).reduce((n,c)=>n+c.total,0);
+ el.innerHTML=rows.map(x=>`<div class="task"><strong>${esc(x.r)}</strong><div>${x.found===xs.length&&xs.length?'R'+x.total.toFixed(2):x.found+' of '+xs.length+' items priced'}</div>${x.choices.some(c=>c.kind==='value')?'<div class="tiny">Includes sensible quantity-step value deal(s).</div>':''}${x.notes.map(n=>'<div class="tiny">'+esc(n)+'</div>').join('')}</div>`).join('')+(xs.length?`<div class="task"><strong>Cheapest split basket</strong><div>${splitChoices.filter(Boolean).length===xs.length?'R'+splitTotal.toFixed(2):splitChoices.filter(Boolean).length+' of '+xs.length+' items priced'}</div><div class="tiny">Chooses the cheapest sensible item-level option across retailers. Verified cross-item promotions remain retailer-basket specific.</div></div>`:'')
+}
 function seedShoppingConcepts(){let seeds=[
 {id:'concept-citrus',name:'naartjies / mandarins / clementines',category:'fresh-produce',diet:'vegan',packagingRule:'irrelevant',gtins:[],plus:[],aliases:['naartjies','mandarins','clementines'],preferences:['best value per kg']},
 {id:'concept-bananas-lunchbox',name:'bananas for lunchboxes',category:'fresh-produce',diet:'vegan',packagingRule:'proxy',packagingProxy:{packaging:'box',signals:['small fruit','lunchbox size'],knownGood:['B-Bombs']},gtins:[],plus:[],aliases:['bananas','b-bombs'],preferences:['small individual fruit','fits kids Sistema lunch boxes']}
