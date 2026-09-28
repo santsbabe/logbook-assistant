@@ -1,0 +1,176 @@
+{
+  "child": "Harrison",
+  "school": "Pinelands North Primary School",
+  "year": 2027,
+  "grade": 3,
+  "source": {
+    "title": "PNPS 2026 2027 GRADE 3.pdf",
+    "mason_total": 1243.75
+  },
+  "updated": "2026-09-28",
+  "items": [
+    {
+      "item": "Exercise Book A4 72 Page Irish & Margin",
+      "qty": 6,
+      "mason_each": 6,
+      "mason_total": 36,
+      "status": "CHECK_HOME_STOCK",
+      "note": "Count this evening after work; buy only shortfall."
+    },
+    {
+      "item": "Exercise Book A4 72 Page Feint & Margin",
+      "qty": 2,
+      "mason_each": 6,
+      "mason_total": 12,
+      "status": "CHECK_HOME_STOCK",
+      "note": "Count this evening after work; buy only shortfall."
+    },
+    {
+      "item": "Croxley Counter Book A4 2 Quire Feint & Margin",
+      "qty": 1,
+      "mason_each": 20.5,
+      "mason_total": 20.5,
+      "status": "CHECK_HOME_STOCK",
+      "note": "Count this evening after work; buy only if needed."
+    },
+    {
+      "item": "Oxford S.A. School Dictionary",
+      "qty": 1,
+      "mason_each": 225,
+      "mason_total": 225,
+      "status": "DEFERRED",
+      "note": "Ignore for now."
+    },
+    {
+      "item": "Butterfly A4 Display Book 20 Page",
+      "qty": 3,
+      "mason_each": 22,
+      "mason_total": 66,
+      "status": "ALREADY_HAVE"
+    },
+    {
+      "item": "My isiXhosa-English Workbook 1",
+      "qty": 1,
+      "mason_each": 163,
+      "mason_total": 163,
+      "status": "BUY_MASON"
+    },
+    {
+      "item": "NumberSense Comprehensive Workbook 10",
+      "qty": 1,
+      "mason_each": 82.95,
+      "mason_total": 82.95,
+      "status": "BUY_MASON"
+    },
+    {
+      "item": "Amos Glue Stick 40g",
+      "qty": 6,
+      "mason_each": 21,
+      "mason_total": 126,
+      "status": "ALREADY_HAVE"
+    },
+    {
+      "item": "Croxley Create Eraser Large",
+      "qty": 4,
+      "mason_each": 3.5,
+      "mason_total": 14,
+      "status": "ALREADY_HAVE"
+    },
+    {
+      "item": "Goldfaber 1221 Pencil HB",
+      "qty": 12,
+      "mason_each": 7,
+      "mason_total": 84,
+      "status": "ALREADY_HAVE"
+    },
+    {
+      "item": "BIC Tropicolour Pencils 12-pack",
+      "qty": 2,
+      "mason_each": 35.65,
+      "mason_total": 71.3,
+      "status": "ALREADY_HAVE"
+    },
+    {
+      "item": "Croxley Create Oil Pastels 12-pack",
+      "qty": 1,
+      "mason_each": 24.5,
+      "mason_total": 24.5,
+      "status": "BTS_PRICE_WATCH",
+      "note": "Exact Croxley preferred; R24.50 is price to beat. Generic Checkers R19.99 rejected."
+    },
+    {
+      "item": "Plastic Ruler 30cm Assorted Shatterproof",
+      "qty": 2,
+      "mason_each": 2.5,
+      "mason_total": 5,
+      "status": "ALREADY_HAVE"
+    },
+    {
+      "item": "Maped Barrel Pencil Sharpener Double Hole",
+      "qty": 1,
+      "mason_each": 15.5,
+      "mason_total": 15.5,
+      "status": "ALREADY_HAVE"
+    },
+    {
+      "item": "Pentel MW5S Whiteboard Marker Black",
+      "qty": 2,
+      "mason_each": 16,
+      "mason_total": 32,
+      "status": "BTS_PRICE_WATCH",
+      "note": "Need to buy; R32 Mason total is price to beat."
+    },
+    {
+      "item": "Meeco Large Nylon Pencil Case Assorted",
+      "qty": 1,
+      "mason_each": 24,
+      "mason_total": 24,
+      "status": "JANUARY_CHILD_CHOICE",
+      "note": "Do not buy from Mason; existing case is serviceable; Harrison can choose a new one in January."
+    },
+    {
+      "item": "Ambi Scissors",
+      "qty": 1,
+      "mason_each": 18,
+      "mason_total": 18,
+      "status": "ALREADY_HAVE"
+    },
+    {
+      "item": "Leer Afrikaans Lag-Lag Boek 1 (Grade 3)",
+      "qty": 1,
+      "mason_each": 125,
+      "mason_total": 125,
+      "status": "BUY_MASON"
+    },
+    {
+      "item": "BIC Kids Visa Felt Tipped Pens 12-pack",
+      "qty": 1,
+      "mason_each": 30,
+      "mason_total": 30,
+      "status": "ALREADY_HAVE",
+      "note": "Exact BIC set confirmed already owned."
+    },
+    {
+      "item": "Soprano Recorder",
+      "qty": 1,
+      "mason_each": 69,
+      "mason_total": 69,
+      "status": "HOLD",
+      "note": "Await Mason reply confirming brand/model, fingering system, ABS/3-piece and case/bag; then compare with Yamaha YRS-24B R85."
+    }
+  ],
+  "exclusions": [
+    {
+      "item": "Highlighters",
+      "reason": "Not on authoritative PNPS 2027 Grade 3 list."
+    },
+    {
+      "item": "Blue ballpoint pens",
+      "reason": "Not on authoritative PNPS 2027 Grade 3 list."
+    },
+    {
+      "item": "Retractable wax crayons",
+      "reason": "Already owned but not on authoritative PNPS 2027 Grade 3 list."
+    }
+  ]
+}
