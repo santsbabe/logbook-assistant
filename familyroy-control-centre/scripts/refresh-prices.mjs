@@ -113,6 +113,11 @@ for(const retailer of ['Woolworths','Food Lover’s Market','Checkers']){
  errors.push(...re)
 }
 retailerState.picknpay.status=retailerState.picknpay.observations?(retailerState.picknpay.errors.length?'refreshed-partial':'refreshed'):queries.some(x=>x.retailer==='Pick n Pay')?'refresh-failed-or-no-safe-data':'awaiting-verified-product-urls';
+const obsKey=o=>[o.retailer||'',o.conceptId||'',o.url||'',o.sku||'',o.barcode||''].join('|');
+let merged=new Map();
+for(const old of (existing.observations||[]))merged.set(obsKey(old),old);
+for(const fresh of observations)merged.set(obsKey(fresh),fresh);
+observations=[...merged.values()].sort((a,b)=>String(b.checkedAt||'').localeCompare(String(a.checkedAt||'')));
 const feed={version:2,generatedAt:now,status:observations.length?(errors.length?'refreshed-partial':'refreshed'):queries.length?'refresh-failed-or-no-safe-data':'awaiting-verified-product-urls',retailers:retailerState,observations};
 await fs.mkdir(new URL('../data/',import.meta.url),{recursive:true});
 await fs.writeFile(feedPath,JSON.stringify(feed,null,2)+'\n');
