@@ -53,7 +53,8 @@ async function fetchProduct(q){
 const HOSTS={
  'Pick n Pay':'www.pnp.co.za',
  'Woolworths':'www.woolworths.co.za',
- 'Food Lover’s Market':'foodloversmarket.co.za'
+ 'Food Lover’s Market':'foodloversmarket.co.za',
+ 'Checkers':'specials.checkers.co.za'
 };
 async function fetchHtml(url,retailer){
  let host=HOSTS[retailer];if(!host||!url||new URL(url).hostname!==host)return{ok:false,error:'URL is not an approved first-party '+retailer+' host'};
@@ -77,9 +78,20 @@ function parseFLM(html,url,conceptId){
  if(!title||!Number.isFinite(price))return null;
  return{conceptId,retailer:'Food Lover’s Market',name:title,sku:clean(ld.sku||''),barcode:clean(ld.gtin13||ld.gtin||''),url,price,promotion:clean((html.match(/(?:special|deal)[\s\S]{0,160}?(R\s*[0-9.,]+)/i)||[])[0]),checkedAt:now,source:'Food Lover’s Market first-party specials page'}
 }
+function parseCheckersSpecial(html,url,conceptId){
+ let page=clean(html),valid=(page.match(/OFFERS VALID FROM\s+(.{0,60}?)\s+UNTIL\s+(.{0,60}?)(?:\.|PRICES APPLY)/i)||[]),region=(page.match(/PRICES APPLY TO\s+(.{0,300}?)(?:\.|SELECTED ITEMS|WHILE STOCKS)/i)||[])[1]||'';
+ let q=queries.find(x=>x.url===url&&x.conceptId===conceptId)||{},needle=clean(q.query||q.name||'');
+ if(!needle)return null;
+ let terms=needle.toLowerCase().split(/\s+/).filter(x=>x.length>2),idx=page.toLowerCase().indexOf(needle.toLowerCase());
+ if(idx<0&&terms.length)idx=page.toLowerCase().indexOf(terms[0]);if(idx<0)return null;
+ let snippet=page.slice(Math.max(0,idx-180),idx+360),prices=[...snippet.matchAll(/(?:ANY\s+\d+\s+FOR\s+)?R?\s*([0-9]{1,4}(?:[.,][0-9]{2}))/gi)].map(m=>Number(m[1].replace(',','.'))).filter(n=>n>0);
+ let price=prices[0];if(!Number.isFinite(price))return null;
+ let promo=clean((snippet.match(/(BUY\s+ANY\s+\d+\s+&?\s*SAVE\s+\d+%|ANY\s+\d+\s+FOR\s+R?\s*[0-9.,]+|BUY\s+\d+\s+FOR\s+R?\s*[0-9.,]+|SAVE\s+R?\s*[0-9.,]+|WITH CARD)/i)||[])[1]);
+ return{conceptId,retailer:'Checkers',name:q.name||q.query,sku:'',barcode:'',url,price,promotion:promo,memberOnly:/WITH CARD/i.test(snippet),validFrom:clean(valid[1]||''),validTo:clean(valid[2]||''),region:clean(region),checkedAt:now,source:'Checkers official Western Cape specials'}
+}
 async function fetchFirstParty(q){
  let got=await fetchHtml(q.url,q.retailer);if(!got.ok)return got;
- let row=q.retailer==='Woolworths'?parseWoolworths(got.html,q.url,q.conceptId):q.retailer==='Food Lover’s Market'?parseFLM(got.html,q.url,q.conceptId):null;
+ let row=q.retailer==='Woolworths'?parseWoolworths(got.html,q.url,q.conceptId):q.retailer==='Food Lover’s Market'?parseFLM(got.html,q.url,q.conceptId):q.retailer==='Checkers'?parseCheckersSpecial(got.html,q.url,q.conceptId):null;
  return row?{ok:true,row}:{ok:false,error:'Could not safely parse '+q.retailer+' first-party page'}
 }
 let observations=[],errors=[];
@@ -91,17 +103,16 @@ for(const q of queries.filter(x=>x.retailer==='Pick n Pay')){
  }catch(e){errors.push({conceptId:q.conceptId,url:q.url,query:q.query,error:String(e?.message||e)})}
 }
 let retailerState={picknpay:{checkedAt:now,observations:observations.length,errors:[...errors]}};
-for(const retailer of ['Woolworths','Food Lover’s Market']){
+for(const retailer of ['Woolworths','Food Lover’s Market','Checkers']){
  let ro=[],re=[];
  for(const q of queries.filter(x=>x.retailer===retailer)){
   if(!q.url){re.push({conceptId:q.conceptId,error:'Discovery not yet verified for '+retailer});continue}
   try{let r=await fetchFirstParty(q);if(r.ok){observations.push(r.row);ro.push(r.row)}else re.push({conceptId:q.conceptId,url:q.url,error:r.error})}catch(e){re.push({conceptId:q.conceptId,url:q.url,error:String(e?.message||e)})}
  }
- retailerState[retailer==='Woolworths'?'woolworths':'foodloversmarket']={status:ro.length?'refreshed':queries.some(x=>x.retailer===retailer)?'refresh-failed-or-no-safe-data':'awaiting-verified-product-urls',checkedAt:now,observations:ro.length,errors:re};
+ retailerState[retailer==='Woolworths'?'woolworths':retailer==='Checkers'?'checkers':'foodloversmarket']={status:ro.length?'refreshed':queries.some(x=>x.retailer===retailer)?'refresh-failed-or-no-safe-data':'awaiting-verified-product-urls',checkedAt:now,observations:ro.length,errors:re};
  errors.push(...re)
 }
 retailerState.picknpay.status=retailerState.picknpay.observations?'refreshed':queries.some(x=>x.retailer==='Pick n Pay')?'refresh-failed-or-no-safe-data':'awaiting-verified-product-urls';
-retailerState.checkers={status:'researching-first-party-ingestion',checkedAt:now,observations:0,errors:[]};
 const feed={version:2,generatedAt:now,status:queries.length?'refreshed':'awaiting-verified-product-urls',retailers:retailerState,observations};
 await fs.mkdir(new URL('../data/',import.meta.url),{recursive:true});
 await fs.writeFile(feedPath,JSON.stringify(feed,null,2)+'\n');
