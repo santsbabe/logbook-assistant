@@ -15,6 +15,10 @@ Run this before merging changes to `main`. This is deliberately short: it is a r
 - [ ] New action-producing integrations use `normaliseAction()` / `ingestActions()`.
 - [ ] Domain data remains domain data unless an exception genuinely needs attention.
 
+## Control Centre fix list
+
+- [ ] Create a proper remote write route/API so ChatGPT can genuinely add tasks to FamilyRoy Control Centre instead of only browser-local state. The route must use the shared action record (what, when, by whom, why, source), feed Today, deduplicate safely, and preserve the existing local/browser workflow.
+
 ## FamilyRoy browser test
 
 - [ ] Open every tab: Today, Inbox, School, Radar, Money, Electricity, Admin, More.
