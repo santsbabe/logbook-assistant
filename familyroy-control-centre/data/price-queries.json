@@ -10,5 +10,17 @@
     "conceptId": "test-bonnisan-120ml",
     "url": "https://www.pnp.co.za/himalaya-wellness-bonnisan-syrup-120ml/p/000000000000460598_EA",
     "purpose": "acceptance-test"
+  },
+  {
+    "retailer": "Pick n Pay",
+    "conceptId": "concept-citrus",
+    "query": "soft citrus",
+    "purpose": "discovery-acceptance"
+  },
+  {
+    "retailer": "Pick n Pay",
+    "conceptId": "concept-bananas-lunchbox",
+    "query": "Kidz Bananas",
+    "purpose": "discovery-acceptance"
   }
 ]
