@@ -156,7 +156,12 @@
       "mason_each": 69,
       "mason_total": 69,
       "status": "BUY_MASON",
-      "note": "Mason confirmed 28 Sep 2026: Yamaha, 3-piece, ABS resin, supplied in material pouch. Shaun described fingering as 'German Baroque', so fingering wording remains ambiguous; no need to hold purchase."
+      "note": "Mason confirmed 28 Sep 2026: Yamaha, 3-piece, ABS resin, supplied in material pouch. Shaun described fingering as 'German Baroque', so fingering wording remains ambiguous; no need to hold purchase. After purchase: have the pouch embroidered with Harrison’s name, and let Harrison choose a patch/insignia to personalise the pouch.",
+      "personalisation": {
+        "embroidery": "Harrison’s name",
+        "decoration": "Harrison to choose a patch or other insignia for the recorder pouch",
+        "status": "TO_DO_AFTER_PURCHASE"
+      }
     }
   ],
   "exclusions": [
