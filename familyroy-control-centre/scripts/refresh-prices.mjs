@@ -22,6 +22,25 @@ function parseProductPage(html,url,conceptId){
  if(prices.length>1)smart=prices[0];
  return{conceptId,retailer:'Pick n Pay',name:title,sku,barcode,url,price:regular,smartShopperPrice:smart,promotion:promo,validFrom:valid?clean(valid[1]):'',validTo:valid?clean(valid[2]):'',checkedAt:now};
 }
+function productLinks(html){
+ let out=[],seen=new Set();
+ for(const m of html.matchAll(/href=["']([^"']+\/p\/[0-9A-Za-z_-]+)[^"']*["']/gi)){let u=new URL(m[1],'https://www.pnp.co.za').href;if(!seen.has(u)){seen.add(u);out.push(u)}}
+ return out
+}
+async function discoverPnP(q){
+ let term=encodeURIComponent(q.query||q.name||'');
+ if(!term)return{urls:[],error:'Empty discovery query'};
+ let urls=[
+  'https://www.pnp.co.za/search/?text='+term,
+  'https://www.pnp.co.za/search?text='+term
+ ];
+ for(const u of urls){
+  try{let r=await fetch(u,{headers:{'user-agent':'FamilyRoy-Control-Centre/1.0 (+personal price monitor; low frequency)','accept':'text/html'}});
+   if(!r.ok)continue;let links=productLinks(await r.text());if(links.length)return{urls:links.slice(0,12),source:u}
+  }catch{}
+ }
+ return{urls:[],error:'No verified PnP product links discovered'}
+}
 async function fetchProduct(q){
  if(!q.url||!/^https:\/\/www\.pnp\.co\.za\//i.test(q.url))return{ok:false,error:'No verified pnp.co.za product URL'};
  const r=await fetch(q.url,{headers:{'user-agent':'FamilyRoy-Control-Centre/1.0 (+personal price monitor; low frequency)','accept':'text/html'}});
@@ -32,8 +51,11 @@ async function fetchProduct(q){
 
 let observations=[],errors=[];
 for(const q of queries.filter(x=>x.retailer==='Pick n Pay')){
- try{let r=await fetchProduct(q);if(r.ok)observations.push(r.row);else errors.push({conceptId:q.conceptId,url:q.url,error:r.error})}
- catch(e){errors.push({conceptId:q.conceptId,url:q.url,error:String(e?.message||e)})}
+ try{
+  let targets=q.url?[q.url]:[];
+  if(!targets.length&&q.query){let d=await discoverPnP(q);targets=d.urls;if(!targets.length)errors.push({conceptId:q.conceptId,query:q.query,error:d.error})}
+  for(const url of targets){let r=await fetchProduct({...q,url});if(r.ok)observations.push(r.row);else errors.push({conceptId:q.conceptId,url,error:r.error})}
+ }catch(e){errors.push({conceptId:q.conceptId,url:q.url,query:q.query,error:String(e?.message||e)})}
 }
 const feed={version:1,generatedAt:now,status:queries.length?'refreshed':'awaiting-verified-product-urls',retailers:{picknpay:{status:observations.length?'refreshed':queries.length?'refresh-failed-or-no-safe-data':'awaiting-verified-product-urls',checkedAt:now,observations:observations.length,errors}},observations};
 await fs.mkdir(new URL('../data/',import.meta.url),{recursive:true});
