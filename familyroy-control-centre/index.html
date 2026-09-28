@@ -50,7 +50,7 @@ body.driveMode .driveBack{display:block;margin:16px 0;text-align:center}
       <button type="button" class="btn primary" onclick="addShopItem()">Add to Shopping</button>
     </div></div>
     <div class="card adminShopCard"><h2>Value opportunities</h2><div class="muted">Useful multi-buys that justify changing quantity. Fresh-food extras are treated cautiously.</div><div id="valueOpportunities"></div></div>\n    <div class="card adminShopCard"><h2>Price comparison</h2><div class="muted">Current offers for active items. Loyalty prices are used when available; stale observations keep their checked date visible.</div><div id="shoppingComparisons"></div></div>
-    <div class="card adminShopCard"><h2>Basket view</h2><div class="muted">Compares one-retailer baskets and a split basket using only eligible, known prices.</div><div id="basketComparison"></div></div>
+    <div class="card adminShopCard"><h2>Basket view</h2><div class="muted">Compares complete baskets across retailer combinations, including sensible multi-buys, and shows the cash saving versus extra-stop trade-off without deciding for you.</div><div id="basketComparison"></div></div>
     <div class="card branchAdmin"><h2>Saved stores & branches</h2><div class="muted">Reusable locations for shopping items and proximity reminders.</div><div id="branchRegistry"></div>
       <details style="margin-top:12px"><summary class="muted" style="cursor:pointer;font-weight:750">Add a branch</summary><div class="form" style="margin-top:8px"><input id="branchRetailer" placeholder="Retailer / place"><input id="branchName" placeholder="Branch name"><input id="branchAddress" placeholder="Street address"><button type="button" class="btn" onclick="addBranch()">Save branch</button></div></details>
     </div>
@@ -191,7 +191,10 @@ function retailerSlug(s){return String(s||'').toLowerCase().trim().replace(/&/g,
 function shopHtml(x,drive=false){let legacy=x.retailer?('<span class="pill">'+esc(x.retailer)+'</span>'):'';let diet=x.diet==='default'||!x.diet?'Household dietary default':x.diet.charAt(0).toUpperCase()+x.diet.slice(1);let sub=x.substitution==='exact'?'Exact product':x.substitution==='sameProduct'?'Same product · any size':'Comparable alternatives okay';return `<div class="task shopItem"><strong>${esc(x.title)}</strong>${legacy}<span class="pill">${esc(diet)}</span><span class="pill">${esc(sub)}</span>${x.quantity?`<span class="pill">${esc(x.quantity)}</span>`:''}${x.source?`<div class="tiny">Source: ${esc(x.source)}</div>`:''}<div class="row" style="margin-top:8px"><button type="button" class="btn" onclick="markShopGot('${x.id}')">Mark as bought</button>${drive?'':`<button type="button" class="btn shopRemove" onclick="deleteShopItem('${x.id}')">Remove from list</button>`}</div></div>`}
 function completedShopHtml(x){return `<div class="task shopItem done"><strong>${esc(x.title)}</strong><span class="pill">${esc(x.retailer)}</span><div class="tiny">Bought${x.completedAt?' · '+esc(x.completedAt.slice(0,10)):''}</div><div class="row" style="margin-top:8px"><button type="button" class="btn" onclick="restoreShopItem('${x.id}')">Not bought — return to list</button></div></div>`}
 function mapsUrl(address){return 'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(address)}
-function renderBranches(){let el=document.getElementById('branchRegistry');if(!el)return;el.innerHTML=(db.branches||[]).map(b=>`<div class="branchBox"><b>${esc(b.retailer)} · ${esc(b.name)}</b><div class="tiny">${esc(b.address)}</div><a class="btn" style="display:inline-block;margin-top:7px;text-decoration:none" href="${mapsUrl(b.address)}" target="_blank" rel="noopener">Open location</a></div>`).join('')||'<div class="muted">No saved branches yet.</div>'}
+function renderBranches(){let el=document.getElementById('branchRegistry');if(!el)return;el.innerHTML=(db.branches||[]).map(b=>`<div class="branchBox"><b>${esc(b.retailer)} · ${esc(b.name)}</b><div class="tiny">${esc(b.address)}</div><div class="row" style="margin-top:7px"><button type="button" class="btn ${b.dayContext==='planned'?'primary':''}" onclick="setBranchDayContext('${b.id}','planned')">Already going</button><button type="button" class="btn ${b.dayContext==='nearby'?'primary':''}" onclick="setBranchDayContext('${b.id}','nearby')">Nearby today</button><button type="button" class="btn" onclick="setBranchDayContext('${b.id}','')">Clear</button><a class="btn" style="text-decoration:none" href="${mapsUrl(b.address)}" target="_blank" rel="noopener">Map</a></div></div>`).join('')||'<div class="muted">No saved branches yet.</div>'}
+function setBranchDayContext(id,value){let b=(db.branches||[]).find(x=>x.id===id);if(!b)return;b.dayContext=b.dayContext===value?'':value;b.dayContextDate=value?new Date().toISOString().slice(0,10):'';save();renderBranches();renderBasketComparison()}
+function retailerDayContext(retailer){let today=new Date().toISOString().slice(0,10),bs=(db.branches||[]).filter(b=>b.retailer===retailer&&b.dayContext&&b.dayContextDate===today);if(bs.some(b=>b.dayContext==='planned'))return{rank:0,label:'already on today’s route'};if(bs.some(b=>b.dayContext==='nearby'))return{rank:1,label:'nearby today'};return{rank:2,label:'extra stop'}}
+
 function addBranch(){let retailer=document.getElementById('branchRetailer').value.trim(),name=document.getElementById('branchName').value.trim(),address=document.getElementById('branchAddress').value.trim();if(!retailer||!name||!address)return;db.branches.push({id:'branch-'+Date.now(),retailer,name,address});save();document.getElementById('branchRetailer').value='';document.getElementById('branchName').value='';document.getElementById('branchAddress').value='';renderBranches()}
 const SHOP_RETAILERS=['Checkers','Pick n Pay','Woolworths','Food Lover’s Market'];
 function normText(v){return String(v||'').toLowerCase().trim().replace(/\s+/g,' ')}
@@ -257,11 +260,39 @@ function optimiseVerifiedMix(retailer,items,base){
  });
  return{total:Math.max(0,total),notes}
 }
+function retailerSubsetPlans(items){
+ let plans=[];
+ for(let mask=1;mask<(1<<SHOP_RETAILERS.length);mask++){
+  let retailers=SHOP_RETAILERS.filter((_,i)=>mask&(1<<i)),assignments=[],complete=true;
+  for(const x of items){let opts=retailers.map(r=>({r,c:basketChoice(x,r)})).filter(z=>z.c);if(!opts.length){complete=false;break}assignments.push({x,...opts.sort((a,b)=>a.c.total-b.c.total)[0]})}
+  if(!complete)continue;
+  let total=assignments.reduce((n,a)=>n+a.c.total,0),notes=[];
+  // Re-price a single-retailer plan with verified cross-item mix-and-match promotions.
+  if(retailers.length===1){let mix=optimiseVerifiedMix(retailers[0],items,{total});total=mix.total;notes=mix.notes}
+  let used=[...new Set(assignments.map(a=>a.r))],contexts=used.map(retailerDayContext),extraStops=contexts.filter(c=>c.rank===2).length,routeRank=contexts.reduce((n,c)=>n+c.rank,0);
+  plans.push({retailers:used,total,assignments,notes,extraStops,routeRank});
+ }
+ let unique=new Map();plans.forEach(p=>{let k=p.retailers.slice().sort().join('|');let old=unique.get(k);if(!old||p.total<old.total)unique.set(k,p)});
+ return [...unique.values()].sort((a,b)=>a.total-b.total||a.extraStops-b.extraStops)
+}
+function basketFrontier(plans){
+ return plans.filter(p=>!plans.some(q=>q!==p&&q.total<=p.total&&q.extraStops<=p.extraStops&&(q.total<p.total||q.extraStops<p.extraStops))).sort((a,b)=>a.extraStops-b.extraStops||a.total-b.total)
+}
+function planLabel(p){return p.retailers.length===1?p.retailers[0]:p.retailers.join(' + ')}
 function renderBasketComparison(){
  let el=document.getElementById('basketComparison');if(!el)return;let xs=(db.shopping||[]).filter(x=>!x.done);
- let rows=SHOP_RETAILERS.map(r=>{let choices=xs.map(x=>basketChoice(x,r)),found=choices.filter(Boolean),baseTotal=found.reduce((n,c)=>n+c.total,0),mix=optimiseVerifiedMix(r,xs,{total:baseTotal});return{r,total:mix.total,found:found.length,choices:found,notes:mix.notes}});
- let splitChoices=xs.map(x=>{let opts=SHOP_RETAILERS.map(r=>basketChoice(x,r)).filter(Boolean);return opts.sort((a,b)=>a.total-b.total)[0]||null}),splitTotal=splitChoices.filter(Boolean).reduce((n,c)=>n+c.total,0);
- el.innerHTML=rows.map(x=>`<div class="task"><strong>${esc(x.r)}</strong><div>${x.found===xs.length&&xs.length?'R'+x.total.toFixed(2):x.found+' of '+xs.length+' items priced'}</div>${x.choices.some(c=>c.kind==='value')?'<div class="tiny">Includes sensible quantity-step value deal(s).</div>':''}${x.notes.map(n=>'<div class="tiny">'+esc(n)+'</div>').join('')}</div>`).join('')+(xs.length?`<div class="task"><strong>Cheapest split basket</strong><div>${splitChoices.filter(Boolean).length===xs.length?'R'+splitTotal.toFixed(2):splitChoices.filter(Boolean).length+' of '+xs.length+' items priced'}</div><div class="tiny">Chooses the cheapest sensible item-level option across retailers. Verified cross-item promotions remain retailer-basket specific.</div></div>`:'')
+ if(!xs.length){el.innerHTML='<div class="muted">Add active shopping items to compare baskets.</div>';return}
+ let plans=retailerSubsetPlans(xs),front=basketFrontier(plans),cheapest=plans[0];
+ if(!cheapest){el.innerHTML='<div class="muted">Not enough verified prices yet to build a complete basket.</div>';return}
+ let routeBest=plans.slice().sort((a,b)=>a.extraStops-b.extraStops||a.total-b.total)[0];
+ let cards=[];
+ cards.push(`<div class="task"><strong>Cheapest known basket · ${esc(planLabel(cheapest))}</strong><div>R${cheapest.total.toFixed(2)} · ${cheapest.retailers.length} retailer${cheapest.retailers.length===1?'':'s'} · ${cheapest.extraStops} extra stop${cheapest.extraStops===1?'':'s'}</div><div class="tiny">Pure price view. No hidden travel penalty is added.</div></div>`);
+ if(routeBest&&routeBest!==cheapest){let premium=routeBest.total-cheapest.total;cards.push(`<div class="task"><strong>Lowest-friction option · ${esc(planLabel(routeBest))}</strong><div>R${routeBest.total.toFixed(2)} · ${routeBest.extraStops} extra stop${routeBest.extraStops===1?'':'s'}</div><div class="tiny">Costs R${premium.toFixed(2)} more than the cheapest known basket to avoid ${Math.max(0,cheapest.extraStops-routeBest.extraStops)} extra stop${Math.max(0,cheapest.extraStops-routeBest.extraStops)===1?'':'s'}. FamilyRoy leaves that trade-off to you.</div></div>`)}
+ let alternatives=front.filter(p=>p!==cheapest&&p!==routeBest).slice(0,5);
+ if(alternatives.length)cards.push('<div class="tiny" style="margin:10px 0 4px"><b>Useful trade-offs</b> · only non-dominated price/stop combinations are shown.</div>'+alternatives.map(p=>`<div class="task"><strong>${esc(planLabel(p))}</strong><div>R${p.total.toFixed(2)} · ${p.extraStops} extra stop${p.extraStops===1?'':'s'} · R${(p.total-cheapest.total).toFixed(2)} above cheapest</div></div>`).join(''));
+ let contexts=SHOP_RETAILERS.map(r=>({r,c:retailerDayContext(r)})).filter(z=>z.c.rank<2);
+ if(contexts.length)cards.push('<div class="tiny" style="margin-top:10px">Today context: '+contexts.map(z=>esc(z.r)+' · '+esc(z.c.label)).join(' · ')+'</div>');
+ el.innerHTML=cards.join('')
 }
 function seedShoppingConcepts(){let seeds=[
 {id:'concept-citrus',name:'naartjies / mandarins / clementines',category:'fresh-produce',diet:'vegan',packagingRule:'irrelevant',gtins:[],plus:[],aliases:['naartjies','mandarins','clementines'],preferences:['best value per kg']},
