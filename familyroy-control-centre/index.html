@@ -262,13 +262,26 @@ function optimiseVerifiedMix(retailer,items,base){
  });
  return{total:Math.max(0,total),notes}
 }
-function assignmentTotal(assignments,items){
- let total=assignments.reduce((n,a)=>n+a.c.total,0),notes=[];
- SHOP_RETAILERS.forEach(r=>{let mine=assignments.filter(a=>a.r===r);if(!mine.length)return;
-  // Verified cross-item promotion maths must only see items actually assigned to this retailer.
-  let mix=optimiseVerifiedMix(r,mine.map(a=>a.x),{total:mine.reduce((n,a)=>n+a.c.total,0)});
-  let raw=mine.reduce((n,a)=>n+a.c.total,0);total-=Math.max(0,raw-mix.total);notes.push(...mix.notes)
+function optimiseAssignedMix(retailer,assignments){
+ let total=assignments.reduce((n,a)=>n+a.c.total,0),notes=[],pools=new Map();
+ assignments.filter(a=>a.r===retailer).forEach(a=>{let p=a.c.o?.promotion,g=p?.promotionGroupId;if(!p?.mixAndMatch||!g)return;let key=g+'|'+(p.kind||'');if(!pools.has(key))pools.set(key,{p,entries:[]});pools.get(key).entries.push(a)});
+ pools.forEach(({p,entries})=>{
+  let n=Number(p.eligibleQuantity||0);if(n<2||entries.length<2)return;let units=[];
+  entries.forEach(a=>{let price=Number(a.c.o.loyaltyPrice||a.c.o.price);for(let i=0;i<a.c.qty;i++)if(Number.isFinite(price))units.push({price,a})});
+  if(units.length<n)return;let groups=Math.floor(units.length/n),saving=0;
+  for(let g=0;g<groups;g++){let group=units.slice(g*n,(g+1)*n),sum=group.reduce((z,u)=>z+u.price,0);
+   if(p.kind==='bundle-price')saving+=Math.max(0,sum-Number(p.bundlePrice||sum));
+   else if(p.kind==='mix-save')saving+=Number(p.discountAmount||0);
+   else if(p.kind==='mix-percent')saving+=sum*Number(p.discountPercent||0)/100;
+   else if(p.kind==='buy-n-pay-m'){let free=Math.max(0,n-Number(p.payQuantity||n));saving+=group.slice().sort((x,y)=>x.price-y.price).slice(0,free).reduce((z,u)=>z+u.price,0)}
+  }
+  if(saving>0){total-=saving;notes.push((p.label||'Verified mix-and-match')+' saves '+money(saving))}
  });
+ return{total:Math.max(0,total),notes}
+}
+function assignmentTotal(assignments){
+ let total=assignments.reduce((n,a)=>n+a.c.total,0),notes=[];
+ SHOP_RETAILERS.forEach(r=>{let mine=assignments.filter(a=>a.r===r);if(!mine.length)return;let priced=optimiseAssignedMix(r,mine),raw=mine.reduce((n,a)=>n+a.c.total,0);total-=Math.max(0,raw-priced.total);notes.push(...priced.notes)});
  return{total,notes}
 }
 function retailerSubsetPlans(items){
@@ -282,7 +295,7 @@ function retailerSubsetPlans(items){
   if(combinations<=20000){
    let walk=(i,acc)=>{if(i===options.length){candidates.push(acc.slice());return}options[i].forEach(o=>{acc.push(o);walk(i+1,acc);acc.pop()})};walk(0,[])
   }else candidates.push(options.map(o=>o.slice().sort((x,y)=>x.c.total-y.c.total)[0]));
-  candidates.forEach(assignments=>{let priced=assignmentTotal(assignments,items),used=[...new Set(assignments.map(a=>a.r))],contexts=used.map(retailerDayContext),extraStops=contexts.filter(c=>c.rank===2).length,routeRank=contexts.reduce((n,c)=>n+c.rank,0);plans.push({retailers:used,total:priced.total,assignments,notes:priced.notes,extraStops,routeRank,exact:combinations<=20000})})
+  candidates.forEach(assignments=>{let priced=assignmentTotal(assignments),used=[...new Set(assignments.map(a=>a.r))],contexts=used.map(retailerDayContext),extraStops=contexts.filter(c=>c.rank===2).length,routeRank=contexts.reduce((n,c)=>n+c.rank,0);plans.push({retailers:used,total:priced.total,assignments,notes:priced.notes,extraStops,routeRank,exact:combinations<=20000})})
  }
  let unique=new Map();plans.forEach(p=>{let k=p.retailers.slice().sort().join('|');let old=unique.get(k);if(!old||p.total<old.total)unique.set(k,p)});
  return [...unique.values()].sort((a,b)=>a.total-b.total||a.extraStops-b.extraStops)
@@ -298,10 +311,10 @@ function renderBasketComparison(){
  if(!cheapest){el.innerHTML='<div class="muted">Not enough verified prices yet to build a complete basket.</div>';return}
  let routeBest=plans.slice().sort((a,b)=>a.extraStops-b.extraStops||a.total-b.total)[0];
  let cards=[];
- cards.push(`<div class="task"><strong>Cheapest known basket · ${esc(planLabel(cheapest))}</strong><div>R${cheapest.total.toFixed(2)} · ${cheapest.retailers.length} retailer${cheapest.retailers.length===1?'':'s'} · ${cheapest.extraStops} extra stop${cheapest.extraStops===1?'':'s'}</div><div class="tiny">Pure price view. No hidden travel penalty is added.</div></div>`);
- if(routeBest&&routeBest!==cheapest){let premium=routeBest.total-cheapest.total;cards.push(`<div class="task"><strong>Lowest-friction option · ${esc(planLabel(routeBest))}</strong><div>R${routeBest.total.toFixed(2)} · ${routeBest.extraStops} extra stop${routeBest.extraStops===1?'':'s'}</div><div class="tiny">Costs R${premium.toFixed(2)} more than the cheapest known basket to avoid ${Math.max(0,cheapest.extraStops-routeBest.extraStops)} extra stop${Math.max(0,cheapest.extraStops-routeBest.extraStops)===1?'':'s'}. FamilyRoy leaves that trade-off to you.</div></div>`)}
+ cards.push(`<div class="task"><strong>Cheapest known basket · ${esc(planLabel(cheapest))}</strong><div>${money(cheapest.total)} · ${cheapest.retailers.length} retailer${cheapest.retailers.length===1?'':'s'} · ${cheapest.extraStops} extra stop${cheapest.extraStops===1?'':'s'}</div><div class="tiny">Pure price view. No hidden travel penalty is added.</div></div>`);
+ if(routeBest&&routeBest!==cheapest){let premium=routeBest.total-cheapest.total;cards.push(`<div class="task"><strong>Lowest-friction option · ${esc(planLabel(routeBest))}</strong><div>${money(routeBest.total)} · ${routeBest.extraStops} extra stop${routeBest.extraStops===1?'':'s'}</div><div class="tiny">Costs ${money(premium)} more than the cheapest known basket to avoid ${Math.max(0,cheapest.extraStops-routeBest.extraStops)} extra stop${Math.max(0,cheapest.extraStops-routeBest.extraStops)===1?'':'s'}. FamilyRoy leaves that trade-off to you.</div></div>`)}
  let alternatives=front.filter(p=>p!==cheapest&&p!==routeBest).slice(0,5);
- if(alternatives.length)cards.push('<div class="tiny" style="margin:10px 0 4px"><b>Useful trade-offs</b> · only non-dominated price/stop combinations are shown.</div>'+alternatives.map(p=>`<div class="task"><strong>${esc(planLabel(p))}</strong><div>R${p.total.toFixed(2)} · ${p.extraStops} extra stop${p.extraStops===1?'':'s'} · R${(p.total-cheapest.total).toFixed(2)} above cheapest</div></div>`).join(''));
+ if(alternatives.length)cards.push('<div class="tiny" style="margin:10px 0 4px"><b>Useful trade-offs</b> · only non-dominated price/stop combinations are shown.</div>'+alternatives.map(p=>`<div class="task"><strong>${esc(planLabel(p))}</strong><div>${money(p.total)} · ${p.extraStops} extra stop${p.extraStops===1?'':'s'} · ${money(p.total-cheapest.total)} above cheapest</div></div>`).join(''));
  let contexts=SHOP_RETAILERS.map(r=>({r,c:retailerDayContext(r)})).filter(z=>z.c.rank<2);
  if(contexts.length)cards.push('<div class="tiny" style="margin-top:10px">Today context: '+contexts.map(z=>esc(z.r)+' · '+esc(z.c.label)).join(' · ')+'</div>');
  el.innerHTML=cards.join('')
