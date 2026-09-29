@@ -47,6 +47,15 @@ function productLinks(html){
  for(const m of html.matchAll(/href=["']([^"']+\/p\/[0-9A-Za-z_-]+)[^"']*["']/gi)){let u=new URL(m[1],'https://www.pnp.co.za').href;if(!seen.has(u)){seen.add(u);out.push(u)}}
  return out
 }
+async function flmSpecialDocuments(){
+ try{
+  let r=await fetch('https://foodloversmarket.co.za/specials/',{headers:{'User-Agent':'FamilyRoyPriceMonitor/1.0'}});
+  if(!r.ok)return[];
+  let html=await r.text(),out=[];
+  for(const m of html.matchAll(/https?:[^"' ]+\.pdf/gi)){let u=m[0].replaceAll('\\/','/');if(!out.includes(u))out.push(u)}
+  return out
+ }catch{return[]}
+}
 async function checkersSearch(query){
  let r=await parseApi(CHECKERS_PARSE,'search_products',{query,page:0,limit:20});if(!r.ok)return r;
  return{ok:true,products:r.data?.products||r.data?.data?.products||[]}
