@@ -8,6 +8,8 @@ let queries=[];
 try{queries=JSON.parse(await fs.readFile(queriesPath,'utf8'))}catch{}
 
 const now=new Date().toISOString();
+const runId='price-refresh:'+now;
+const parserVersion=3;
 const clean=s=>String(s||'').replace(/<[^>]+>/g,' ').replace(/&nbsp;/g,' ').replace(/&amp;/g,'&').replace(/\s+/g,' ').trim();
 const money=s=>{let m=String(s||'').match(/R\s*([0-9]+(?:[.,][0-9]{1,2})?)/i);return m?Number(m[1].replace(',','.')):null};
 function isoDateText(v){
@@ -30,7 +32,7 @@ function parseProductPage(html,url,conceptId){
  if(!Number.isFinite(price))price=prices[prices.length-1];
  let smart=prices.length>1?prices[0]:null;
  if(!title||!sku||!Number.isFinite(price))return null;
- return{conceptId,retailer:'Pick n Pay',name:title,sku,barcode,url,price,smartShopperPrice:smart,promotion:promo,...packFromName(title),validFrom:valid?isoDateText(valid[1]):'',validTo:valid?isoDateText(valid[2]):'',checkedAt:now};
+ return{runId,parserVersion,confidence:'verified-first-party',conceptId,retailer:'Pick n Pay',name:title,sku,barcode,url,price,smartShopperPrice:smart,promotion:promo,...packFromName(title),validFrom:valid?isoDateText(valid[1]):'',validTo:valid?isoDateText(valid[2]):'',checkedAt:now};
 }
 function productLinks(html){
  let out=[],seen=new Set();
@@ -80,13 +82,13 @@ function parseWoolworths(html,url,conceptId){
  let code=clean((html.match(/Product code:\s*<[^>]*>?\s*([0-9]{5,14})/i)||[])[1]||(url.match(/A-(\d+)/)||[])[1]),offer=Array.isArray(ld.offers)?ld.offers[0]:ld.offers||{},price=Number(offer.price);
  if(!Number.isFinite(price)){let vals=[...html.matchAll(/R\s*([0-9]+(?:[.,][0-9]{2}))/gi)].map(m=>Number(m[1].replace(',','.')));price=vals[0]}
  if(!title||!code||!Number.isFinite(price))return null;
- return{conceptId,retailer:'Woolworths',name:title,sku:code,barcode:'',url,price,...packFromName(title),checkedAt:now,source:'Woolworths first-party product page'}
+ return{runId,parserVersion,confidence:'verified-first-party',conceptId,retailer:'Woolworths',name:title,sku:code,barcode:'',url,price,...packFromName(title),checkedAt:now,source:'Woolworths first-party product page'}
 }
 function parseFLM(html,url,conceptId){
  let ld=jsonLd(html).find(x=>x?.['@type']==='Product')||{},title=clean(ld.name||(html.match(/<h1[^>]*>([\s\S]*?)<\/h1>/i)||[])[1]),offer=Array.isArray(ld.offers)?ld.offers[0]:ld.offers||{},price=Number(offer.price);
  if(!Number.isFinite(price)){let vals=[...html.matchAll(/R\s*([0-9]+(?:[.,][0-9]{2}))/gi)].map(m=>Number(m[1].replace(',','.')));price=vals[0]}
  if(!title||!Number.isFinite(price))return null;
- return{conceptId,retailer:'Food Lover’s Market',name:title,sku:clean(ld.sku||''),barcode:clean(ld.gtin13||ld.gtin||''),url,price,...packFromName(title),promotion:clean((html.match(/(?:special|deal)[\s\S]{0,160}?(R\s*[0-9.,]+)/i)||[])[0]),checkedAt:now,source:'Food Lover’s Market first-party specials page'}
+ return{runId,parserVersion,confidence:'verified-first-party',conceptId,retailer:'Food Lover’s Market',name:title,sku:clean(ld.sku||''),barcode:clean(ld.gtin13||ld.gtin||''),url,price,...packFromName(title),promotion:clean((html.match(/(?:special|deal)[\s\S]{0,160}?(R\s*[0-9.,]+)/i)||[])[0]),checkedAt:now,source:'Food Lover’s Market first-party specials page'}
 }
 function parseCheckersSpecial(html,url,conceptId){
  let page=clean(html),valid=(page.match(/OFFERS VALID FROM\s+(.{0,60}?)\s+UNTIL\s+(.{0,60}?)(?:\.|PRICES APPLY)/i)||[]),region=(page.match(/PRICES APPLY TO\s+(.{0,300}?)(?:\.|SELECTED ITEMS|WHILE STOCKS)/i)||[])[1]||'';
@@ -97,7 +99,7 @@ function parseCheckersSpecial(html,url,conceptId){
  let snippet=page.slice(Math.max(0,idx-180),idx+360),prices=[...snippet.matchAll(/R\s*([0-9]{1,4}(?:[.,][0-9]{2}))/gi)].map(m=>Number(m[1].replace(',','.'))).filter(n=>n>0);
  let price=prices[0];if(!Number.isFinite(price))return null;
  let promo=clean((snippet.match(/(BUY\s+ANY\s+\d+\s+&?\s*SAVE\s+\d+%|ANY\s+\d+\s+FOR\s+R?\s*[0-9.,]+|BUY\s+\d+\s+FOR\s+R?\s*[0-9.,]+|SAVE\s+R?\s*[0-9.,]+|WITH CARD)/i)||[])[1]);
- return{conceptId,retailer:'Checkers',name:q.name||q.query,sku:'',barcode:'',url,price,promotion:promo,memberOnly:/WITH CARD/i.test(snippet),validFrom:isoDateText(valid[1]||''),validTo:isoDateText(valid[2]||''),region:clean(region),checkedAt:now,source:'Checkers official Western Cape specials'}
+ return{runId,parserVersion,confidence:'catalogue-text-match',conceptId,retailer:'Checkers',name:q.name||q.query,sku:'',barcode:'',url,price,promotion:promo,memberOnly:/WITH CARD/i.test(snippet),validFrom:isoDateText(valid[1]||''),validTo:isoDateText(valid[2]||''),region:clean(region),checkedAt:now,source:'Checkers official Western Cape specials'}
 }
 const checkersBookCache=new Map();
 async function fetchCheckersBook(url){
@@ -136,7 +138,7 @@ for(const old of (existing.observations||[]))merged.set(obsKey(old),old);
 for(const fresh of observations)merged.set(obsKey(fresh),fresh);
 let cutoff=Date.now()-90*86400000;
 observations=[...merged.values()].filter(o=>{let t=new Date(o.checkedAt||0).getTime();return Number.isFinite(t)&&t>=cutoff}).sort((a,b)=>String(b.checkedAt||'').localeCompare(String(a.checkedAt||'')));
-const feed={version:2,generatedAt:now,status:observations.length?(errors.length?'refreshed-partial':'refreshed'):queries.length?'refresh-failed-or-no-safe-data':'awaiting-verified-product-urls',retailers:retailerState,observations};
+const feed={version:3,runId,parserVersion,generatedAt:now,status:observations.length?(errors.length?'refreshed-partial':'refreshed'):queries.length?'refresh-failed-or-no-safe-data':'awaiting-verified-product-urls',retailers:retailerState,observations};
 await fs.mkdir(new URL('../data/',import.meta.url),{recursive:true});
 await fs.writeFile(feedPath,JSON.stringify(feed,null,2)+'\n');
 console.log(`FamilyRoy retailer refresh: ${observations.length} observations, ${errors.length} errors. First-party only; no inferred prices emitted.`);
