@@ -44,5 +44,11 @@
     "url": "https://specials.checkers.co.za/deals/wccheckersmonthend21sep11oct/",
     "purpose": "shopping-special-match",
     "region": "Western Cape"
+  },
+  {
+    "retailer": "Woolworths",
+    "conceptId": "concept-bananas-lunchbox",
+    "url": "https://www.woolworths.co.za/prod/_/A-20102951",
+    "purpose": "shopping-product"
   }
 ]
