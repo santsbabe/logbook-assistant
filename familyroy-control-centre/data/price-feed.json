@@ -1,8 +1,8 @@
 {
   "version": 3,
-  "runId": "price-refresh:2026-09-29T13:26:22.915Z",
+  "runId": "price-refresh:2026-09-29T13:27:05.784Z",
   "parserVersion": 3,
-  "generatedAt": "2026-09-29T13:26:22.915Z",
+  "generatedAt": "2026-09-29T13:27:05.784Z",
   "runSummary": {
     "queries": 10,
     "freshObservations": 4,
@@ -17,8 +17,8 @@
     },
     "Woolworths": {
       "observations": 4,
-      "oldest": "2026-09-29T13:26:22.915Z",
-      "newest": "2026-09-29T13:26:22.915Z"
+      "oldest": "2026-09-29T13:27:05.784Z",
+      "newest": "2026-09-29T13:27:05.784Z"
     },
     "Checkers": {
       "observations": 0,
@@ -34,7 +34,7 @@
   "status": "refreshed-partial",
   "retailers": {
     "picknpay": {
-      "checkedAt": "2026-09-29T13:26:22.915Z",
+      "checkedAt": "2026-09-29T13:27:05.784Z",
       "observations": 0,
       "errors": [
         {
@@ -70,31 +70,31 @@
     },
     "woolworths": {
       "status": "refreshed",
-      "checkedAt": "2026-09-29T13:26:22.915Z",
+      "checkedAt": "2026-09-29T13:27:05.784Z",
       "observations": 4,
       "errors": []
     },
     "foodloversmarket": {
       "status": "awaiting-verified-product-urls",
-      "checkedAt": "2026-09-29T13:26:22.915Z",
+      "checkedAt": "2026-09-29T13:27:05.784Z",
       "observations": 0,
       "errors": []
     },
     "checkers": {
       "status": "refresh-failed-or-no-safe-data",
-      "checkedAt": "2026-09-29T13:26:22.915Z",
+      "checkedAt": "2026-09-29T13:27:05.784Z",
       "observations": 0,
       "errors": [
         {
           "conceptId": "concept-citrus",
-          "url": "https://specials.checkers.co.za/deals/wccheckersmonthend21sep11oct/",
+          "url": "https://specials.checkers.co.za/deals/wccheckersmonthend21sep11oct/index.html",
           "purpose": "shopping-special-match",
           "nonBlocking": false,
           "error": "Could not safely parse Checkers first-party page"
         },
         {
           "conceptId": "concept-bananas-lunchbox",
-          "url": "https://specials.checkers.co.za/deals/wccheckersmonthend21sep11oct/",
+          "url": "https://specials.checkers.co.za/deals/wccheckersmonthend21sep11oct/index.html",
           "purpose": "shopping-special-match",
           "nonBlocking": false,
           "error": "Could not safely parse Checkers first-party page"
@@ -104,7 +104,7 @@
   },
   "observations": [
     {
-      "runId": "price-refresh:2026-09-29T13:26:22.915Z",
+      "runId": "price-refresh:2026-09-29T13:27:05.784Z",
       "parserVersion": 3,
       "confidence": "verified-first-party",
       "conceptId": "test-strawberries-250g",
@@ -116,12 +116,12 @@
       "price": 49.99,
       "netQuantity": 0.25,
       "unit": "kg",
-      "checkedAt": "2026-09-29T13:26:22.915Z",
+      "checkedAt": "2026-09-29T13:27:05.784Z",
       "source": "Woolworths first-party product page",
       "purpose": "acceptance-test"
     },
     {
-      "runId": "price-refresh:2026-09-29T13:26:22.915Z",
+      "runId": "price-refresh:2026-09-29T13:27:05.784Z",
       "parserVersion": 3,
       "confidence": "verified-first-party",
       "conceptId": "concept-bananas-lunchbox",
@@ -133,12 +133,12 @@
       "price": 28.99,
       "netQuantity": 0.8,
       "unit": "kg",
-      "checkedAt": "2026-09-29T13:26:22.915Z",
+      "checkedAt": "2026-09-29T13:27:05.784Z",
       "source": "Woolworths first-party product page",
       "purpose": "shopping-product"
     },
     {
-      "runId": "price-refresh:2026-09-29T13:26:22.915Z",
+      "runId": "price-refresh:2026-09-29T13:27:05.784Z",
       "parserVersion": 3,
       "confidence": "verified-first-party",
       "conceptId": "concept-citrus",
@@ -150,12 +150,12 @@
       "price": 38.99,
       "netQuantity": 1,
       "unit": "kg",
-      "checkedAt": "2026-09-29T13:26:22.915Z",
+      "checkedAt": "2026-09-29T13:27:05.784Z",
       "source": "Woolworths first-party product page",
       "purpose": "shopping-product"
     },
     {
-      "runId": "price-refresh:2026-09-29T13:26:22.915Z",
+      "runId": "price-refresh:2026-09-29T13:27:05.784Z",
       "parserVersion": 3,
       "confidence": "verified-first-party",
       "conceptId": "concept-citrus",
@@ -167,7 +167,7 @@
       "price": 57.99,
       "netQuantity": 1.8,
       "unit": "kg",
-      "checkedAt": "2026-09-29T13:26:22.915Z",
+      "checkedAt": "2026-09-29T13:27:05.784Z",
       "source": "Woolworths first-party product page",
       "purpose": "shopping-product"
     }
