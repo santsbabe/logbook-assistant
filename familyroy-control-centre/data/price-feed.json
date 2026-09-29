@@ -1,12 +1,117 @@
 {
-  "version": 1,
-  "generatedAt": null,
-  "status": "not-yet-refreshed",
+  "version": 2,
+  "generatedAt": "2026-09-29T04:22:02.867Z",
+  "status": "refreshed-partial",
   "retailers": {
     "picknpay": {
-      "status": "adapter-ready-fetch-not-configured",
-      "checkedAt": null
+      "checkedAt": "2026-09-29T04:22:02.867Z",
+      "observations": 0,
+      "errors": [
+        {
+          "conceptId": "test-sunlight-750ml",
+          "url": "https://www.pnp.co.za/p/000000000001007088_EA",
+          "error": "Could not safely parse product page"
+        },
+        {
+          "conceptId": "test-bonnisan-120ml",
+          "url": "https://www.pnp.co.za/himalaya-wellness-bonnisan-syrup-120ml/p/000000000000460598_EA",
+          "error": "Could not safely parse product page"
+        },
+        {
+          "conceptId": "concept-citrus",
+          "query": "soft citrus",
+          "error": "No verified PnP product links discovered"
+        },
+        {
+          "conceptId": "concept-bananas-lunchbox",
+          "query": "Kidz Bananas",
+          "error": "No verified PnP product links discovered"
+        }
+      ],
+      "status": "refresh-failed-or-no-safe-data"
+    },
+    "woolworths": {
+      "status": "refreshed",
+      "checkedAt": "2026-09-29T04:22:02.867Z",
+      "observations": 4,
+      "errors": []
+    },
+    "foodloversmarket": {
+      "status": "awaiting-verified-product-urls",
+      "checkedAt": "2026-09-29T04:22:02.867Z",
+      "observations": 0,
+      "errors": []
+    },
+    "checkers": {
+      "status": "refresh-failed-or-no-safe-data",
+      "checkedAt": "2026-09-29T04:22:02.867Z",
+      "observations": 0,
+      "errors": [
+        {
+          "conceptId": "concept-citrus",
+          "url": "https://specials.checkers.co.za/deals/wccheckersmonthend21sep11oct/",
+          "error": "Could not safely parse Checkers first-party page"
+        },
+        {
+          "conceptId": "concept-bananas-lunchbox",
+          "url": "https://specials.checkers.co.za/deals/wccheckersmonthend21sep11oct/",
+          "error": "Could not safely parse Checkers first-party page"
+        }
+      ]
     }
   },
-  "observations": []
+  "observations": [
+    {
+      "conceptId": "test-strawberries-250g",
+      "retailer": "Woolworths",
+      "name": "Local Strawberries 250 g",
+      "sku": "20017279",
+      "barcode": "",
+      "url": "https://www.woolworths.co.za/prod/_/A-20017279",
+      "price": 49.99,
+      "netQuantity": 0.25,
+      "unit": "kg",
+      "checkedAt": "2026-09-29T04:22:02.867Z",
+      "source": "Woolworths first-party product page"
+    },
+    {
+      "conceptId": "concept-bananas-lunchbox",
+      "retailer": "Woolworths",
+      "name": "Small Bananas Minimum 800 g",
+      "sku": "20102951",
+      "barcode": "",
+      "url": "https://www.woolworths.co.za/prod/_/A-20102951",
+      "price": 28.99,
+      "netQuantity": 0.8,
+      "unit": "kg",
+      "checkedAt": "2026-09-29T04:22:02.867Z",
+      "source": "Woolworths first-party product page"
+    },
+    {
+      "conceptId": "concept-citrus",
+      "retailer": "Woolworths",
+      "name": "Soft Citrus 1 kg",
+      "sku": "20099305",
+      "barcode": "",
+      "url": "https://www.woolworths.co.za/prod/_/A-20099305",
+      "price": 38.99,
+      "netQuantity": 1,
+      "unit": "kg",
+      "checkedAt": "2026-09-29T04:22:02.867Z",
+      "source": "Woolworths first-party product page"
+    },
+    {
+      "conceptId": "concept-citrus",
+      "retailer": "Woolworths",
+      "name": "Soft Citrus Tray 1.8 kg",
+      "sku": "20027537",
+      "barcode": "",
+      "url": "https://www.woolworths.co.za/prod/_/A-20027537",
+      "price": 57.99,
+      "netQuantity": 1.8,
+      "unit": "kg",
+      "checkedAt": "2026-09-29T04:22:02.867Z",
+      "source": "Woolworths first-party product page"
+    }
+  ]
 }
