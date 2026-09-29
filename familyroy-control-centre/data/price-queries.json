@@ -50,5 +50,11 @@
     "conceptId": "concept-bananas-lunchbox",
     "url": "https://www.woolworths.co.za/prod/_/A-20102951",
     "purpose": "shopping-product"
+  },
+  {
+    "retailer": "Woolworths",
+    "conceptId": "concept-citrus",
+    "url": "https://www.woolworths.co.za/prod/_/A-20099305",
+    "purpose": "shopping-product"
   }
 ]
