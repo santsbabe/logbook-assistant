@@ -53,7 +53,7 @@ async function flmSpecialDocuments(){
   if(!r.ok)return[];
   let html=await r.text(),out=[];
   for(const m of html.matchAll(/https?:[^"' ]+\.pdf/gi)){let u=m[0].replaceAll('\\/','/');if(!out.includes(u))out.push(u)}
-  return out
+  return out.filter(u=>/wc|western/i.test(u))
  }catch{return[]}
 }
 async function checkersSearch(query){
