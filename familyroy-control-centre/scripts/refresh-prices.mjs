@@ -99,9 +99,16 @@ function parseCheckersSpecial(html,url,conceptId){
  let promo=clean((snippet.match(/(BUY\s+ANY\s+\d+\s+&?\s*SAVE\s+\d+%|ANY\s+\d+\s+FOR\s+R?\s*[0-9.,]+|BUY\s+\d+\s+FOR\s+R?\s*[0-9.,]+|SAVE\s+R?\s*[0-9.,]+|WITH CARD)/i)||[])[1]);
  return{conceptId,retailer:'Checkers',name:q.name||q.query,sku:'',barcode:'',url,price,promotion:promo,memberOnly:/WITH CARD/i.test(snippet),validFrom:isoDateText(valid[1]||''),validTo:isoDateText(valid[2]||''),region:clean(region),checkedAt:now,source:'Checkers official Western Cape specials'}
 }
+const checkersBookCache=new Map();
+async function fetchCheckersBook(url){
+ if(checkersBookCache.has(url))return checkersBookCache.get(url);
+ let parts=[];for(let p=1;p<=25;p++){try{let u=url.replace(/\/$/,'')+'/'+p+'/',r=await fetchHtml(u,'Checkers');if(r.ok)parts.push(r.html)}catch{}}
+ let html=parts.join('\n');checkersBookCache.set(url,html);return html
+}
 async function fetchFirstParty(q){
  let got=await fetchHtml(q.url,q.retailer);if(!got.ok)return got;
- let row=q.retailer==='Woolworths'?parseWoolworths(got.html,q.url,q.conceptId):q.retailer==='Food Lover’s Market'?parseFLM(got.html,q.url,q.conceptId):q.retailer==='Checkers'?parseCheckersSpecial(got.html,q.url,q.conceptId):null;
+ let html=got.html;if(q.retailer==='Checkers'){let book=await fetchCheckersBook(q.url);if(book)html+='\n'+book}
+ let row=q.retailer==='Woolworths'?parseWoolworths(html,q.url,q.conceptId):q.retailer==='Food Lover’s Market'?parseFLM(html,q.url,q.conceptId):q.retailer==='Checkers'?parseCheckersSpecial(html,q.url,q.conceptId):null;
  return row?{ok:true,row}:{ok:false,error:'Could not safely parse '+q.retailer+' first-party page'}
 }
 let observations=[],errors=[];
