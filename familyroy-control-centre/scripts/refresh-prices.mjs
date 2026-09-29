@@ -58,6 +58,15 @@ function productLinks(html){
  for(const m of html.matchAll(/href=["']([^"']+\/p\/[0-9A-Za-z_-]+)[^"']*["']/gi)){let u=new URL(m[1],'https://www.pnp.co.za').href;if(!seen.has(u)){seen.add(u);out.push(u)}}
  return out
 }
+async function pnpStoreId(query){
+ let r=await parseApi(PNP_PARSE,'get_stores',{query});if(!r.ok)return r;
+ let stores=r.data?.stores||r.data?.data?.stores||[],best=stores[0];
+ return best?{ok:true,storeId:best.storeId||best.store_id,name:best.storeName||best.name,address:best.storeAddress||best.address}:{ok:false,error:'PnP store not found: '+query}
+}
+async function pnpStoreSearch(storeId,query){
+ let r=await parseApi(PNP_PARSE,'search_store_products',{store_id:storeId,query,page:0,page_size:20});if(!r.ok)return r;
+ return{ok:true,products:r.data?.products||r.data?.data?.products||[]}
+}
 async function discoverPnP(q){
  let term=encodeURIComponent(q.query||q.name||'');
  if(!term)return{urls:[],error:'Empty discovery query'};
