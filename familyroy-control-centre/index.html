@@ -231,7 +231,7 @@ function renderValueOpportunities(){
 function offerPromoView(o,x){let p=o.promotion;if(!offerIsUsableNow(o)||!p||p.kind==='none'||!window.FamilyRoyPnP)return null;if(p.mixAndMatch&&!p.promotionGroupId&&!(p.participatingSkus||[]).length)return{eligible:false,unverifiedPool:true,label:p.label,memberOnly:p.memberOnly,reason:'Mix-and-match pool not verified'};let calc=FamilyRoyPnP.promotionMath(Number(o.loyaltyPrice||o.price),p,requestedShopQty(x));return{...calc,label:p.label,memberOnly:p.memberOnly}}
 function observationConfidence(o){let c=o.confidence||'';if(c==='verified-first-party')return{rank:3,label:'Verified first-party'};if(c==='catalogue-text-match')return{rank:2,label:'Catalogue match'};return{rank:1,label:'First-party source'}}
 function priceTrend(o){
- let hist=(db.priceObservations||[]).filter(x=>x.listingId===o.listingId&&Number.isFinite(Number(x.loyaltyPrice||x.price))).sort((a,b)=>String(a.checkedAt||'').localeCompare(String(b.checkedAt||'')));
+ let hist=(db.priceObservations||[]).filter(x=>x.listingId===o.listingId&&Number.isFinite(Number(x.loyaltyPrice||x.price))&&new Date(x.checkedAt||0).getTime()>=Date.now()-90*86400000).sort((a,b)=>String(a.checkedAt||'').localeCompare(String(b.checkedAt||'')));
  if(hist.length<2)return null;let vals=hist.map(x=>Number(x.loyaltyPrice||x.price)),cur=vals[vals.length-1],prior=vals.slice(0,-1),low=Math.min(...prior),high=Math.max(...prior),avg=prior.reduce((a,b)=>a+b,0)/prior.length;
  return{cur,low,high,avg,delta:cur-avg}
 }
