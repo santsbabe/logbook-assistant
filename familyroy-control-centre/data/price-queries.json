@@ -9,7 +9,8 @@
       "liquorFallback": "Rosmead, Claremont",
       "categoryRule": "Use Rosmead for wine/liquor; Howard Centre for normal grocery shopping"
     },
-    "requireStoreSpecificPrice": true
+    "requireStoreSpecificPrice": true,
+    "storeScope": "Howard Centre default; Rosmead for liquor"
   },
   {
     "retailer": "Pick n Pay",
@@ -21,7 +22,8 @@
       "liquorFallback": "Rosmead, Claremont",
       "categoryRule": "Use Rosmead for wine/liquor; Howard Centre for normal grocery shopping"
     },
-    "requireStoreSpecificPrice": true
+    "requireStoreSpecificPrice": true,
+    "storeScope": "Howard Centre default; Rosmead for liquor"
   },
   {
     "retailer": "Pick n Pay",
@@ -33,7 +35,8 @@
       "liquorFallback": "Rosmead, Claremont",
       "categoryRule": "Use Rosmead for wine/liquor; Howard Centre for normal grocery shopping"
     },
-    "requireStoreSpecificPrice": true
+    "requireStoreSpecificPrice": true,
+    "storeScope": "Howard Centre default; Rosmead for liquor"
   },
   {
     "retailer": "Pick n Pay",
@@ -45,7 +48,8 @@
       "liquorFallback": "Rosmead, Claremont",
       "categoryRule": "Use Rosmead for wine/liquor; Howard Centre for normal grocery shopping"
     },
-    "requireStoreSpecificPrice": true
+    "requireStoreSpecificPrice": true,
+    "storeScope": "Howard Centre default; Rosmead for liquor"
   },
   {
     "retailer": "Woolworths",
