@@ -87,8 +87,8 @@ jobs:
           eval(detect+'\n'+parser);
           let raffle=parseNotice('Dear Red Roots Parents\nFriday 23rd October is the closing date for raffle money and forms to be handed in.\nThe raffle is completely voluntary.','End of term · communications@pnps.co.za','r1',new Date('2026-09-23T08:06:00'));
           if(raffle.length!==1||raffle[0].child!=='Alexander'||raffle[0].due!=='2026-10-23')throw new Error('Red Roots raffle parsing failed: '+JSON.stringify(raffle));
-          let sna=parseNotice('Please can I ask that he packs it in so not as to forget it.\nIt must be returned on Wednesday.','SNA Parent signature · kwakwadimaditsi@pnps.co.za','s1',new Date('2026-09-22T15:07:00'));
-          if(!sna.some(x=>x.child==='Harrison'&&x.due==='2026-09-23'&&x.morning))throw new Error('PNPS return parsing failed: '+JSON.stringify(sna));
+          let sna=parseNotice('Please can I ask that he packs it in so not as to forget it.\nIt must be returned on Wednesday.','SNA Parent signature · kwakwadimaditsi@pnps.co.za','s1',new Date('2026-10-05T15:07:00'));
+          if(!sna.some(x=>x.child==='Harrison'&&x.due==='2026-10-07'&&x.morning))throw new Error('PNPS return parsing failed: '+JSON.stringify(sna));
           let old=parseNotice('Please return the signed form on Friday 4 September.','School email · @pnps.co.za','o1',new Date('2026-09-01T08:00:00'));
           if(old.length)throw new Error('expired ordinary school action leaked into current queue');
           console.log('School notice parser smoke tests passed');
