@@ -85,7 +85,7 @@ body.driveMode .driveBack{display:block;margin:16px 0;text-align:center}
 <section id="settings" class="panel"><div class="card"><h2>Connected capabilities</h2><div class="muted">One registry for what FamilyRoy owns, links to, or receives in the background.</div><div id="capabilityList"></div></div><div class="card" id="googleConnection"><h2>Google connection</h2><p class="muted">Load the OAuth JSON you already downloaded for <b>Homework Quest Imports</b>. Only the client ID is stored in this browser.</p><input type="file" id="oauthFile" accept="application/json,.json" onchange="loadOAuth(this.files[0])"><div id="oauthStatus" class="status warn" style="margin-top:9px">No Google client ID saved yet.</div><p class="muted">For Google sign-in to work, add <b>https://santsbabe.github.io</b> to that OAuth client's Authorised JavaScript origins.</p></div><div class="card"><h2>Local data</h2><button type="button" class="btn" onclick="resetData()">Reset Control Centre data</button></div></section>
 </div>
 <script>
-const KEY='familyroy_cc_live_v1', CID='familyroy_google_client_id', ACTION_SCHEMA=2;let tokenClient=null,accessToken=null;
+const KEY='familyroy_cc_qa_v1', CID='familyroy_google_client_id', ACTION_SCHEMA=2;let tokenClient=null,accessToken=null;
 const CAPABILITIES=[
  {id:'school',name:'School readiness',kind:'native',status:'connected',panel:'school',note:'Gmail + notice extraction'},
  {id:'shopping',name:'Shopping Radar',kind:'native',status:'connected',panel:'shopping',note:'Branch-aware errands'},
