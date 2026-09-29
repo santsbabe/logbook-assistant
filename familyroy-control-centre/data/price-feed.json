@@ -1,8 +1,8 @@
 {
   "version": 3,
-  "runId": "price-refresh:2026-09-29T13:09:54.311Z",
+  "runId": "price-refresh:2026-09-29T13:11:25.733Z",
   "parserVersion": 3,
-  "generatedAt": "2026-09-29T13:09:54.311Z",
+  "generatedAt": "2026-09-29T13:11:25.733Z",
   "historySummary": {
     "Pick n Pay": {
       "observations": 0,
@@ -11,8 +11,8 @@
     },
     "Woolworths": {
       "observations": 4,
-      "oldest": "2026-09-29T13:09:54.311Z",
-      "newest": "2026-09-29T13:09:54.311Z"
+      "oldest": "2026-09-29T13:11:25.733Z",
+      "newest": "2026-09-29T13:11:25.733Z"
     },
     "Checkers": {
       "observations": 0,
@@ -28,27 +28,35 @@
   "status": "refreshed-partial",
   "retailers": {
     "picknpay": {
-      "checkedAt": "2026-09-29T13:09:54.311Z",
+      "checkedAt": "2026-09-29T13:11:25.733Z",
       "observations": 0,
       "errors": [
         {
           "conceptId": "test-sunlight-750ml",
           "url": "https://www.pnp.co.za/p/000000000001007088_EA",
+          "purpose": "acceptance-test",
+          "nonBlocking": true,
           "error": "Could not safely parse product page"
         },
         {
           "conceptId": "test-bonnisan-120ml",
           "url": "https://www.pnp.co.za/himalaya-wellness-bonnisan-syrup-120ml/p/000000000000460598_EA",
+          "purpose": "acceptance-test",
+          "nonBlocking": true,
           "error": "Could not safely parse product page"
         },
         {
           "conceptId": "concept-citrus",
           "query": "soft citrus",
+          "purpose": "discovery-acceptance",
+          "nonBlocking": true,
           "error": "No verified PnP product links discovered"
         },
         {
           "conceptId": "concept-bananas-lunchbox",
           "query": "Kidz Bananas",
+          "purpose": "discovery-acceptance",
+          "nonBlocking": true,
           "error": "No verified PnP product links discovered"
         }
       ],
@@ -56,29 +64,33 @@
     },
     "woolworths": {
       "status": "refreshed",
-      "checkedAt": "2026-09-29T13:09:54.311Z",
+      "checkedAt": "2026-09-29T13:11:25.733Z",
       "observations": 4,
       "errors": []
     },
     "foodloversmarket": {
       "status": "awaiting-verified-product-urls",
-      "checkedAt": "2026-09-29T13:09:54.311Z",
+      "checkedAt": "2026-09-29T13:11:25.733Z",
       "observations": 0,
       "errors": []
     },
     "checkers": {
       "status": "refresh-failed-or-no-safe-data",
-      "checkedAt": "2026-09-29T13:09:54.311Z",
+      "checkedAt": "2026-09-29T13:11:25.733Z",
       "observations": 0,
       "errors": [
         {
           "conceptId": "concept-citrus",
           "url": "https://specials.checkers.co.za/deals/wccheckersmonthend21sep11oct/",
+          "purpose": "shopping-special-match",
+          "nonBlocking": false,
           "error": "Could not safely parse Checkers first-party page"
         },
         {
           "conceptId": "concept-bananas-lunchbox",
           "url": "https://specials.checkers.co.za/deals/wccheckersmonthend21sep11oct/",
+          "purpose": "shopping-special-match",
+          "nonBlocking": false,
           "error": "Could not safely parse Checkers first-party page"
         }
       ]
@@ -86,7 +98,7 @@
   },
   "observations": [
     {
-      "runId": "price-refresh:2026-09-29T13:09:54.311Z",
+      "runId": "price-refresh:2026-09-29T13:11:25.733Z",
       "parserVersion": 3,
       "confidence": "verified-first-party",
       "conceptId": "test-strawberries-250g",
@@ -98,11 +110,11 @@
       "price": 49.99,
       "netQuantity": 0.25,
       "unit": "kg",
-      "checkedAt": "2026-09-29T13:09:54.311Z",
+      "checkedAt": "2026-09-29T13:11:25.733Z",
       "source": "Woolworths first-party product page"
     },
     {
-      "runId": "price-refresh:2026-09-29T13:09:54.311Z",
+      "runId": "price-refresh:2026-09-29T13:11:25.733Z",
       "parserVersion": 3,
       "confidence": "verified-first-party",
       "conceptId": "concept-bananas-lunchbox",
@@ -114,11 +126,11 @@
       "price": 28.99,
       "netQuantity": 0.8,
       "unit": "kg",
-      "checkedAt": "2026-09-29T13:09:54.311Z",
+      "checkedAt": "2026-09-29T13:11:25.733Z",
       "source": "Woolworths first-party product page"
     },
     {
-      "runId": "price-refresh:2026-09-29T13:09:54.311Z",
+      "runId": "price-refresh:2026-09-29T13:11:25.733Z",
       "parserVersion": 3,
       "confidence": "verified-first-party",
       "conceptId": "concept-citrus",
@@ -130,11 +142,11 @@
       "price": 38.99,
       "netQuantity": 1,
       "unit": "kg",
-      "checkedAt": "2026-09-29T13:09:54.311Z",
+      "checkedAt": "2026-09-29T13:11:25.733Z",
       "source": "Woolworths first-party product page"
     },
     {
-      "runId": "price-refresh:2026-09-29T13:09:54.311Z",
+      "runId": "price-refresh:2026-09-29T13:11:25.733Z",
       "parserVersion": 3,
       "confidence": "verified-first-party",
       "conceptId": "concept-citrus",
@@ -146,7 +158,7 @@
       "price": 57.99,
       "netQuantity": 1.8,
       "unit": "kg",
-      "checkedAt": "2026-09-29T13:09:54.311Z",
+      "checkedAt": "2026-09-29T13:11:25.733Z",
       "source": "Woolworths first-party product page"
     }
   ]
