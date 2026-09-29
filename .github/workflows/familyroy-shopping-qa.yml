@@ -38,6 +38,8 @@ jobs:
           if(!f.retailers || !f.retailers.picknpay || !f.retailers.woolworths || !f.retailers.checkers) throw new Error('retailer health missing');
           if(!Array.isArray(f.observations)) throw new Error('observations missing');
           if(f.observations.some(o=>!Number.isFinite(Number(o.price))||Number(o.price)<=0)) throw new Error('invalid emitted price');
+          if(f.observations.some(o=>!o.source||!o.confidence||!o.runId)) throw new Error('observation provenance missing');
+          if(f.observations.some(o=>(o.validFrom&&!/^\\d{4}-\\d{2}-\\d{2}$/.test(o.validFrom))||(o.validTo&&!/^\\d{4}-\\d{2}-\\d{2}$/.test(o.validTo)))) throw new Error('promotion validity is not ISO');
           const keys=f.observations.map(o=>[o.retailer,o.conceptId,o.url||o.sku||o.barcode,String(o.checkedAt||'').slice(0,10)].join('|'));
           if(new Set(keys).size!==keys.length) throw new Error('duplicate same-day observations');
           console.log(JSON.stringify({status:f.status,observations:f.observations.length,retailers:f.retailers},null,2));
