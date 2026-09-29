@@ -1,12 +1,12 @@
 {
   "version": 3,
-  "runId": "price-refresh:2026-09-29T14:18:39.474Z",
+  "runId": "price-refresh:2026-09-29T14:19:29.389Z",
   "parserVersion": 3,
-  "generatedAt": "2026-09-29T14:18:39.474Z",
+  "generatedAt": "2026-09-29T14:19:29.389Z",
   "runSummary": {
-    "queries": 11,
+    "queries": 10,
     "freshObservations": 4,
-    "blockingErrors": 3,
+    "blockingErrors": 2,
     "acceptanceErrors": 4
   },
   "historySummary": {
@@ -17,8 +17,8 @@
     },
     "Woolworths": {
       "observations": 4,
-      "oldest": "2026-09-29T14:18:39.474Z",
-      "newest": "2026-09-29T14:18:39.474Z"
+      "oldest": "2026-09-29T14:19:29.389Z",
+      "newest": "2026-09-29T14:19:29.389Z"
     },
     "Checkers": {
       "observations": 0,
@@ -34,7 +34,7 @@
   "status": "refreshed-partial",
   "retailers": {
     "picknpay": {
-      "checkedAt": "2026-09-29T14:18:39.474Z",
+      "checkedAt": "2026-09-29T14:19:29.389Z",
       "observations": 0,
       "errors": [
         {
@@ -70,26 +70,19 @@
     },
     "woolworths": {
       "status": "refreshed",
-      "checkedAt": "2026-09-29T14:18:39.474Z",
+      "checkedAt": "2026-09-29T14:19:29.389Z",
       "observations": 4,
       "errors": []
     },
     "foodloversmarket": {
-      "status": "refresh-failed-or-no-safe-data",
-      "checkedAt": "2026-09-29T14:18:39.474Z",
+      "status": "awaiting-verified-product-urls",
+      "checkedAt": "2026-09-29T14:19:29.389Z",
       "observations": 0,
-      "errors": [
-        {
-          "conceptId": "flm-western-cape-specials",
-          "purpose": "source-discovery",
-          "nonBlocking": false,
-          "error": "Discovery not yet verified for Food Lover’s Market"
-        }
-      ]
+      "errors": []
     },
     "checkers": {
       "status": "refresh-failed-or-no-safe-data",
-      "checkedAt": "2026-09-29T14:18:39.474Z",
+      "checkedAt": "2026-09-29T14:19:29.389Z",
       "observations": 0,
       "errors": [
         {
@@ -111,7 +104,7 @@
   },
   "observations": [
     {
-      "runId": "price-refresh:2026-09-29T14:18:39.474Z",
+      "runId": "price-refresh:2026-09-29T14:19:29.389Z",
       "parserVersion": 3,
       "confidence": "verified-first-party",
       "conceptId": "test-strawberries-250g",
@@ -123,12 +116,12 @@
       "price": 49.99,
       "netQuantity": 0.25,
       "unit": "kg",
-      "checkedAt": "2026-09-29T14:18:39.474Z",
+      "checkedAt": "2026-09-29T14:19:29.389Z",
       "source": "Woolworths first-party product page",
       "purpose": "acceptance-test"
     },
     {
-      "runId": "price-refresh:2026-09-29T14:18:39.474Z",
+      "runId": "price-refresh:2026-09-29T14:19:29.389Z",
       "parserVersion": 3,
       "confidence": "verified-first-party",
       "conceptId": "concept-bananas-lunchbox",
@@ -140,12 +133,12 @@
       "price": 28.99,
       "netQuantity": 0.8,
       "unit": "kg",
-      "checkedAt": "2026-09-29T14:18:39.474Z",
+      "checkedAt": "2026-09-29T14:19:29.389Z",
       "source": "Woolworths first-party product page",
       "purpose": "shopping-product"
     },
     {
-      "runId": "price-refresh:2026-09-29T14:18:39.474Z",
+      "runId": "price-refresh:2026-09-29T14:19:29.389Z",
       "parserVersion": 3,
       "confidence": "verified-first-party",
       "conceptId": "concept-citrus",
@@ -157,12 +150,12 @@
       "price": 38.99,
       "netQuantity": 1,
       "unit": "kg",
-      "checkedAt": "2026-09-29T14:18:39.474Z",
+      "checkedAt": "2026-09-29T14:19:29.389Z",
       "source": "Woolworths first-party product page",
       "purpose": "shopping-product"
     },
     {
-      "runId": "price-refresh:2026-09-29T14:18:39.474Z",
+      "runId": "price-refresh:2026-09-29T14:19:29.389Z",
       "parserVersion": 3,
       "confidence": "verified-first-party",
       "conceptId": "concept-citrus",
@@ -174,7 +167,7 @@
       "price": 57.99,
       "netQuantity": 1.8,
       "unit": "kg",
-      "checkedAt": "2026-09-29T14:18:39.474Z",
+      "checkedAt": "2026-09-29T14:19:29.389Z",
       "source": "Woolworths first-party product page",
       "purpose": "shopping-product"
     }
