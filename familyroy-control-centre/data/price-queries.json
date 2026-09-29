@@ -10,7 +10,9 @@
       "categoryRule": "Use Rosmead for wine/liquor; Howard Centre for normal grocery shopping"
     },
     "requireStoreSpecificPrice": true,
-    "storeScope": "Howard Centre default; Rosmead for liquor"
+    "storeScope": "Howard Centre default; Rosmead for liquor",
+    "nonBlocking": true,
+    "safeLimitation": "Howard Centre grocery pricing requires store-specific evidence; Rosmead is liquor fallback"
   },
   {
     "retailer": "Pick n Pay",
@@ -23,7 +25,9 @@
       "categoryRule": "Use Rosmead for wine/liquor; Howard Centre for normal grocery shopping"
     },
     "requireStoreSpecificPrice": true,
-    "storeScope": "Howard Centre default; Rosmead for liquor"
+    "storeScope": "Howard Centre default; Rosmead for liquor",
+    "nonBlocking": true,
+    "safeLimitation": "Howard Centre grocery pricing requires store-specific evidence; Rosmead is liquor fallback"
   },
   {
     "retailer": "Pick n Pay",
@@ -36,7 +40,9 @@
       "categoryRule": "Use Rosmead for wine/liquor; Howard Centre for normal grocery shopping"
     },
     "requireStoreSpecificPrice": true,
-    "storeScope": "Howard Centre default; Rosmead for liquor"
+    "storeScope": "Howard Centre default; Rosmead for liquor",
+    "nonBlocking": true,
+    "safeLimitation": "Howard Centre grocery pricing requires store-specific evidence; Rosmead is liquor fallback"
   },
   {
     "retailer": "Pick n Pay",
@@ -49,7 +55,9 @@
       "categoryRule": "Use Rosmead for wine/liquor; Howard Centre for normal grocery shopping"
     },
     "requireStoreSpecificPrice": true,
-    "storeScope": "Howard Centre default; Rosmead for liquor"
+    "storeScope": "Howard Centre default; Rosmead for liquor",
+    "nonBlocking": true,
+    "safeLimitation": "Howard Centre grocery pricing requires store-specific evidence; Rosmead is liquor fallback"
   },
   {
     "retailer": "Woolworths",
