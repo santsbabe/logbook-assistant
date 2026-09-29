@@ -1,6 +1,6 @@
 window.FamilyRoyGoogle=(function(){
-const CID='familyroy_google_client_id';let tokenClient=null,accessToken=null;
-function clientId(){return localStorage.getItem(CID)||''}
+const CID='familyroy_google_client_id',DEFAULT_CLIENT_ID='3411436553-jfmu0dls32bcgovgcicmh5pglrgiq063.apps.googleusercontent.com';let tokenClient=null,accessToken=null;
+function clientId(){return localStorage.getItem(CID)||DEFAULT_CLIENT_ID}
 function setClientId(id){if(id)localStorage.setItem(CID,id);else localStorage.removeItem(CID)}
 function token(){return accessToken}
 function init(callback){let id=clientId();if(!id||!window.google?.accounts?.oauth2)return false;tokenClient=google.accounts.oauth2.initTokenClient({client_id:id,scope:'https://www.googleapis.com/auth/gmail.readonly',callback:r=>{if(r.error){callback&&callback(r);return}accessToken=r.access_token;callback&&callback(r)}});return true}
