@@ -92,14 +92,13 @@ function parseFLM(html,url,conceptId){
 }
 function parseCheckersSpecial(html,url,conceptId){
  let page=clean(html),valid=(page.match(/OFFERS VALID FROM\s+(.{0,60}?)\s+UNTIL\s+(.{0,60}?)(?:\.|PRICES APPLY)/i)||[]),region=(page.match(/PRICES APPLY TO\s+(.{0,300}?)(?:\.|SELECTED ITEMS|WHILE STOCKS)/i)||[])[1]||'';
- let q=queries.find(x=>x.url===url&&x.conceptId===conceptId)||{},needle=clean(q.query||q.name||'');
- if(!needle)return null;
- let terms=needle.toLowerCase().split(/\s+/).filter(x=>x.length>2),idx=page.toLowerCase().indexOf(needle.toLowerCase());
- if(idx<0&&terms.length)idx=page.toLowerCase().indexOf(terms[0]);if(idx<0)return null;
+ let q=queries.find(x=>x.url===url&&x.conceptId===conceptId)||{},needle=clean(q.query||q.name||''),candidates=[needle,...(q.queryTerms||[])].map(clean).filter(Boolean);
+ if(!candidates.length)return null;
+ let low=page.toLowerCase(),matched=candidates.find(t=>low.includes(t.toLowerCase()))||'',idx=matched?low.indexOf(matched.toLowerCase()):-1;if(idx<0)return null;
  let snippet=page.slice(Math.max(0,idx-180),idx+360),prices=[...snippet.matchAll(/R\s*([0-9]{1,4}(?:[.,][0-9]{2}))/gi)].map(m=>Number(m[1].replace(',','.'))).filter(n=>n>0);
  let price=prices[0];if(!Number.isFinite(price))return null;
  let promo=clean((snippet.match(/(BUY\s+ANY\s+\d+\s+&?\s*SAVE\s+\d+%|ANY\s+\d+\s+FOR\s+R?\s*[0-9.,]+|BUY\s+\d+\s+FOR\s+R?\s*[0-9.,]+|SAVE\s+R?\s*[0-9.,]+|WITH CARD)/i)||[])[1]);
- return{runId,parserVersion,confidence:'catalogue-text-match',conceptId,retailer:'Checkers',name:q.name||q.query,sku:'',barcode:'',url,price,promotion:promo,memberOnly:/WITH CARD/i.test(snippet),validFrom:isoDateText(valid[1]||''),validTo:isoDateText(valid[2]||''),region:clean(region),checkedAt:now,source:'Checkers official Western Cape specials'}
+ return{runId,parserVersion,confidence:'catalogue-text-match',conceptId,retailer:'Checkers',name:q.name||matched||q.query,sku:'',barcode:'',url,price,promotion:promo,memberOnly:/WITH CARD/i.test(snippet),validFrom:isoDateText(valid[1]||''),validTo:isoDateText(valid[2]||''),region:clean(region),checkedAt:now,source:'Checkers official Western Cape specials'}
 }
 const checkersBookCache=new Map();
 async function fetchCheckersBook(url){
