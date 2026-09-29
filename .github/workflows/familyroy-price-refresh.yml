@@ -1,6 +1,12 @@
 name: FamilyRoy daily price refresh
 
 on:
+  push:
+    branches: [familyroy-operational-core-v1]
+    paths:
+      - 'familyroy-control-centre/scripts/refresh-prices.mjs'
+      - 'familyroy-control-centre/data/price-queries.json'
+      - '.github/workflows/familyroy-price-refresh.yml'
   schedule:
     - cron: "15 3 * * *"
   workflow_dispatch:
