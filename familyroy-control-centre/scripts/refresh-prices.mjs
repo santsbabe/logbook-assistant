@@ -147,7 +147,15 @@ async function fetchFirstParty(q){
  return row?{ok:true,row}:{ok:false,error:'Could not safely parse '+q.retailer+' first-party page'}
 }
 let observations=[],errors=[];
+let pnpStores={};
+if(PARSE_KEY){
+ for(const label of ['Howard Centre, Pinelands','Rosmead, Claremont']){let r=await pnpStoreId(label);if(r.ok)pnpStores[label]=r}
+}
 for(const q of queries.filter(x=>x.retailer==='Pick n Pay')){
+ if(PARSE_KEY&&q.query&&q.storePreference){
+  let label=q.category==='liquor'?q.storePreference.liquorFallback:q.storePreference.default,store=pnpStores[label];
+  if(store){let sr=await pnpStoreSearch(store.storeId,q.query);if(sr.ok){let rows=sr.products.map(p=>pnpApiRow(p,q,store)).filter(Boolean);observations.push(...rows.slice(0,5));if(rows.length)continue}}
+ }
  try{
   let targets=q.url?[q.url]:[];
   if(!targets.length&&q.query){let d=await discoverPnP(q);targets=d.urls;if(!targets.length)errors.push({conceptId:q.conceptId,query:q.query,purpose:q.purpose||'shopping',nonBlocking:/acceptance/.test(q.purpose||''),error:d.error})}
