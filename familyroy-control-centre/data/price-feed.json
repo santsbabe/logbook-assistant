@@ -1,10 +1,12 @@
 {
-  "version": 2,
-  "generatedAt": "2026-09-29T04:22:02.867Z",
+  "version": 3,
+  "runId": "price-refresh:2026-09-29T13:08:11.862Z",
+  "parserVersion": 3,
+  "generatedAt": "2026-09-29T13:08:11.862Z",
   "status": "refreshed-partial",
   "retailers": {
     "picknpay": {
-      "checkedAt": "2026-09-29T04:22:02.867Z",
+      "checkedAt": "2026-09-29T13:08:11.862Z",
       "observations": 0,
       "errors": [
         {
@@ -32,19 +34,19 @@
     },
     "woolworths": {
       "status": "refreshed",
-      "checkedAt": "2026-09-29T04:22:02.867Z",
+      "checkedAt": "2026-09-29T13:08:11.862Z",
       "observations": 4,
       "errors": []
     },
     "foodloversmarket": {
       "status": "awaiting-verified-product-urls",
-      "checkedAt": "2026-09-29T04:22:02.867Z",
+      "checkedAt": "2026-09-29T13:08:11.862Z",
       "observations": 0,
       "errors": []
     },
     "checkers": {
       "status": "refresh-failed-or-no-safe-data",
-      "checkedAt": "2026-09-29T04:22:02.867Z",
+      "checkedAt": "2026-09-29T13:08:11.862Z",
       "observations": 0,
       "errors": [
         {
@@ -62,6 +64,9 @@
   },
   "observations": [
     {
+      "runId": "price-refresh:2026-09-29T13:08:11.862Z",
+      "parserVersion": 3,
+      "confidence": "verified-first-party",
       "conceptId": "test-strawberries-250g",
       "retailer": "Woolworths",
       "name": "Local Strawberries 250 g",
@@ -71,10 +76,13 @@
       "price": 49.99,
       "netQuantity": 0.25,
       "unit": "kg",
-      "checkedAt": "2026-09-29T04:22:02.867Z",
+      "checkedAt": "2026-09-29T13:08:11.862Z",
       "source": "Woolworths first-party product page"
     },
     {
+      "runId": "price-refresh:2026-09-29T13:08:11.862Z",
+      "parserVersion": 3,
+      "confidence": "verified-first-party",
       "conceptId": "concept-bananas-lunchbox",
       "retailer": "Woolworths",
       "name": "Small Bananas Minimum 800 g",
@@ -84,10 +92,13 @@
       "price": 28.99,
       "netQuantity": 0.8,
       "unit": "kg",
-      "checkedAt": "2026-09-29T04:22:02.867Z",
+      "checkedAt": "2026-09-29T13:08:11.862Z",
       "source": "Woolworths first-party product page"
     },
     {
+      "runId": "price-refresh:2026-09-29T13:08:11.862Z",
+      "parserVersion": 3,
+      "confidence": "verified-first-party",
       "conceptId": "concept-citrus",
       "retailer": "Woolworths",
       "name": "Soft Citrus 1 kg",
@@ -97,10 +108,13 @@
       "price": 38.99,
       "netQuantity": 1,
       "unit": "kg",
-      "checkedAt": "2026-09-29T04:22:02.867Z",
+      "checkedAt": "2026-09-29T13:08:11.862Z",
       "source": "Woolworths first-party product page"
     },
     {
+      "runId": "price-refresh:2026-09-29T13:08:11.862Z",
+      "parserVersion": 3,
+      "confidence": "verified-first-party",
       "conceptId": "concept-citrus",
       "retailer": "Woolworths",
       "name": "Soft Citrus Tray 1.8 kg",
@@ -110,7 +124,7 @@
       "price": 57.99,
       "netQuantity": 1.8,
       "unit": "kg",
-      "checkedAt": "2026-09-29T04:22:02.867Z",
+      "checkedAt": "2026-09-29T13:08:11.862Z",
       "source": "Woolworths first-party product page"
     }
   ]
