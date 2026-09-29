@@ -353,7 +353,7 @@ async function syncPublishedPriceFeed(){
  }catch(e){db.priceFeedHealth={...(db.priceFeedHealth||{}),status:'sync-error',error:String(e?.message||e),syncedAt:new Date().toISOString()};save();status.message='Sync error'}
  return status
 }
-function priceFeedHealthHtml(){let h=db.priceFeedHealth||{},when=h.generatedAt?new Date(h.generatedAt).toLocaleString():'Never',names={picknpay:'PnP',checkers:'Checkers',woolworths:'Woolworths',foodloversmarket:'FLM'},bits=[];Object.entries(names).forEach(([k,n])=>{let r=h.retailers?.[k];if(r)bits.push(n+' '+(r.observations||0)+(r.errors?.length?' ⚠'+r.errors.length:''))});return '<div class="tiny">Price feed: '+esc(h.status||'not synced')+' · generated '+esc(when)+(bits.length?' · '+bits.map(esc).join(' · '):'')+'</div>'}
+function priceFeedHealthHtml(){let h=db.priceFeedHealth||{},when=h.generatedAt?new Date(h.generatedAt).toLocaleString():'Never',names={picknpay:'PnP',checkers:'Checkers',woolworths:'Woolworths',foodloversmarket:'FLM'},bits=[];Object.entries(names).forEach(([k,n])=>{let r=h.retailers?.[k];if(r)bits.push(n+' '+(r.status||'unknown')+' · '+(r.observations||0)+' fresh'+(r.errors?.length?' · ⚠ '+r.errors.length:' '))});return '<div class="tiny">Price feed: '+esc(h.status||'not synced')+' · generated '+esc(when)+(bits.length?' · '+bits.map(esc).join(' · '):'')+'</div>'}
 function buildPriceRefreshJobs(){
  let now=new Date().toISOString(),active=(db.shopping||[]).filter(x=>!x.done),jobs=[];
  active.forEach(x=>{let c=conceptFor(x);(x.retailers||SHOP_RETAILERS).forEach(retailer=>jobs.push({id:'pricejob:'+retailerSlug(retailer)+':'+c.id,retailer,conceptId:c.id,query:c.name||x.title,status:'queued',createdAt:now,requestedQuantity:requestedShopQty(x)}))});
