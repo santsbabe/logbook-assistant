@@ -235,7 +235,7 @@ function priceTrend(o){
  if(hist.length<2)return null;let vals=hist.map(x=>Number(x.loyaltyPrice||x.price)),cur=vals[vals.length-1],prior=vals.slice(0,-1),low=Math.min(...prior),high=Math.max(...prior),avg=prior.reduce((a,b)=>a+b,0)/prior.length;
  return{cur,low,high,avg,delta:cur-avg}
 }
-function priceTrendHtml(o){let t=priceTrend(o);if(!t)return'';let label=t.cur<t.avg?'below recent average':t.cur>t.avg?'above recent average':'at recent average';return '<div class="tiny">Price history · '+esc(label)+' · recent range '+money(t.low)+'–'+money(t.high)+'</div>'}
+function priceTrendHtml(o){let t=priceTrend(o);if(!t)return'';let pct=t.avg?((t.cur-t.avg)/t.avg)*100:0,label=pct<=-10?'strong price vs recent history':pct<0?'below recent average':pct>=10?'high vs recent history':pct>0?'above recent average':'at recent average';return '<div class="tiny">Price history · '+esc(label)+' · recent range '+money(t.low)+'–'+money(t.high)+(Math.abs(pct)>=1?' · '+Math.abs(pct).toFixed(0)+'% '+(pct<0?'below':'above')+' average':'')+'</div>'}
 function loyaltyName(retailer){return retailer==='Checkers'?'Xtra Savings':retailer==='Pick n Pay'?'Smart Shopper':retailer==='Woolworths'?'MyDifference':'Loyalty price'}
 function setProductFeedback(listingId,rating){
  db.productFeedback=db.productFeedback||[];db.productFeedback=db.productFeedback.filter(f=>f.listingId!==listingId);db.productFeedback.push({listingId,rating,at:new Date().toISOString()});save();renderShopping()
