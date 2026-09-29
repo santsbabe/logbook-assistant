@@ -321,8 +321,8 @@ function basketFrontier(plans){
 function planLabel(p){return p.retailers.length===1?p.retailers[0]:p.retailers.join(' + ')}
 function planReasonHtml(p){let bits=[];if(p.exact===false)bits.push('basket assignment is an approximation because the search space was unusually large');if(p.assignments.some(a=>a.c.kind==='value'))bits.push('uses worthwhile quantity-step deal(s)');if(p.assignments.some(a=>a.c.kind==='promo-requested'))bits.push('applies promotion to quantity already requested');if(p.notes?.length)bits.push(...p.notes);let route=p.retailers.map(r=>{let c=retailerDayContext(r);return c.rank<2?r+' is '+c.label:''}).filter(Boolean);bits.push(...route);return bits.length?'<div class="tiny">'+bits.map(esc).join(' · ')+'</div>':''}
 function basketCoverageHtml(items){
- let rows=SHOP_RETAILERS.map(r=>{let n=items.filter(x=>basketChoice(x,r)).length;return r+' '+n+'/'+items.length});
- return '<div class="tiny">Fresh basket coverage · '+rows.map(esc).join(' · ')+'</div>'
+ let coverage=SHOP_RETAILERS.map(r=>({r,n:items.filter(x=>basketChoice(x,r)).length})),full=coverage.filter(x=>x.n===items.length).length,rows=coverage.map(x=>x.r+' '+x.n+'/'+items.length);
+ return '<div class="tiny">Fresh basket coverage · '+rows.map(esc).join(' · ')+' · '+full+'/'+SHOP_RETAILERS.length+' retailers fully comparable</div>'
 }
 function renderBasketComparison(){
  let el=document.getElementById('basketComparison');if(!el)return;let xs=(db.shopping||[]).filter(x=>!x.done);
