@@ -127,10 +127,10 @@ for(const retailer of ['Woolworths','Food Lover’s Market','Checkers']){
   if(!q.url){re.push({conceptId:q.conceptId,purpose:q.purpose||'shopping',nonBlocking:/acceptance/.test(q.purpose||''),error:'Discovery not yet verified for '+retailer});continue}
   try{let r=await fetchFirstParty(q);if(r.ok){observations.push(r.row);ro.push(r.row)}else re.push({conceptId:q.conceptId,url:q.url,purpose:q.purpose||'shopping',nonBlocking:/acceptance/.test(q.purpose||''),error:r.error})}catch(e){re.push({conceptId:q.conceptId,url:q.url,purpose:q.purpose||'shopping',nonBlocking:/acceptance/.test(q.purpose||''),error:String(e?.message||e)})}
  }
- retailerState[retailer==='Woolworths'?'woolworths':retailer==='Checkers'?'checkers':'foodloversmarket']={status:ro.length?(re.length?'refreshed-partial':'refreshed'):queries.some(x=>x.retailer===retailer)?'refresh-failed-or-no-safe-data':'awaiting-verified-product-urls',checkedAt:now,observations:ro.length,errors:re};
+ retailerState[retailer==='Woolworths'?'woolworths':retailer==='Checkers'?'checkers':'foodloversmarket']={status:ro.length?(re.some(e=>!e.nonBlocking)?'refreshed-partial':'refreshed'):queries.some(x=>x.retailer===retailer)?'refresh-failed-or-no-safe-data':'awaiting-verified-product-urls',checkedAt:now,observations:ro.length,errors:re};
  errors.push(...re)
 }
-retailerState.picknpay.status=retailerState.picknpay.observations?(retailerState.picknpay.errors.length?'refreshed-partial':'refreshed'):queries.some(x=>x.retailer==='Pick n Pay')?'refresh-failed-or-no-safe-data':'awaiting-verified-product-urls';
+retailerState.picknpay.status=retailerState.picknpay.observations?(retailerState.picknpay.errors.some(e=>!e.nonBlocking)?'refreshed-partial':'refreshed'):queries.some(x=>x.retailer==='Pick n Pay')?'refresh-failed-or-no-safe-data':'awaiting-verified-product-urls';
 const validObservation=o=>o&&o.retailer&&o.conceptId&&Number.isFinite(Number(o.price))&&Number(o.price)>0&&o.checkedAt&&o.source;
 observations=observations.filter(validObservation);
 const obsKey=o=>[o.retailer||'',o.conceptId||'',o.url||'',o.sku||'',o.barcode||'',String(o.checkedAt||'').slice(0,10)].join('|');
@@ -140,7 +140,7 @@ for(const fresh of observations)merged.set(obsKey(fresh),fresh);
 let cutoff=Date.now()-90*86400000;
 observations=[...merged.values()].filter(o=>{let t=new Date(o.checkedAt||0).getTime();return Number.isFinite(t)&&t>=cutoff}).sort((a,b)=>String(b.checkedAt||'').localeCompare(String(a.checkedAt||'')));
 const historySummary=Object.fromEntries(['Pick n Pay','Woolworths','Checkers','Food Lover’s Market'].map(r=>[r,{observations:observations.filter(o=>o.retailer===r).length,oldest:observations.filter(o=>o.retailer===r).map(o=>o.checkedAt).sort()[0]||null,newest:observations.filter(o=>o.retailer===r).map(o=>o.checkedAt).sort().at(-1)||null}]));
-const feed={version:3,runId,parserVersion,generatedAt:now,historySummary,status:observations.length?(errors.length?'refreshed-partial':'refreshed'):queries.length?'refresh-failed-or-no-safe-data':'awaiting-verified-product-urls',retailers:retailerState,observations};
+const feed={version:3,runId,parserVersion,generatedAt:now,historySummary,status:observations.length?(errors.some(e=>!e.nonBlocking)?'refreshed-partial':'refreshed'):queries.length?'refresh-failed-or-no-safe-data':'awaiting-verified-product-urls',retailers:retailerState,observations};
 await fs.mkdir(new URL('../data/',import.meta.url),{recursive:true});
 await fs.writeFile(feedPath,JSON.stringify(feed,null,2)+'\n');
 console.log(`FamilyRoy retailer refresh: ${observations.length} observations, ${errors.length} errors. First-party only; no inferred prices emitted.`);
