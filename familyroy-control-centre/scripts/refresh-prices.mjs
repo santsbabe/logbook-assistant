@@ -172,6 +172,7 @@ for(const q of queries.filter(x=>x.retailer==='Pick n Pay')){
 let retailerState={picknpay:{checkedAt:now,observations:observations.length,errors:[...errors]}};
 for(const retailer of ['Woolworths','Food Lover’s Market','Checkers']){
  let ro=[],re=[];
+ if(retailer==='Food Lover’s Market'){let docs=await flmSpecialDocuments();if(docs.length)re.push({conceptId:'flm-specials-discovery',purpose:'source-discovery',nonBlocking:true,error:'Official specials documents discovered: '+docs.length+'; parser not yet promoted to price feed'})}
  for(const q of queries.filter(x=>x.retailer===retailer)){
   if(retailer==='Checkers'&&PARSE_KEY&&q.query){let sr=await checkersSearch(q.query);if(sr.ok){let rows=sr.products.map(p=>checkersApiRow(p,q)).filter(Boolean);if(rows.length){for(const row of rows.slice(0,5)){observations.push(row);ro.push(row)}continue}}}
   if(!q.url){re.push({conceptId:q.conceptId,purpose:q.purpose||'shopping',nonBlocking:/acceptance/.test(q.purpose||''),error:'Discovery not yet verified for '+retailer});continue}
