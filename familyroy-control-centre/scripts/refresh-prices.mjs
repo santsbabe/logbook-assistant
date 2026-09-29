@@ -132,6 +132,8 @@ for(const retailer of ['Woolworths','Food Lover’s Market','Checkers']){
  errors.push(...re)
 }
 retailerState.picknpay.status=retailerState.picknpay.observations?(retailerState.picknpay.errors.length?'refreshed-partial':'refreshed'):queries.some(x=>x.retailer==='Pick n Pay')?'refresh-failed-or-no-safe-data':'awaiting-verified-product-urls';
+const validObservation=o=>o&&o.retailer&&o.conceptId&&Number.isFinite(Number(o.price))&&Number(o.price)>0&&o.checkedAt&&o.source;
+observations=observations.filter(validObservation);
 const obsKey=o=>[o.retailer||'',o.conceptId||'',o.url||'',o.sku||'',o.barcode||'',String(o.checkedAt||'').slice(0,10)].join('|');
 let merged=new Map();
 for(const old of (existing.observations||[]))merged.set(obsKey(old),old);
