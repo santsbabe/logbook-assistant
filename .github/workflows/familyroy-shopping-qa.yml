@@ -44,6 +44,22 @@ jobs:
           if(new Set(keys).size!==keys.length) throw new Error('duplicate same-day observations');
           console.log(JSON.stringify({status:f.status,observations:f.observations.length,retailers:f.retailers},null,2));
           NODE
+      - name: Basket safety contract
+        run: |
+          node - <<'NODE'
+          const s=require('fs').readFileSync('familyroy-control-centre/index.html','utf8');
+          const must=[
+            "o.retailer===retailer&&offerIsUsableNow(o)",
+            "if(p.mixAndMatch)return null",
+            "promotionGroupId",
+            "basket assignment is an approximation",
+            "routeRank-b.routeRank",
+            "Don’t buy again",
+            "Fresh basket coverage"
+          ];
+          for(const x of must)if(!s.includes(x))throw new Error('basket safety contract missing: '+x);
+          console.log('Basket safety contract passed');
+          NODE
       - name: Promotion contract smoke test
         run: |
           node - <<'NODE'
