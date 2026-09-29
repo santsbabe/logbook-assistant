@@ -106,6 +106,10 @@
     "query": "Western Cape specials",
     "region": "Western Cape",
     "sourcePage": "https://foodloversmarket.co.za/specials/",
-    "safeToPrice": false
+    "safeToPrice": false,
+    "allowedRegions": [
+      "Western Cape"
+    ],
+    "requireValidityWindow": true
   }
 ]
