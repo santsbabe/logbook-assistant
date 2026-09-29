@@ -63,6 +63,11 @@ async function pnpStoreId(query){
  let stores=r.data?.stores||r.data?.data?.stores||[],best=stores[0];
  return best?{ok:true,storeId:best.storeId||best.store_id,name:best.storeName||best.name,address:best.storeAddress||best.address}:{ok:false,error:'PnP store not found: '+query}
 }
+function pnpApiRow(p,q,store){
+ let price=Number(p?.price?.value??p?.price??p?.priceValue);if(!Number.isFinite(price)||price<=0)return null;
+ let name=clean(p.name||p.productName),pack=packFromName(name),code=p.code||p.productCode||'';
+ return{runId,parserVersion,confidence:'third-party-retailer-transport',transport:'parse.bot',conceptId:q.conceptId,retailer:'Pick n Pay',name,sku:String(code),barcode:'',price,loyaltyPrice:null,currency:'ZAR',checkedAt:now,source:'pnp.co.za via Parse',url:code?'https://www.pnp.co.za/p/'+code:'',region:'Store-specific',storeId:store.storeId,storeName:store.name,storeAddress:store.address,purpose:q.purpose||'shopping',...pack}
+}
 async function pnpStoreSearch(storeId,query){
  let r=await parseApi(PNP_PARSE,'search_store_products',{store_id:storeId,query,page:0,page_size:20});if(!r.ok)return r;
  return{ok:true,products:r.data?.products||r.data?.data?.products||[]}
