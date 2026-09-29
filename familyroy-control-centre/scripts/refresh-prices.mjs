@@ -43,6 +43,7 @@ async function discoverPnP(q){
  let term=encodeURIComponent(q.query||q.name||'');
  if(!term)return{urls:[],error:'Empty discovery query'};
  let urls=[
+  'https://www.pnp.co.za/c/pnpbase?query='+term,
   'https://www.pnp.co.za/search/?text='+term,
   'https://www.pnp.co.za/search?text='+term
  ];
