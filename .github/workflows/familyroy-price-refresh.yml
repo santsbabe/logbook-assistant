@@ -34,5 +34,11 @@ jobs:
           git config user.email "actions@users.noreply.github.com"
           git add familyroy-control-centre/data/price-feed.json
           git diff --cached --quiet || git commit -m "Refresh FamilyRoy price feed"
-          git pull --rebase origin familyroy-operational-core-v1
-          git push origin HEAD:familyroy-operational-core-v1
+          for attempt in 1 2 3 4 5; do
+            git pull --rebase origin familyroy-operational-core-v1
+            if git push origin HEAD:familyroy-operational-core-v1; then exit 0; fi
+            echo "Concurrent branch update; retrying push ($attempt/5)"
+            sleep $((attempt * 2))
+          done
+          echo "Could not publish feed after 5 concurrency retries" >&2
+          exit 1
