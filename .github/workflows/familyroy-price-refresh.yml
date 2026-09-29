@@ -26,14 +26,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "24"
-      - name: Install retailer browser fallback
-        working-directory: familyroy-control-centre
-        run: |
-          npm install --no-audit --no-fund
-          npx playwright install chromium --with-deps
       - name: Refresh retailer price feed
         env:
-          FAMILYROY_BROWSER: '1'
           PARSE_API_KEY: ${{ secrets.PARSE_API_KEY }}
         run: node familyroy-control-centre/scripts/refresh-prices.mjs
       - name: Commit changed feed
