@@ -135,7 +135,7 @@ const validObservation=o=>o&&o.retailer&&o.conceptId&&Number.isFinite(Number(o.p
 observations=observations.filter(validObservation);
 const obsKey=o=>[o.retailer||'',o.conceptId||'',o.url||'',o.sku||'',o.barcode||'',String(o.checkedAt||'').slice(0,10)].join('|');
 let merged=new Map();
-for(const old of (existing.observations||[]))merged.set(obsKey(old),old);
+for(const old of (existing.observations||[])){let legacy={confidence:'verified-first-party',runId:existing.runId||'legacy-feed',parserVersion:existing.parserVersion||2,...old};merged.set(obsKey(legacy),legacy)}
 for(const fresh of observations)merged.set(obsKey(fresh),fresh);
 let cutoff=Date.now()-90*86400000;
 observations=[...merged.values()].filter(o=>{let t=new Date(o.checkedAt||0).getTime();return Number.isFinite(t)&&t>=cutoff}).sort((a,b)=>String(b.checkedAt||'').localeCompare(String(a.checkedAt||'')));
