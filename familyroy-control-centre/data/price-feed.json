@@ -1,8 +1,8 @@
 {
   "version": 3,
-  "runId": "price-refresh:2026-09-29T13:11:25.733Z",
+  "runId": "price-refresh:2026-09-29T13:12:24.520Z",
   "parserVersion": 3,
-  "generatedAt": "2026-09-29T13:11:25.733Z",
+  "generatedAt": "2026-09-29T13:12:24.520Z",
   "historySummary": {
     "Pick n Pay": {
       "observations": 0,
@@ -11,8 +11,8 @@
     },
     "Woolworths": {
       "observations": 4,
-      "oldest": "2026-09-29T13:11:25.733Z",
-      "newest": "2026-09-29T13:11:25.733Z"
+      "oldest": "2026-09-29T13:12:24.520Z",
+      "newest": "2026-09-29T13:12:24.520Z"
     },
     "Checkers": {
       "observations": 0,
@@ -28,7 +28,7 @@
   "status": "refreshed-partial",
   "retailers": {
     "picknpay": {
-      "checkedAt": "2026-09-29T13:11:25.733Z",
+      "checkedAt": "2026-09-29T13:12:24.520Z",
       "observations": 0,
       "errors": [
         {
@@ -64,19 +64,19 @@
     },
     "woolworths": {
       "status": "refreshed",
-      "checkedAt": "2026-09-29T13:11:25.733Z",
+      "checkedAt": "2026-09-29T13:12:24.520Z",
       "observations": 4,
       "errors": []
     },
     "foodloversmarket": {
       "status": "awaiting-verified-product-urls",
-      "checkedAt": "2026-09-29T13:11:25.733Z",
+      "checkedAt": "2026-09-29T13:12:24.520Z",
       "observations": 0,
       "errors": []
     },
     "checkers": {
       "status": "refresh-failed-or-no-safe-data",
-      "checkedAt": "2026-09-29T13:11:25.733Z",
+      "checkedAt": "2026-09-29T13:12:24.520Z",
       "observations": 0,
       "errors": [
         {
@@ -98,7 +98,7 @@
   },
   "observations": [
     {
-      "runId": "price-refresh:2026-09-29T13:11:25.733Z",
+      "runId": "price-refresh:2026-09-29T13:12:24.520Z",
       "parserVersion": 3,
       "confidence": "verified-first-party",
       "conceptId": "test-strawberries-250g",
@@ -110,11 +110,12 @@
       "price": 49.99,
       "netQuantity": 0.25,
       "unit": "kg",
-      "checkedAt": "2026-09-29T13:11:25.733Z",
-      "source": "Woolworths first-party product page"
+      "checkedAt": "2026-09-29T13:12:24.520Z",
+      "source": "Woolworths first-party product page",
+      "purpose": "acceptance-test"
     },
     {
-      "runId": "price-refresh:2026-09-29T13:11:25.733Z",
+      "runId": "price-refresh:2026-09-29T13:12:24.520Z",
       "parserVersion": 3,
       "confidence": "verified-first-party",
       "conceptId": "concept-bananas-lunchbox",
@@ -126,11 +127,12 @@
       "price": 28.99,
       "netQuantity": 0.8,
       "unit": "kg",
-      "checkedAt": "2026-09-29T13:11:25.733Z",
-      "source": "Woolworths first-party product page"
+      "checkedAt": "2026-09-29T13:12:24.520Z",
+      "source": "Woolworths first-party product page",
+      "purpose": "shopping-product"
     },
     {
-      "runId": "price-refresh:2026-09-29T13:11:25.733Z",
+      "runId": "price-refresh:2026-09-29T13:12:24.520Z",
       "parserVersion": 3,
       "confidence": "verified-first-party",
       "conceptId": "concept-citrus",
@@ -142,11 +144,12 @@
       "price": 38.99,
       "netQuantity": 1,
       "unit": "kg",
-      "checkedAt": "2026-09-29T13:11:25.733Z",
-      "source": "Woolworths first-party product page"
+      "checkedAt": "2026-09-29T13:12:24.520Z",
+      "source": "Woolworths first-party product page",
+      "purpose": "shopping-product"
     },
     {
-      "runId": "price-refresh:2026-09-29T13:11:25.733Z",
+      "runId": "price-refresh:2026-09-29T13:12:24.520Z",
       "parserVersion": 3,
       "confidence": "verified-first-party",
       "conceptId": "concept-citrus",
@@ -158,8 +161,9 @@
       "price": 57.99,
       "netQuantity": 1.8,
       "unit": "kg",
-      "checkedAt": "2026-09-29T13:11:25.733Z",
-      "source": "Woolworths first-party product page"
+      "checkedAt": "2026-09-29T13:12:24.520Z",
+      "source": "Woolworths first-party product page",
+      "purpose": "shopping-product"
     }
   ]
 }
