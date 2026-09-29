@@ -196,4 +196,4 @@ const runSummary={queries:queries.length,freshObservations:observations.filter(o
 const feed={version:3,runId,parserVersion,generatedAt:now,runSummary,historySummary,status:observations.length?(errors.some(e=>!e.nonBlocking)?'refreshed-partial':'refreshed'):queries.length?'refresh-failed-or-no-safe-data':'awaiting-verified-product-urls',retailers:retailerState,observations};
 await fs.mkdir(new URL('../data/',import.meta.url),{recursive:true});
 await fs.writeFile(feedPath,JSON.stringify(feed,null,2)+'\n');
-console.log(`FamilyRoy retailer refresh: ${observations.length} observations, ${errors.length} errors. First-party only; no inferred prices emitted.`);
+console.log(`FamilyRoy retailer refresh: ${observations.length} observations, ${errors.length} errors. Provenance-labelled; no inferred prices emitted.`);
