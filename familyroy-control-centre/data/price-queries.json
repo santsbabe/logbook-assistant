@@ -56,5 +56,11 @@
     "conceptId": "concept-citrus",
     "url": "https://www.woolworths.co.za/prod/_/A-20099305",
     "purpose": "shopping-product"
+  },
+  {
+    "retailer": "Woolworths",
+    "conceptId": "concept-citrus",
+    "url": "https://www.woolworths.co.za/prod/_/A-20027537",
+    "purpose": "shopping-product"
   }
 ]
