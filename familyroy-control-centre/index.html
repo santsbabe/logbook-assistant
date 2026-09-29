@@ -322,7 +322,7 @@ function renderBasketComparison(){
  let el=document.getElementById('basketComparison');if(!el)return;let xs=(db.shopping||[]).filter(x=>!x.done);
  if(!xs.length){el.innerHTML='<div class="muted">Add active shopping items to compare baskets.</div>';return}
  let plans=retailerSubsetPlans(xs),front=basketFrontier(plans),cheapest=plans[0];
- if(!cheapest){el.innerHTML='<div class="muted">Not enough verified prices yet to build a complete basket.</div>';return}
+ if(!cheapest){let stale=xs.reduce((n,x)=>n+eligibleOffers(x).filter(o=>!offerIsUsableNow(o)).length,0);el.innerHTML='<div class="muted">Not enough fresh verified prices yet to build a complete basket.'+(stale?' '+stale+' older price observation'+(stale===1?' is':'s are')+' still visible above as last-known, but excluded from the basket.':'')+'</div>';return}
  let routeBest=plans.slice().sort((a,b)=>a.extraStops-b.extraStops||a.routeRank-b.routeRank||a.total-b.total)[0];
  let cards=[];
  cards.push(`<div class="task"><strong>Cheapest known basket · ${esc(planLabel(cheapest))}</strong><div>${money(cheapest.total)} · ${cheapest.retailers.length} retailer${cheapest.retailers.length===1?'':'s'} · ${cheapest.extraStops} extra stop${cheapest.extraStops===1?'':'s'}</div><div class="tiny">Pure price view. No hidden travel penalty is added.</div>${planReasonHtml(cheapest)}</div>`);
