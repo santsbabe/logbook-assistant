@@ -104,7 +104,7 @@ function parseCheckersSpecial(html,url,conceptId){
 const checkersBookCache=new Map();
 async function fetchCheckersBook(url){
  if(checkersBookCache.has(url))return checkersBookCache.get(url);
- let parts=[];for(let p=1;p<=25;p++){try{let u=url.replace(/\/$/,'')+'/'+p+'/',r=await fetchHtml(u,'Checkers');if(r.ok)parts.push(r.html)}catch{}}
+ let base=url.replace(/index\.html$/,'').replace(/\/$/,'');let parts=[];for(let p=1;p<=25;p++){try{let u=base+'/'+p+'/',r=await fetchHtml(u,'Checkers');if(r.ok)parts.push(r.html)}catch{}}
  let html=parts.join('\n');checkersBookCache.set(url,html);return html
 }
 async function fetchFirstParty(q){
