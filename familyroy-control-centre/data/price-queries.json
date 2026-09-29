@@ -8,7 +8,8 @@
       "default": "Howard Centre, Pinelands",
       "liquorFallback": "Rosmead, Claremont",
       "categoryRule": "Use Rosmead for wine/liquor; Howard Centre for normal grocery shopping"
-    }
+    },
+    "requireStoreSpecificPrice": true
   },
   {
     "retailer": "Pick n Pay",
@@ -19,7 +20,8 @@
       "default": "Howard Centre, Pinelands",
       "liquorFallback": "Rosmead, Claremont",
       "categoryRule": "Use Rosmead for wine/liquor; Howard Centre for normal grocery shopping"
-    }
+    },
+    "requireStoreSpecificPrice": true
   },
   {
     "retailer": "Pick n Pay",
@@ -30,7 +32,8 @@
       "default": "Howard Centre, Pinelands",
       "liquorFallback": "Rosmead, Claremont",
       "categoryRule": "Use Rosmead for wine/liquor; Howard Centre for normal grocery shopping"
-    }
+    },
+    "requireStoreSpecificPrice": true
   },
   {
     "retailer": "Pick n Pay",
@@ -41,7 +44,8 @@
       "default": "Howard Centre, Pinelands",
       "liquorFallback": "Rosmead, Claremont",
       "categoryRule": "Use Rosmead for wine/liquor; Howard Centre for normal grocery shopping"
-    }
+    },
+    "requireStoreSpecificPrice": true
   },
   {
     "retailer": "Woolworths",
