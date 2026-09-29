@@ -166,7 +166,7 @@ for(const q of queries.filter(x=>x.retailer==='Pick n Pay')){
  }
  try{
   let targets=q.url?[q.url]:[];
-  if(!targets.length&&q.query){let d=await discoverPnP(q);targets=d.urls;if(!targets.length)errors.push({conceptId:q.conceptId,query:q.query,purpose:q.purpose||'shopping',nonBlocking:/acceptance/.test(q.purpose||''),error:d.error})}
+  if(!targets.length&&q.query){let d=await discoverPnP(q);targets=d.urls;if(!targets.length)errors.push({conceptId:q.conceptId,query:q.query,purpose:q.purpose||'shopping',nonBlocking:q.nonBlocking===true||/acceptance/.test(q.purpose||''),error:d.error})}
   for(const url of targets){let r=await fetchProduct({...q,url});if(r.ok){r.row.purpose=q.purpose||'shopping';observations.push(r.row)}else errors.push({conceptId:q.conceptId,url,purpose:q.purpose||'shopping',nonBlocking:/acceptance/.test(q.purpose||''),error:r.error})}
  }catch(e){errors.push({conceptId:q.conceptId,url:q.url,query:q.query,purpose:q.purpose||'shopping',nonBlocking:/acceptance/.test(q.purpose||''),error:String(e?.message||e)})}
 }
