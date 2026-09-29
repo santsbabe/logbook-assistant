@@ -72,7 +72,9 @@
       "mandarins",
       "clementine",
       "clementines"
-    ]
+    ],
+    "safeLimitation": "Current Western Cape catalogue monitored; no price emitted unless product text and nearby price parse safely",
+    "nonBlocking": true
   },
   {
     "retailer": "Checkers",
@@ -87,7 +89,9 @@
       "mini banana",
       "kidz banana",
       "lunchbox banana"
-    ]
+    ],
+    "safeLimitation": "Current Western Cape catalogue monitored; no price emitted unless product text and nearby price parse safely",
+    "nonBlocking": true
   },
   {
     "retailer": "Woolworths",
