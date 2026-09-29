@@ -10,17 +10,6 @@ try{queries=JSON.parse(await fs.readFile(queriesPath,'utf8'))}catch{}
 const now=new Date().toISOString();
 const runId='price-refresh:'+now;
 const parserVersion=3;
-let browserPromise=null;
-async function renderedHtml(url){
- if(process.env.FAMILYROY_BROWSER!=='1')return'';
- try{
-  if(!browserPromise)browserPromise=import('playwright').then(async m=>m.chromium.launch({headless:true}));
-  let browser=await browserPromise,page=await browser.newPage({locale:'en-ZA'});
-  await page.goto(url,{waitUntil:'domcontentloaded',timeout:45000});
-  await page.waitForTimeout(3500);
-  let html=await page.content();await page.close();return html
- }catch{return''}
-}
 const PARSE_KEY=process.env.PARSE_API_KEY||'';
 const PNP_PARSE='https://api.parse.bot/scraper/b87810bc-903f-41b8-b38d-c5c911cab324';
 const CHECKERS_PARSE='https://api.parse.bot/scraper/a7a3a4ba-dfb7-4476-9712-8753b2fb3140';
