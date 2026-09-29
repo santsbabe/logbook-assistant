@@ -16,16 +16,17 @@ function packFromName(name){
  return{netQuantity:q,unit:u}
 }
 function parseProductPage(html,url,conceptId){
- const title=clean((html.match(/<h1[^>]*>([\s\S]*?)<\/h1>/i)||[])[1]||(html.match(/<title[^>]*>([\s\S]*?)<\/title>/i)||[])[1]).replace(/\s*\|\s*PnP.*$/i,'');
- const sku=clean((html.match(/SKU[\s\S]{0,250}?([0-9]{12,18}_[A-Z]{2})/i)||[])[1]);
- const barcode=clean((html.match(/Barcode[\s\S]{0,200}?(\d{8,14})/i)||[])[1]);
- const promo=(clean((html.match(/(Buy\s+\d+\s*,?\s*Pay\s+(?:For\s+)?\d+|(?:ANY\s+)?\d+\s+For\s+R\s*[0-9.,]+|Buy\s+\d+\s+Save\s+(?:R\s*)?[0-9.,]+%?)/i)||[])[1]));
+ const ld=jsonLd(html).find(x=>x?.['@type']==='Product')||{},offer=Array.isArray(ld.offers)?ld.offers[0]:ld.offers||{};
+ const title=clean(ld.name||(html.match(/<h1[^>]*>([\s\S]*?)<\/h1>/i)||[])[1]||(html.match(/<title[^>]*>([\s\S]*?)<\/title>/i)||[])[1]).replace(/\s*\|\s*PnP.*$/i,'');
+ const sku=clean(ld.sku||(html.match(/SKU[\s\S]{0,250}?([0-9]{12,18}_[A-Z]{2})/i)||[])[1]||(url.match(/\/p\/([^/?#]+)/)||[])[1]);
+ const barcode=clean(ld.gtin13||ld.gtin||(html.match(/Barcode[\s\S]{0,200}?(\d{8,14})/i)||[])[1]);
+ const promo=clean((html.match(/(Buy\s+\d+\s*,?\s*Pay\s+(?:For\s+)?\d+|(?:ANY\s+)?\d+\s+For\s+R\s*[0-9.,]+|Buy\s+\d+\s+Save\s+(?:R\s*)?[0-9.,]+%?)/i)||[])[1]);
  const valid=html.match(/Valid from\s+([^<]+?)\s+until\s+([^<]+)/i);
- const prices=[...html.matchAll(/R\s*([0-9]+(?:[.,][0-9]{2}))/gi)].map(m=>Number(m[1].replace(',','.')));
- if(!title||(!sku&&!barcode)||!prices.length)return null;
- let regular=prices[prices.length-1],smart=null;
- if(prices.length>1)smart=prices[0];
- return{conceptId,retailer:'Pick n Pay',name:title,sku,barcode,url,price:regular,smartShopperPrice:smart,promotion:promo,validFrom:valid?clean(valid[1]):'',validTo:valid?clean(valid[2]):'',checkedAt:now};
+ let price=Number(offer.price),prices=[...html.matchAll(/R\s*([0-9]+(?:[.,][0-9]{2}))/gi)].map(m=>Number(m[1].replace(',','.')));
+ if(!Number.isFinite(price))price=prices[prices.length-1];
+ let smart=prices.length>1?prices[0]:null;
+ if(!title||!sku||!Number.isFinite(price))return null;
+ return{conceptId,retailer:'Pick n Pay',name:title,sku,barcode,url,price,smartShopperPrice:smart,promotion:promo,...packFromName(title),validFrom:valid?clean(valid[1]):'',validTo:valid?clean(valid[2]):'',checkedAt:now};
 }
 function productLinks(html){
  let out=[],seen=new Set();
