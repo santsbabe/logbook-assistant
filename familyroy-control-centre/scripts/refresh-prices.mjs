@@ -10,6 +10,11 @@ try{queries=JSON.parse(await fs.readFile(queriesPath,'utf8'))}catch{}
 const now=new Date().toISOString();
 const clean=s=>String(s||'').replace(/<[^>]+>/g,' ').replace(/&nbsp;/g,' ').replace(/&amp;/g,'&').replace(/\s+/g,' ').trim();
 const money=s=>{let m=String(s||'').match(/R\s*([0-9]+(?:[.,][0-9]{1,2})?)/i);return m?Number(m[1].replace(',','.')):null};
+function packFromName(name){
+ let s=clean(name),m=s.match(/(\d+(?:[.,]\d+)?)\s*(kg|g|l|ml)\b/i);if(!m)return{};
+ let q=Number(m[1].replace(',','.')),u=m[2].toLowerCase();if(u==='g'){q/=1000;u='kg'}if(u==='ml'){q/=1000;u='l'}
+ return{netQuantity:q,unit:u}
+}
 function parseProductPage(html,url,conceptId){
  const title=clean((html.match(/<h1[^>]*>([\s\S]*?)<\/h1>/i)||[])[1]||(html.match(/<title[^>]*>([\s\S]*?)<\/title>/i)||[])[1]).replace(/\s*\|\s*PnP.*$/i,'');
  const sku=clean((html.match(/SKU[\s\S]{0,250}?([0-9]{12,18}_[A-Z]{2})/i)||[])[1]);
@@ -70,13 +75,13 @@ function parseWoolworths(html,url,conceptId){
  let code=clean((html.match(/Product code:\s*<[^>]*>?\s*([0-9]{5,14})/i)||[])[1]||(url.match(/A-(\d+)/)||[])[1]),offer=Array.isArray(ld.offers)?ld.offers[0]:ld.offers||{},price=Number(offer.price);
  if(!Number.isFinite(price)){let vals=[...html.matchAll(/R\s*([0-9]+(?:[.,][0-9]{2}))/gi)].map(m=>Number(m[1].replace(',','.')));price=vals[0]}
  if(!title||!code||!Number.isFinite(price))return null;
- return{conceptId,retailer:'Woolworths',name:title,sku:code,barcode:'',url,price,checkedAt:now,source:'Woolworths first-party product page'}
+ return{conceptId,retailer:'Woolworths',name:title,sku:code,barcode:'',url,price,...packFromName(title),checkedAt:now,source:'Woolworths first-party product page'}
 }
 function parseFLM(html,url,conceptId){
  let ld=jsonLd(html).find(x=>x?.['@type']==='Product')||{},title=clean(ld.name||(html.match(/<h1[^>]*>([\s\S]*?)<\/h1>/i)||[])[1]),offer=Array.isArray(ld.offers)?ld.offers[0]:ld.offers||{},price=Number(offer.price);
  if(!Number.isFinite(price)){let vals=[...html.matchAll(/R\s*([0-9]+(?:[.,][0-9]{2}))/gi)].map(m=>Number(m[1].replace(',','.')));price=vals[0]}
  if(!title||!Number.isFinite(price))return null;
- return{conceptId,retailer:'Food Lover’s Market',name:title,sku:clean(ld.sku||''),barcode:clean(ld.gtin13||ld.gtin||''),url,price,promotion:clean((html.match(/(?:special|deal)[\s\S]{0,160}?(R\s*[0-9.,]+)/i)||[])[0]),checkedAt:now,source:'Food Lover’s Market first-party specials page'}
+ return{conceptId,retailer:'Food Lover’s Market',name:title,sku:clean(ld.sku||''),barcode:clean(ld.gtin13||ld.gtin||''),url,price,...packFromName(title),promotion:clean((html.match(/(?:special|deal)[\s\S]{0,160}?(R\s*[0-9.,]+)/i)||[])[0]),checkedAt:now,source:'Food Lover’s Market first-party specials page'}
 }
 function parseCheckersSpecial(html,url,conceptId){
  let page=clean(html),valid=(page.match(/OFFERS VALID FROM\s+(.{0,60}?)\s+UNTIL\s+(.{0,60}?)(?:\.|PRICES APPLY)/i)||[]),region=(page.match(/PRICES APPLY TO\s+(.{0,300}?)(?:\.|SELECTED ITEMS|WHILE STOCKS)/i)||[])[1]||'';
