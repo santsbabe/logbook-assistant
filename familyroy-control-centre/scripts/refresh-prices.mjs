@@ -58,6 +58,15 @@ function productLinks(html){
  for(const m of html.matchAll(/href=["']([^"']+\/p\/[0-9A-Za-z_-]+)[^"']*["']/gi)){let u=new URL(m[1],'https://www.pnp.co.za').href;if(!seen.has(u)){seen.add(u);out.push(u)}}
  return out
 }
+async function checkersSearch(query){
+ let r=await parseApi(CHECKERS_PARSE,'search_products',{query,page:0,limit:20});if(!r.ok)return r;
+ return{ok:true,products:r.data?.products||r.data?.data?.products||[]}
+}
+function checkersApiRow(p,q){
+ let cents=Number(p.priceWithoutDecimal),price=Number.isFinite(cents)?cents/100:Number(p.price);if(!Number.isFinite(price)||price<=0)return null;
+ let name=clean(p.name),pack=packFromName(name);
+ return{runId,parserVersion,confidence:'third-party-retailer-transport',transport:'parse.bot',conceptId:q.conceptId,retailer:'Checkers',name,sku:String(p.articleNumber||p.id||''),barcode:'',price,loyaltyPrice:null,currency:'ZAR',checkedAt:now,source:'checkers.co.za via Parse',url:'',region:'General Checkers catalogue',purpose:q.purpose||'shopping',promotionText:p.isOnPromotion?'Promotion flagged by retailer transport':'',...pack}
+}
 async function pnpStoreId(query){
  let r=await parseApi(PNP_PARSE,'get_stores',{query});if(!r.ok)return r;
  let stores=r.data?.stores||r.data?.data?.stores||[],best=stores[0];
