@@ -27,8 +27,6 @@ jobs:
         with:
           node-version: "24"
       - name: Refresh retailer price feed
-        env:
-          PARSE_API_KEY: ${{ secrets.PARSE_API_KEY }}
         run: node familyroy-control-centre/scripts/refresh-prices.mjs
       - name: Commit changed feed
         run: |
