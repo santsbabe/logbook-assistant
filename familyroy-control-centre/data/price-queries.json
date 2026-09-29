@@ -35,7 +35,16 @@
     "query": "citrus",
     "url": "https://specials.checkers.co.za/deals/wccheckersmonthend21sep11oct/",
     "purpose": "shopping-special-match",
-    "region": "Western Cape"
+    "region": "Western Cape",
+    "queryTerms": [
+      "citrus",
+      "naartjie",
+      "naartjies",
+      "mandarin",
+      "mandarins",
+      "clementine",
+      "clementines"
+    ]
   },
   {
     "retailer": "Checkers",
@@ -43,7 +52,14 @@
     "query": "banana",
     "url": "https://specials.checkers.co.za/deals/wccheckersmonthend21sep11oct/",
     "purpose": "shopping-special-match",
-    "region": "Western Cape"
+    "region": "Western Cape",
+    "queryTerms": [
+      "banana",
+      "bananas",
+      "mini banana",
+      "kidz banana",
+      "lunchbox banana"
+    ]
   },
   {
     "retailer": "Woolworths",
