@@ -21,6 +21,14 @@ async function renderedHtml(url){
   let html=await page.content();await page.close();return html
  }catch{return''}
 }
+const PARSE_KEY=process.env.PARSE_API_KEY||'';
+const PNP_PARSE='https://api.parse.bot/scraper/b87810bc-903f-41b8-b38d-c5c911cab324';
+const CHECKERS_PARSE='https://api.parse.bot/scraper/a7a3a4ba-dfb7-4476-9712-8753b2fb3140';
+async function parseApi(base,endpoint,params={}){
+ if(!PARSE_KEY)return{ok:false,error:'PARSE_API_KEY not configured'};
+ let u=new URL(base+'/'+endpoint);for(const[k,v]of Object.entries(params))if(v!==undefined&&v!==null&&v!=='')u.searchParams.set(k,String(v));
+ try{let r=await fetch(u,{headers:{'X-API-Key':PARSE_KEY,'Accept':'application/json'}});if(!r.ok)return{ok:false,error:'Parse API '+r.status};return{ok:true,data:await r.json()}}catch(e){return{ok:false,error:String(e?.message||e)}}
+}
 const clean=s=>String(s||'').replace(/<[^>]+>/g,' ').replace(/&nbsp;/g,' ').replace(/&amp;/g,'&').replace(/\s+/g,' ').trim();
 const money=s=>{let m=String(s||'').match(/R\s*([0-9]+(?:[.,][0-9]{1,2})?)/i);return m?Number(m[1].replace(',','.')):null};
 function isoDateText(v){
