@@ -330,7 +330,7 @@ function basketCoverageHtml(items){
 function renderBasketComparison(){
  let el=document.getElementById('basketComparison');if(!el)return;let xs=(db.shopping||[]).filter(x=>!x.done);
  if(!xs.length){el.innerHTML='<div class="muted">Add active shopping items to compare baskets.</div>';return}
- let plans=retailerSubsetPlans(xs),front=basketFrontier(plans),cheapest=plans[0];
+ let plans=retailerSubsetPlans(xs),front=basketFrontier(plans),cheapest=plans[0],missingRetailers=RETAILER_UNIVERSE.filter(r=>!xs.some(x=>eligibleOffers(x).some(o=>o.retailer===r&&offerIsUsableNow(o))));
  if(!cheapest){let stale=xs.reduce((n,x)=>n+eligibleOffers(x).filter(o=>!offerIsUsableNow(o)).length,0);el.innerHTML=basketCoverageHtml(xs)+'<div class="muted">Not enough fresh verified prices yet to build a complete basket.'+(stale?' '+stale+' older price observation'+(stale===1?' is':'s are')+' still visible above as last-known, but excluded from the basket.':'')+'</div>';return}
  let routeBest=plans.slice().sort((a,b)=>a.extraStops-b.extraStops||a.routeRank-b.routeRank||a.total-b.total)[0];
  let cards=[];
