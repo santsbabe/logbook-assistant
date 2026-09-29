@@ -320,11 +320,15 @@ function basketFrontier(plans){
 }
 function planLabel(p){return p.retailers.length===1?p.retailers[0]:p.retailers.join(' + ')}
 function planReasonHtml(p){let bits=[];if(p.exact===false)bits.push('basket assignment is an approximation because the search space was unusually large');if(p.assignments.some(a=>a.c.kind==='value'))bits.push('uses worthwhile quantity-step deal(s)');if(p.assignments.some(a=>a.c.kind==='promo-requested'))bits.push('applies promotion to quantity already requested');if(p.notes?.length)bits.push(...p.notes);let route=p.retailers.map(r=>{let c=retailerDayContext(r);return c.rank<2?r+' is '+c.label:''}).filter(Boolean);bits.push(...route);return bits.length?'<div class="tiny">'+bits.map(esc).join(' · ')+'</div>':''}
+function basketCoverageHtml(items){
+ let rows=SHOP_RETAILERS.map(r=>{let n=items.filter(x=>basketChoice(x,r)).length;return r+' '+n+'/'+items.length});
+ return '<div class="tiny">Fresh basket coverage · '+rows.map(esc).join(' · ')+'</div>'
+}
 function renderBasketComparison(){
  let el=document.getElementById('basketComparison');if(!el)return;let xs=(db.shopping||[]).filter(x=>!x.done);
  if(!xs.length){el.innerHTML='<div class="muted">Add active shopping items to compare baskets.</div>';return}
  let plans=retailerSubsetPlans(xs),front=basketFrontier(plans),cheapest=plans[0];
- if(!cheapest){let stale=xs.reduce((n,x)=>n+eligibleOffers(x).filter(o=>!offerIsUsableNow(o)).length,0);el.innerHTML='<div class="muted">Not enough fresh verified prices yet to build a complete basket.'+(stale?' '+stale+' older price observation'+(stale===1?' is':'s are')+' still visible above as last-known, but excluded from the basket.':'')+'</div>';return}
+ if(!cheapest){let stale=xs.reduce((n,x)=>n+eligibleOffers(x).filter(o=>!offerIsUsableNow(o)).length,0);el.innerHTML=basketCoverageHtml(xs)+'<div class="muted">Not enough fresh verified prices yet to build a complete basket.'+(stale?' '+stale+' older price observation'+(stale===1?' is':'s are')+' still visible above as last-known, but excluded from the basket.':'')+'</div>';return}
  let routeBest=plans.slice().sort((a,b)=>a.extraStops-b.extraStops||a.routeRank-b.routeRank||a.total-b.total)[0];
  let cards=[];
  cards.push(`<div class="task"><strong>Cheapest known basket · ${esc(planLabel(cheapest))}</strong><div>${money(cheapest.total)} · ${cheapest.retailers.length} retailer${cheapest.retailers.length===1?'':'s'} · ${cheapest.extraStops} extra stop${cheapest.extraStops===1?'':'s'}</div><div class="tiny">Pure price view. No hidden travel penalty is added.</div>${planReasonHtml(cheapest)}</div>`);
@@ -333,7 +337,7 @@ function renderBasketComparison(){
  if(alternatives.length)cards.push('<div class="tiny" style="margin:10px 0 4px"><b>Useful trade-offs</b> · only non-dominated price/stop combinations are shown.</div>'+alternatives.map(p=>`<div class="task"><strong>${esc(planLabel(p))}</strong><div>${money(p.total)} · ${p.extraStops} extra stop${p.extraStops===1?'':'s'} · ${money(p.total-cheapest.total)} above cheapest</div>${planReasonHtml(p)}</div>`).join(''));
  let contexts=SHOP_RETAILERS.map(r=>({r,c:retailerDayContext(r)})).filter(z=>z.c.rank<2);
  if(contexts.length)cards.push('<div class="tiny" style="margin-top:10px">Today context: '+contexts.map(z=>esc(z.r)+' · '+esc(z.c.label)).join(' · ')+'</div>');
- el.innerHTML=cards.join('')
+ el.innerHTML=basketCoverageHtml(xs)+cards.join('')
 }
 function seedShoppingConcepts(){let seeds=[
 {id:'concept-citrus',name:'naartjies / mandarins / clementines',category:'fresh-produce',diet:'vegan',packagingRule:'irrelevant',gtins:[],plus:[],aliases:['naartjies','mandarins','clementines'],preferences:['best value per kg']},
