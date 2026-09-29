@@ -232,7 +232,7 @@ function offerPromoView(o,x){let p=o.promotion;if(!offerIsUsableNow(o)||!p||p.ki
 function observationConfidence(o){let c=o.confidence||'';if(c==='verified-first-party')return{rank:3,label:'Verified first-party'};if(c==='catalogue-text-match')return{rank:2,label:'Catalogue match'};return{rank:1,label:'First-party source'}}
 function priceTrend(o){
  let hist=(db.priceObservations||[]).filter(x=>x.listingId===o.listingId&&Number.isFinite(Number(x.loyaltyPrice||x.price))&&new Date(x.checkedAt||0).getTime()>=Date.now()-90*86400000).sort((a,b)=>String(a.checkedAt||'').localeCompare(String(b.checkedAt||'')));
- if(hist.length<2)return null;let vals=hist.map(x=>Number(x.loyaltyPrice||x.price)),cur=vals[vals.length-1],prior=vals.slice(0,-1),low=Math.min(...prior),high=Math.max(...prior),avg=prior.reduce((a,b)=>a+b,0)/prior.length;
+ if(hist.length<3)return null;let vals=hist.map(x=>Number(x.loyaltyPrice||x.price)),cur=vals[vals.length-1],prior=vals.slice(0,-1),low=Math.min(...prior),high=Math.max(...prior),avg=prior.reduce((a,b)=>a+b,0)/prior.length;
  return{cur,low,high,avg,delta:cur-avg}
 }
 function validityLabel(o){if(!o.validFrom&&!o.validTo)return'';return '<span class="pill">'+esc(o.validFrom&&o.validTo?o.validFrom+' → '+o.validTo:o.validTo?'ends '+o.validTo:'from '+o.validFrom)+'</span>'}
