@@ -175,6 +175,7 @@ let retailerState={picknpay:{checkedAt:now,observations:observations.length,erro
 for(const retailer of ['Woolworths','Food Lover’s Market','Checkers']){
  let ro=[],re=[];
  for(const q of queries.filter(x=>x.retailer===retailer)){
+  if(retailer==='Checkers'&&PARSE_KEY&&q.query){let sr=await checkersSearch(q.query);if(sr.ok){let rows=sr.products.map(p=>checkersApiRow(p,q)).filter(Boolean);if(rows.length){for(const row of rows.slice(0,5)){observations.push(row);ro.push(row)}continue}}}
   if(!q.url){re.push({conceptId:q.conceptId,purpose:q.purpose||'shopping',nonBlocking:/acceptance/.test(q.purpose||''),error:'Discovery not yet verified for '+retailer});continue}
   try{let r=await fetchFirstParty(q);if(r.ok){r.row.purpose=q.purpose||'shopping';observations.push(r.row);ro.push(r.row)}else re.push({conceptId:q.conceptId,url:q.url,purpose:q.purpose||'shopping',nonBlocking:/acceptance/.test(q.purpose||''),error:r.error})}catch(e){re.push({conceptId:q.conceptId,url:q.url,purpose:q.purpose||'shopping',nonBlocking:/acceptance/.test(q.purpose||''),error:String(e?.message||e)})}
  }
