@@ -110,6 +110,7 @@
     "allowedRegions": [
       "Western Cape"
     ],
-    "requireValidityWindow": true
+    "requireValidityWindow": true,
+    "nonBlocking": true
   }
 ]
