@@ -10,6 +10,17 @@ try{queries=JSON.parse(await fs.readFile(queriesPath,'utf8'))}catch{}
 const now=new Date().toISOString();
 const runId='price-refresh:'+now;
 const parserVersion=3;
+let browserPromise=null;
+async function renderedHtml(url){
+ if(process.env.FAMILYROY_BROWSER!=='1')return'';
+ try{
+  if(!browserPromise)browserPromise=import('playwright').then(async m=>m.chromium.launch({headless:true}));
+  let browser=await browserPromise,page=await browser.newPage({locale:'en-ZA'});
+  await page.goto(url,{waitUntil:'domcontentloaded',timeout:45000});
+  await page.waitForTimeout(3500);
+  let html=await page.content();await page.close();return html
+ }catch{return''}
+}
 const clean=s=>String(s||'').replace(/<[^>]+>/g,' ').replace(/&nbsp;/g,' ').replace(/&amp;/g,'&').replace(/\s+/g,' ').trim();
 const money=s=>{let m=String(s||'').match(/R\s*([0-9]+(?:[.,][0-9]{1,2})?)/i);return m?Number(m[1].replace(',','.')):null};
 function isoDateText(v){
