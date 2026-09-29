@@ -110,5 +110,15 @@
     "conceptId": "concept-citrus",
     "url": "https://www.woolworths.co.za/prod/_/A-20027537",
     "purpose": "shopping-product"
+  },
+  {
+    "retailer": "Food Lover’s Market",
+    "conceptId": "flm-western-cape-specials",
+    "purpose": "known-v1-limitation",
+    "region": "Western Cape",
+    "safeToPrice": false,
+    "nonBlocking": true,
+    "sourcePage": "https://foodloversmarket.co.za/specials/",
+    "safeLimitation": "Official Western Cape specials monitored; price extraction deferred until a verifiable structured source is available"
   }
 ]
