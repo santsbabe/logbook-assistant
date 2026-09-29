@@ -29,6 +29,16 @@ jobs:
           Path('/tmp/familyroy-inline.js').write_text('\n'.join(inline))
           PY
           node --check /tmp/familyroy-inline.js
+      - name: Live retailer worker smoke test
+        run: |
+          node familyroy-control-centre/scripts/refresh-prices.mjs
+          node - <<'NODE'
+          const f=require('./familyroy-control-centre/data/price-feed.json');
+          if(!f.generatedAt) throw new Error('feed timestamp missing');
+          if(!f.retailers || !f.retailers.picknpay || !f.retailers.woolworths || !f.retailers.checkers) throw new Error('retailer health missing');
+          if(!Array.isArray(f.observations)) throw new Error('observations missing');
+          console.log(JSON.stringify({status:f.status,observations:f.observations.length,retailers:f.retailers},null,2));
+          NODE
       - name: Promotion contract smoke test
         run: |
           node - <<'NODE'
