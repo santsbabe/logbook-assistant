@@ -1,4 +1,4 @@
-name: FamilyRoy Shopping QA
+name: FamilyRoy Core QA
 on:
   push:
     branches: [familyroy-operational-core-v1]
@@ -59,6 +59,23 @@ jobs:
           ];
           for(const x of must)if(!s.includes(x))throw new Error('basket safety contract missing: '+x);
           console.log('Basket safety contract passed');
+          NODE
+      - name: School Readiness safety contract
+        run: |
+          node - <<'NODE'
+          const s=require('fs').readFileSync('familyroy-control-centre/index.html','utf8');
+          const must=[
+            'function schoolDateFromText',
+            'function readinessBucket',
+            'function schoolDueLabel',
+            "red roots|grade\\s*r",
+            'completely voluntary|entirely voluntary',
+            "actionIsToday(t)&&!['Waiting','Done'].includes(t.state)",
+            'new Date(Number(full.internalDate)||Date.now())',
+            'Open source email ↗'
+          ];
+          for(const x of must)if(!s.includes(x))throw new Error('school readiness contract missing: '+x);
+          console.log('School Readiness safety contract passed');
           NODE
       - name: Promotion contract smoke test
         run: |
