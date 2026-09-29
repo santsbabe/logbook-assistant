@@ -95,6 +95,7 @@ async function discoverPnP(q){
  return{urls:[],error:'No verified PnP product links discovered'}
 }
 async function fetchProduct(q){
+ if(q.requireStoreSpecificPrice)return{ok:false,error:'Store-specific PnP evidence required; generic page price excluded'};
  if(!q.url||!/^https:\/\/www\.pnp\.co\.za\//i.test(q.url))return{ok:false,error:'No verified pnp.co.za product URL'};
  const r=await fetch(q.url,{headers:{'user-agent':'FamilyRoy-Control-Centre/1.0 (+personal price monitor; low frequency)','accept':'text/html'}});
  if(!r.ok)return{ok:false,error:'HTTP '+r.status};
