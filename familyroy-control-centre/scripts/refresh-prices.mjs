@@ -117,7 +117,7 @@ for(const q of queries.filter(x=>x.retailer==='Pick n Pay')){
  try{
   let targets=q.url?[q.url]:[];
   if(!targets.length&&q.query){let d=await discoverPnP(q);targets=d.urls;if(!targets.length)errors.push({conceptId:q.conceptId,query:q.query,purpose:q.purpose||'shopping',nonBlocking:/acceptance/.test(q.purpose||''),error:d.error})}
-  for(const url of targets){let r=await fetchProduct({...q,url});if(r.ok)observations.push(r.row);else errors.push({conceptId:q.conceptId,url,purpose:q.purpose||'shopping',nonBlocking:/acceptance/.test(q.purpose||''),error:r.error})}
+  for(const url of targets){let r=await fetchProduct({...q,url});if(r.ok){r.row.purpose=q.purpose||'shopping';observations.push(r.row)}else errors.push({conceptId:q.conceptId,url,purpose:q.purpose||'shopping',nonBlocking:/acceptance/.test(q.purpose||''),error:r.error})}
  }catch(e){errors.push({conceptId:q.conceptId,url:q.url,query:q.query,purpose:q.purpose||'shopping',nonBlocking:/acceptance/.test(q.purpose||''),error:String(e?.message||e)})}
 }
 let retailerState={picknpay:{checkedAt:now,observations:observations.length,errors:[...errors]}};
@@ -125,7 +125,7 @@ for(const retailer of ['Woolworths','Food Lover’s Market','Checkers']){
  let ro=[],re=[];
  for(const q of queries.filter(x=>x.retailer===retailer)){
   if(!q.url){re.push({conceptId:q.conceptId,purpose:q.purpose||'shopping',nonBlocking:/acceptance/.test(q.purpose||''),error:'Discovery not yet verified for '+retailer});continue}
-  try{let r=await fetchFirstParty(q);if(r.ok){observations.push(r.row);ro.push(r.row)}else re.push({conceptId:q.conceptId,url:q.url,purpose:q.purpose||'shopping',nonBlocking:/acceptance/.test(q.purpose||''),error:r.error})}catch(e){re.push({conceptId:q.conceptId,url:q.url,purpose:q.purpose||'shopping',nonBlocking:/acceptance/.test(q.purpose||''),error:String(e?.message||e)})}
+  try{let r=await fetchFirstParty(q);if(r.ok){r.row.purpose=q.purpose||'shopping';observations.push(r.row);ro.push(r.row)}else re.push({conceptId:q.conceptId,url:q.url,purpose:q.purpose||'shopping',nonBlocking:/acceptance/.test(q.purpose||''),error:r.error})}catch(e){re.push({conceptId:q.conceptId,url:q.url,purpose:q.purpose||'shopping',nonBlocking:/acceptance/.test(q.purpose||''),error:String(e?.message||e)})}
  }
  retailerState[retailer==='Woolworths'?'woolworths':retailer==='Checkers'?'checkers':'foodloversmarket']={status:ro.length?(re.some(e=>!e.nonBlocking)?'refreshed-partial':'refreshed'):queries.some(x=>x.retailer===retailer)?'refresh-failed-or-no-safe-data':'awaiting-verified-product-urls',checkedAt:now,observations:ro.length,errors:re};
  errors.push(...re)
