@@ -10,6 +10,10 @@ try{queries=JSON.parse(await fs.readFile(queriesPath,'utf8'))}catch{}
 const now=new Date().toISOString();
 const clean=s=>String(s||'').replace(/<[^>]+>/g,' ').replace(/&nbsp;/g,' ').replace(/&amp;/g,'&').replace(/\s+/g,' ').trim();
 const money=s=>{let m=String(s||'').match(/R\s*([0-9]+(?:[.,][0-9]{1,2})?)/i);return m?Number(m[1].replace(',','.')):null};
+function isoDateText(v){
+ let s=clean(v),m=s.match(/(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})/);if(m)return m[3]+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0');
+ let d=new Date(s);return Number.isFinite(d.getTime())?d.toISOString().slice(0,10):''
+}
 function packFromName(name){
  let s=clean(name),m=s.match(/(\d+(?:[.,]\d+)?)\s*(kg|g|l|ml)\b/i);if(!m)return{};
  let q=Number(m[1].replace(',','.')),u=m[2].toLowerCase();if(u==='g'){q/=1000;u='kg'}if(u==='ml'){q/=1000;u='l'}
@@ -26,7 +30,7 @@ function parseProductPage(html,url,conceptId){
  if(!Number.isFinite(price))price=prices[prices.length-1];
  let smart=prices.length>1?prices[0]:null;
  if(!title||!sku||!Number.isFinite(price))return null;
- return{conceptId,retailer:'Pick n Pay',name:title,sku,barcode,url,price,smartShopperPrice:smart,promotion:promo,...packFromName(title),validFrom:valid?clean(valid[1]):'',validTo:valid?clean(valid[2]):'',checkedAt:now};
+ return{conceptId,retailer:'Pick n Pay',name:title,sku,barcode,url,price,smartShopperPrice:smart,promotion:promo,...packFromName(title),validFrom:valid?isoDateText(valid[1]):'',validTo:valid?isoDateText(valid[2]):'',checkedAt:now};
 }
 function productLinks(html){
  let out=[],seen=new Set();
@@ -93,7 +97,7 @@ function parseCheckersSpecial(html,url,conceptId){
  let snippet=page.slice(Math.max(0,idx-180),idx+360),prices=[...snippet.matchAll(/R\s*([0-9]{1,4}(?:[.,][0-9]{2}))/gi)].map(m=>Number(m[1].replace(',','.'))).filter(n=>n>0);
  let price=prices[0];if(!Number.isFinite(price))return null;
  let promo=clean((snippet.match(/(BUY\s+ANY\s+\d+\s+&?\s*SAVE\s+\d+%|ANY\s+\d+\s+FOR\s+R?\s*[0-9.,]+|BUY\s+\d+\s+FOR\s+R?\s*[0-9.,]+|SAVE\s+R?\s*[0-9.,]+|WITH CARD)/i)||[])[1]);
- return{conceptId,retailer:'Checkers',name:q.name||q.query,sku:'',barcode:'',url,price,promotion:promo,memberOnly:/WITH CARD/i.test(snippet),validFrom:clean(valid[1]||''),validTo:clean(valid[2]||''),region:clean(region),checkedAt:now,source:'Checkers official Western Cape specials'}
+ return{conceptId,retailer:'Checkers',name:q.name||q.query,sku:'',barcode:'',url,price,promotion:promo,memberOnly:/WITH CARD/i.test(snippet),validFrom:isoDateText(valid[1]||''),validTo:isoDateText(valid[2]||''),region:clean(region),checkedAt:now,source:'Checkers official Western Cape specials'}
 }
 async function fetchFirstParty(q){
  let got=await fetchHtml(q.url,q.retailer);if(!got.ok)return got;
