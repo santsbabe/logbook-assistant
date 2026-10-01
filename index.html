@@ -108,8 +108,23 @@ function applyQueryParams(){
     if(matched){editingTripId=matched.id;populateFromTrip(matched)}
   }
   const map=isEnd?['date','tripid','from','to','endodo','purpose','receipt']:['date','time','endtime','tripid','from','to','startodo','endodo','purpose','receipt'];
-  map.forEach(k=>{if(q.has(k)) $(k).value=q.get(k)});
-  if(isEnd){const arrival=q.get('endtime')||q.get('time');if(arrival)$('endtime').value=arrival}
+  const setQueryValue=(k,raw)=>{
+    if(raw==null) return;
+    const el=$(k); if(!el) return;
+    let v=String(raw).trim();
+    if(k==='startodo'||k==='endodo'){
+      v=v.replace(/[^0-9.\-]/g,'');
+      if(v===''||!Number.isFinite(Number(v))) return;
+      el.value=v;
+      el.valueAsNumber=Number(v);
+    }else{
+      el.value=v;
+    }
+    el.dispatchEvent(new Event('input',{bubbles:true}));
+    el.dispatchEvent(new Event('change',{bubbles:true}));
+  };
+  map.forEach(k=>{if(q.has(k)) setQueryValue(k,q.get(k))});
+  if(isEnd){const arrival=q.get('endtime')||q.get('time');if(arrival)setQueryValue('endtime',arrival)}
   if(q.has('type')){const v=q.get('type').toLowerCase();$('type').value=v.startsWith('p')?'Private':'Business'}
   $('shortcutBanner').classList.remove('hidden');
   if(isEnd&&matched){
