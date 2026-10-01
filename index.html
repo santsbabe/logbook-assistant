@@ -141,6 +141,22 @@ function applyQueryParams(){
     if(ok) $('shortcutBanner').innerHTML=wasEdit?'<b>Trip completed.</b><div class="small">The ending odometer was added to the existing trip automatically.</div>':'<b>Shortcut trip saved.</b><div class="small">The incoming record was added automatically.</div>';
   }
 }
+function reapplyShortcutFields(){
+  const q=new URLSearchParams(location.search); if([...q.keys()].length===0) return;
+  const isEnd=q.has('endodo')&&!q.has('startodo');
+  const keys=isEnd?['date','tripid','from','to','endodo','purpose','receipt']:['date','time','endtime','tripid','from','to','startodo','endodo','purpose','receipt'];
+  keys.forEach(k=>{
+    if(!q.has(k)) return;
+    const el=$(k); if(!el) return;
+    let v=String(q.get(k)??'').trim();
+    if(k==='startodo'||k==='endodo'){
+      v=v.replace(/[^0-9.\-]/g,'');
+      if(v!==''&&Number.isFinite(Number(v))){el.value=v;el.valueAsNumber=Number(v)}
+    }else el.value=v;
+  });
+  if(isEnd){const arrival=q.get('endtime')||q.get('time');if(arrival)$('endtime').value=String(arrival).trim()}
+  if(q.has('type')){const v=q.get('type').toLowerCase();$('type').value=v.startsWith('p')?'Private':'Business'}
+}
 function copyShortcutTemplate(){
   const base=location.href.split('?')[0];
   const tpl=base+'?date=[Date]&time=[Time]&endtime=[EndTime]&tripid=[TripID]&from=[From]&to=[To]&startodo=[StartOdo]&endodo=[EndOdo]&type=Business&purpose=[Purpose]&receipt=[Receipt]&autosave=0';
@@ -148,7 +164,12 @@ function copyShortcutTemplate(){
 }
 todayDefaults();
 $('exampleUrl').textContent=location.href.split('?')[0]+'?date=2026-09-09&time=07:30&tripid=65563&from=Home&to=Elsenburg&startodo=12345&type=Business&purpose=Official%20travel&autosave=0';
-applyQueryParams();render();
+applyQueryParams();
+reapplyShortcutFields();
+window.addEventListener('pageshow',()=>reapplyShortcutFields());
+setTimeout(reapplyShortcutFields,50);
+setTimeout(reapplyShortcutFields,300);
+render();
 </script>
 </body>
 </html>
