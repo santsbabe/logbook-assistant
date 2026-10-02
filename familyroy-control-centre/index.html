@@ -25,7 +25,7 @@ body.driveMode .driveBack{display:block;margin:16px 0;text-align:center}
 @media(max-width:560px){.grid,.two{grid-template-columns:1fr}}
 </style></head><body><div class="app">
 <div class="muted">FAMILYROY</div><h1>Control Centre</h1><div class="muted" id="today"></div>
-<div class="tabs"><button class="tab active" data-p="actions">Actions</button><button class="tab" data-p="school">School</button><button class="tab" data-p="shopping">Shopping radar</button><button class="tab" data-p="prices">Price tracker</button><button class="tab" data-p="admin">Documents</button><button class="tab" data-p="settings">Connections</button></div>
+<div class="tabs"><button class="tab active" data-p="actions">Actions</button><button class="tab" data-p="school">School</button><button class="tab" data-p="shopping">Shopping radar</button><button class="tab" data-p="prices">Price tracker</button><button class="tab" data-p="ot">OT comparison</button><button class="tab" data-p="admin">Documents</button><button class="tab" data-p="settings">Connections</button></div>
 <section id="actions" class="panel active"><div class="grid" id="kpis"></div><div class="card before"><h2>🚪 Before we leave</h2><div class="muted">Things that need to physically leave the house with a child.</div><div id="beforeList"></div></div><div class="card"><h2>Must do today</h2><div id="nowList"></div></div><div class="card"><h2>Waiting</h2><div id="waitingList"></div></div><div class="card"><h2>Review</h2><div id="reviewList"></div></div><div class="card"><h2>Add something</h2><div class="form"><input id="newTitle" placeholder="What needs doing?"><div class="two"><select id="newState"><option>Now</option><option>Next</option><option>Waiting</option><option>Review</option></select><select id="newOwner"><option>Santie</option><option>Matthew</option><option>Family</option></select></div><button class="btn primary" onclick="addManual()">Add action</button></div></div></section>
 <section id="school" class="panel"><div class="card"><h2>Gmail school ingestion</h2><p class="muted">Reads PNPS, Red Roots, 100 Acre Wood, Google Classroom and the homework label. Messages are deduplicated by Gmail message ID.</p><div id="gmailStatus" class="status warn">Not connected</div><div class="row" style="margin-top:10px"><button class="btn primary" onclick="connectGmail()">Connect Gmail</button><button class="btn" onclick="syncGmail()">Sync school mail</button></div><div id="syncResult" class="muted" style="margin-top:9px"></div></div><div class="card"><h2>Paste a notice</h2><div class="form"><select id="noticeSource"><option>WhatsApp / forwarded message</option><option>School email</option><option>Paper notice</option><option>Other</option></select><textarea id="noticeText" placeholder="Paste a school email, WhatsApp message or notice here…"></textarea><button class="btn primary" onclick="parsePasted()">Extract actions</button></div><div id="pastePreview"></div></div></section>
 <section id="shopping" class="panel">
@@ -48,6 +48,90 @@ body.driveMode .driveBack{display:block;margin:16px 0;text-align:center}
   <section id="prices" class="panel">
   <div class="card"><h2>🎒 Imogen 2027 requirements watch</h2><p class="muted">Active price watch for the 23–27 November 2026 hand-in week. Compare Clicks, Checkers, Dis-Chem, Pick n Pay and Woolworths; retain the last verified observation when a retailer cannot be checked.</p><div id="schoolPriceWatch"></div></div>
   <div class="card"><h2>🧽 Cleaning price tracker</h2><p class="muted">Actual prices paid for household cleaning products. These become benchmarks for future price checks.</p><div id="priceHistory"></div></div>
+</section>
+<section id="ot" class="panel">
+  <div class="card">
+    <h2>OT options for Harrison & Alexander</h2>
+    <p class="muted">Live comparison of assessment and therapy options. Prices below are from provider emails received in September–October 2026. Pending providers stay visible until they reply.</p>
+    <div class="status"><b>Fastest low-cost starting point:</b> Sterling offers screening from R950 per child; Lyndall Scharfetter offers a free 15–20 minute initial chat for each child before deciding the next step.</div>
+  </div>
+
+  <div class="card">
+    <h2>Side-by-side</h2>
+    <div style="overflow-x:auto">
+      <table style="width:100%;border-collapse:collapse;min-width:760px">
+        <thead><tr>
+          <th style="text-align:left;padding:9px;border-bottom:1px solid var(--line)">Provider</th>
+          <th style="text-align:left;padding:9px;border-bottom:1px solid var(--line)">First step / assessment</th>
+          <th style="text-align:left;padding:9px;border-bottom:1px solid var(--line)">Therapy</th>
+          <th style="text-align:left;padding:9px;border-bottom:1px solid var(--line)">Two-boy comparison</th>
+          <th style="text-align:left;padding:9px;border-bottom:1px solid var(--line)">Flexibility / status</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td style="padding:9px;vertical-align:top;border-bottom:1px solid var(--line)"><b>Sterling Practice</b></td>
+            <td style="padding:9px;vertical-align:top;border-bottom:1px solid var(--line)">Screening R950 each incl. feedback, no report; R1,500 each with short report. Full assessment not required before therapy.</td>
+            <td style="padding:9px;vertical-align:top;border-bottom:1px solid var(--line)">R600 / 45 min. 6-session block R3,480; 12-session block R6,840.</td>
+            <td style="padding:9px;vertical-align:top;border-bottom:1px solid var(--line)">Screening: R1,900 both, or R3,000 with short reports. 4 weeks × 45 min weekly for both: R4,800 at standard rate.</td>
+            <td style="padding:9px;vertical-align:top;border-bottom:1px solid var(--line)">Capacity for both. Suggested at least 12 weekly sessions, then possible breaks with home programme.</td>
+          </tr>
+          <tr>
+            <td style="padding:9px;vertical-align:top;border-bottom:1px solid var(--line)"><b>Lyndall Scharfetter</b><div class="tiny">Pinelands</div></td>
+            <td style="padding:9px;vertical-align:top;border-bottom:1px solid var(--line)">Free 15–20 min initial chat per boy. Traditional full assessment R2,990 each. Alternative evaluation + 5 × 50 min treatment package: R4,000 each upfront.</td>
+            <td style="padding:9px;vertical-align:top;border-bottom:1px solid var(--line)">R400 / 30 min; R550 / 45 min; R700 / 60 min. 5 × 50 min treatment package R1,800.</td>
+            <td style="padding:9px;vertical-align:top;border-bottom:1px solid var(--line)">Traditional assessments: R5,980 both. 4 weeks × 45 min weekly for both: R4,400. Evaluation + 5-session packages: R8,000 both.</td>
+            <td style="padding:9px;vertical-align:top;border-bottom:1px solid var(--line)">Assessment can be paid R1,495 × 2 over max 2 months. Family/sibling package may be possible after initial chats. Group slots may include 1–4 children depending on need.</td>
+          </tr>
+          <tr>
+            <td style="padding:9px;vertical-align:top;border-bottom:1px solid var(--line)"><b>Kathleen Holcroft</b><div class="tiny">PNPS</div></td>
+            <td style="padding:9px;vertical-align:top;border-bottom:1px solid var(--line)">Full developmental assessment R3,525 each; no reduced assessment route offered.</td>
+            <td style="padding:9px;vertical-align:top;border-bottom:1px solid var(--line)">R400 / 30 min; R600 / 45 min; R800 / 60 min. Weekly therapy if indicated.</td>
+            <td style="padding:9px;vertical-align:top;border-bottom:1px solid var(--line)">Assessments: R7,050 both. 4 weeks × 45 min weekly for both: R4,800. Broad minimum at 30 min weekly: R3,200/month both.</td>
+            <td style="padding:9px;vertical-align:top;border-bottom:1px solid var(--line)">Assessment can be split over two payments; therapy starts after assessment fees settled. Capacity from Term 4, one boy first, then the other.</td>
+          </tr>
+          <tr>
+            <td style="padding:9px;vertical-align:top;border-bottom:1px solid var(--line)"><b>Cole Goldberg OT</b></td>
+            <td style="padding:9px;vertical-align:top;border-bottom:1px solid var(--line)">Parent intake R885 / 45 min. Full assessment R4,475 each including written report + feedback.</td>
+            <td style="padding:9px;vertical-align:top;border-bottom:1px solid var(--line)">R885 / 45 min; R965 / 60 min.</td>
+            <td style="padding:9px;vertical-align:top;border-bottom:1px solid var(--line)">Full assessments: R8,950 both. 4 weeks × 45 min weekly for both: R7,080.</td>
+            <td style="padding:9px;vertical-align:top;border-bottom:1px solid var(--line)">Cash practice; claim back yourself. No payment plans or discounted rates. Parked while comparing.</td>
+          </tr>
+          <tr>
+            <td style="padding:9px;vertical-align:top;border-bottom:1px solid var(--line)"><b>UCT Occupational Therapy</b></td>
+            <td style="padding:9px;vertical-align:top;border-bottom:1px solid var(--line)">Asked about student/teaching-clinic assessment and reduced-cost routes.</td>
+            <td style="padding:9px;vertical-align:top;border-bottom:1px solid var(--line)">Awaiting response.</td>
+            <td style="padding:9px;vertical-align:top;border-bottom:1px solid var(--line)">Not yet priced.</td>
+            <td style="padding:9px;vertical-align:top;border-bottom:1px solid var(--line)">Shenel Ryan contacted 2 Oct. <span class="pill wait">WAITING</span></td>
+          </tr>
+          <tr>
+            <td style="padding:9px;vertical-align:top;border-bottom:1px solid var(--line)"><b>Building Blocks</b></td>
+            <td style="padding:9px;vertical-align:top;border-bottom:1px solid var(--line)">Asked about screening, full assessment and affordable alternatives.</td>
+            <td style="padding:9px;vertical-align:top;border-bottom:1px solid var(--line)">Awaiting response.</td>
+            <td style="padding:9px;vertical-align:top;border-bottom:1px solid var(--line)">Not yet priced.</td>
+            <td style="padding:9px;vertical-align:top;border-bottom:1px solid var(--line)"><span class="pill wait">WAITING</span></td>
+          </tr>
+          <tr>
+            <td style="padding:9px;vertical-align:top"><b>Aaliyah Osman / The OT Diaries</b></td>
+            <td style="padding:9px;vertical-align:top">Asked about initial consultation, lower-cost support and capacity.</td>
+            <td style="padding:9px;vertical-align:top">Awaiting response.</td>
+            <td style="padding:9px;vertical-align:top">Not yet priced.</td>
+            <td style="padding:9px;vertical-align:top"><span class="pill wait">WAITING</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Useful cost snapshots</h2>
+    <div class="grid">
+      <div class="kpi"><b>R1,900</b><span>Sterling screening for both, no report</span></div>
+      <div class="kpi"><b>R5,980</b><span>Lyndall traditional assessments for both</span></div>
+      <div class="kpi"><b>R7,050</b><span>Kathleen full assessments for both</span></div>
+      <div class="kpi"><b>R8,950</b><span>CGOT full assessments for both</span></div>
+    </div>
+    <p class="muted" style="margin-top:10px">These routes are not clinically identical: screening, traditional assessment and full formal assessment provide different levels of testing/reporting. The comparison is for planning, not a claim that they are interchangeable.</p>
+  </div>
 </section>
   <section id="admin" class="panel"><div class="card"><h2>Identity & documents</h2><p class="muted">Harrison’s dependent document chain. Later stages stay blocked until earlier gates are complete.</p><div id="docStages"></div></div></section>
 <section id="settings" class="panel"><div class="card"><h2>Google connection</h2><p class="muted">Load the OAuth JSON you already downloaded for <b>Homework Quest Imports</b>. Only the client ID is stored in this browser.</p><input type="file" id="oauthFile" accept="application/json,.json" onchange="loadOAuth(this.files[0])"><div id="oauthStatus" class="status warn" style="margin-top:9px">No Google client ID saved yet.</div><p class="muted">For Google sign-in to work, add <b>https://santsbabe.github.io</b> to that OAuth client's Authorised JavaScript origins.</p></div><div class="card"><h2>Local data</h2><button class="btn" onclick="resetData()">Reset Control Centre data</button></div></section>
