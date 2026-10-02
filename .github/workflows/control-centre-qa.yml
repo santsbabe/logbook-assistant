@@ -1,0 +1,31 @@
+name: Control Centre QA checks
+on:
+  push:
+    branches: ["integration/**"]
+  pull_request:
+    branches: [main]
+jobs:
+  qa:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax-check inline Control Centre JavaScript
+        run: |
+          python - <<'PY'
+          import re
+          from pathlib import Path
+          html=Path("familyroy-control-centre-qa/index.html").read_text()
+          blocks=re.findall(r"<script(?:\s[^>]*)?>(.*?)</script>",html,re.S|re.I)
+          Path("/tmp/control-centre-inline.js").write_text("\n".join(blocks))
+          PY
+          node --check /tmp/control-centre-inline.js
+      - name: Check FamilyRoy browser credential boundary
+        run: |
+          ! grep -q "FAMILYROY_INTAKE_TOKEN" familyroy-control-centre-qa/index.html
+          ! grep -q "Authorization:'Bearer" familyroy-control-centre-qa/index.html
+          grep -q "Authorization:'Handoff '" familyroy-control-centre-qa/index.html
+          grep -q "history.replaceState" familyroy-control-centre-qa/index.html
+          grep -q "familyroy-review:" familyroy-control-centre-qa/index.html
