@@ -117,7 +117,7 @@ function actionDueRank(t){
 }
 function actionSort(a,b){return actionDueRank(a)-actionDueRank(b)||(b.priority||0)-(a.priority||0)}
 function actionIsToday(t){return t.state==='Now'||actionDueRank(t)<=1}
-function ingestActions(items=[]){let ids=new Set(db.tasks.map(x=>x.id)),schoolKeys=new Set(db.tasks.filter(x=>x.module==='School Readiness'&&x.gmailId).map(x=>schoolActionKey(x.title))),added=0;items.map(normaliseAction).forEach(x=>{let sk=x.module==='School Readiness'&&x.gmailId?schoolActionKey(x.title):'';if(!ids.has(x.id)&&(!sk||!schoolKeys.has(sk))){db.tasks.push(x);ids.add(x.id);if(sk)schoolKeys.add(sk);added++}});save();return added}
+function ingestActions(items=[]){let ids=new Set(db.tasks.map(x=>x.id)),schoolKeys=new Set(db.tasks.filter(x=>x.module==='School Readiness'&&(x.gmailId||x.familyRoySourceId)).map(x=>schoolActionKey(x.title))),added=0;items.map(normaliseAction).forEach(x=>{let sk=x.module==='School Readiness'&&(x.gmailId||x.familyRoySourceId)?schoolActionKey(x.title):'';if(!ids.has(x.id)&&(!sk||!schoolKeys.has(sk))){db.tasks.push(x);ids.add(x.id);if(sk)schoolKeys.add(sk);added++}});save();return added}
 const purchaseSeed=[{id:'takealot-224867638',date:'2026-09-20',retailer:'Takealot',order:'224867638',total:368,shipping:0,items:[
 {name:'Astonish Lavender Blossom Floor Cleaner',size:'1L',price:42},
 {name:'Astonish Specialist Kitchen Cleaner – Zesty Lemon',size:'750ml',price:42},
