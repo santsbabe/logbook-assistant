@@ -28,3 +28,4 @@ jobs:
           ! grep -q "Authorization:'Bearer" familyroy-control-centre-qa/index.html
           grep -q "Authorization:'Handoff '" familyroy-control-centre-qa/index.html
           grep -q "history.replaceState" familyroy-control-centre-qa/index.html
+          grep -q "familyroy-review:" familyroy-control-centre-qa/index.html
