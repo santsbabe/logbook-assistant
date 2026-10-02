@@ -402,6 +402,7 @@ function addShopItem(){let title=document.getElementById('shopItemTitle').value.
 function markShopGot(id){let x=db.shopping.find(y=>y.id===id);if(x){x.done=true;x.completedAt=new Date().toISOString()}save();renderShopping()}function restoreShopItem(id){let x=db.shopping.find(y=>y.id===id);if(x){x.done=false;delete x.completedAt}save();renderShopping()}
 function deleteShopItem(id){db.shopping=db.shopping.filter(x=>x.id!==id);save();renderShopping()}
 function handleDeepLink(){let q=new URLSearchParams(location.search);if(q.has('shop'))openPanel('shopping')}
+async function handleFamilyRoyDeepLink(){let h=new URLSearchParams(location.hash.replace(/^#/,'')),capability=h.get('familyroy'),endpoint=h.get('endpoint');if(!capability||!endpoint)return null;history.replaceState(null,'',location.pathname+location.search);try{let result=await consumeFamilyRoyReadinessHandoff({endpoint,capability});openPanel('school');return result}catch(e){console.error('FamilyRoy handoff failed',e);return null}}
 
 function meterSortKey(r){return String(r.date||'')+'T'+(r.time||'23:59')+'-'+String(r.order||0).padStart(3,'0')}
 function meterRows(){return (db.electricity||[]).slice().sort((a,b)=>meterSortKey(a).localeCompare(meterSortKey(b)))}
@@ -413,5 +414,5 @@ function renderDocs(){let d=db.docs,stages=[['birth','Birth-record amendment','L
 function toggleDoc(k){db.docs[k]=!db.docs[k];save();renderDocs()}
 function resetData(){if(confirm('Reset all local Control Centre data on this device?')){localStorage.removeItem(KEY);db=load();render()}}
 function openPanel(id){document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.id===id));document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.p===id));window.scrollTo(0,0)}document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>openPanel(t.dataset.p));document.getElementById('today').textContent=new Intl.DateTimeFormat('en-ZA',{weekday:'long',day:'numeric',month:'long',year:'numeric'}).format(new Date());window.addEventListener('load',()=>{syncPublishedPriceFeed().then(()=>renderShopping());
-render();handleDeepLink();setTimeout(initToken,700)});
+render();handleDeepLink();handleFamilyRoyDeepLink();setTimeout(initToken,700)});
 </script></body></html>
