@@ -5,6 +5,11 @@ on:
     paths:
       - 'familyroy-control-centre/**'
       - '.github/workflows/familyroy-shopping-qa.yml'
+  pull_request:
+    branches: [familyroy-operational-core-v1]
+    paths:
+      - 'familyroy-control-centre/**'
+      - '.github/workflows/familyroy-shopping-qa.yml'
   workflow_dispatch:
 jobs:
   syntax-and-contract:
@@ -14,6 +19,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
+      - name: Store promotion regression tests
+        run: node --test familyroy-control-centre/tests/promotion-validation.test.mjs
       - name: Check JavaScript syntax
         run: |
           node --check familyroy-control-centre/pnp-adapter.js
