@@ -1,4 +1,5 @@
 import fs from 'node:fs/promises';
+import '../promotion-validation.js';
 
 const feedPath=new URL('../data/price-feed.json',import.meta.url);
 const queriesPath=new URL('../data/price-queries.json',import.meta.url);
@@ -9,7 +10,7 @@ try{queries=JSON.parse(await fs.readFile(queriesPath,'utf8'))}catch{}
 
 const now=new Date().toISOString();
 const runId='price-refresh:'+now;
-const parserVersion=4;
+const parserVersion=5;
 const PARSE_KEY=process.env.PARSE_API_KEY||''; // Optional experimental transport; absence never blocks first-party refresh.
 const PNP_PARSE='https://api.parse.bot/scraper/b87810bc-903f-41b8-b38d-c5c911cab324';
 const CHECKERS_PARSE='https://api.parse.bot/scraper/a7a3a4ba-dfb7-4476-9712-8753b2fb3140';
@@ -127,10 +128,10 @@ function parseWoolworths(html,url,conceptId){
  return{runId,parserVersion,confidence:'verified-first-party',conceptId,retailer:'Woolworths',name:title,sku:code,barcode:'',url,price,...packFromName(title),checkedAt:now,source:'Woolworths first-party product page'}
 }
 function parseFLM(html,url,conceptId){
- let ld=jsonLd(html).find(x=>x?.['@type']==='Product')||{},title=clean(ld.name||(html.match(/<h1[^>]*>([\s\S]*?)<\/h1>/i)||[])[1]),offer=Array.isArray(ld.offers)?ld.offers[0]:ld.offers||{},price=Number(offer.price);
- if(!Number.isFinite(price)){let vals=[...html.matchAll(/R\s*([0-9]+(?:[.,][0-9]{2}))/gi)].map(m=>Number(m[1].replace(',','.')));price=vals[0]}
- if(!title||!Number.isFinite(price))return null;
- return{runId,parserVersion,confidence:'verified-first-party',conceptId,retailer:'Food Lover’s Market',name:title,sku:clean(ld.sku||''),barcode:clean(ld.gtin13||ld.gtin||''),url,price,...packFromName(title),promotion:clean((html.match(/(?:special|deal)[\s\S]{0,160}?(R\s*[0-9.,]+)/i)||[])[0]),checkedAt:now,source:'Food Lover’s Market first-party specials page'}
+ // Generic headings/first price on a multi-product page do not identify an offer.
+ // Catalogue extraction requires the evidence contract in PROMOTION_RULES.md.
+ // Until that exists, emit no price rather than labelling unrelated text verified.
+ return null;
 }
 function parseCheckersSpecial(html,url,conceptId){
  let page=clean(html),valid=(page.match(/OFFERS VALID FROM\s+(.{0,60}?)\s+UNTIL\s+(.{0,60}?)(?:\.|PRICES APPLY)/i)||[]),region=(page.match(/PRICES APPLY TO\s+(.{0,300}?)(?:\.|SELECTED ITEMS|WHILE STOCKS)/i)||[])[1]||'';
@@ -185,7 +186,7 @@ for(const retailer of ['Woolworths','Food Lover’s Market','Checkers']){
 retailerState.picknpay.status=retailerState.picknpay.observations?(retailerState.picknpay.errors.some(e=>!e.nonBlocking)?'refreshed-partial':'refreshed'):queries.some(x=>x.retailer==='Pick n Pay')?'refresh-failed-or-no-safe-data':'awaiting-verified-product-urls';
 const validObservation=o=>o&&o.retailer&&o.conceptId&&Number.isFinite(Number(o.price))&&Number(o.price)>0&&o.checkedAt&&o.source;
 observations=observations.filter(validObservation);
-const obsKey=o=>[o.retailer||'',o.conceptId||'',o.url||'',o.sku||'',o.barcode||'',String(o.checkedAt||'').slice(0,10)].join('|');
+const obsKey=FamilyRoyPromotionValidation.observationKey;
 let merged=new Map();
 for(const old of (existing.observations||[])){let legacy={confidence:'verified-first-party',runId:existing.runId||'legacy-feed',parserVersion:existing.parserVersion||2,...old};merged.set(obsKey(legacy),legacy)}
 for(const fresh of observations)merged.set(obsKey(fresh),fresh);
