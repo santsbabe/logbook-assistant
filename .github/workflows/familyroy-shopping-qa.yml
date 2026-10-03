@@ -125,3 +125,20 @@ jobs:
           if(!card.memberOnly) throw new Error('loyalty marker failed');
           console.log('Promotion contract smoke tests passed');
           NODE
+
+  promotion-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Install isolated browser test tools
+        run: |
+          npm install --prefix /tmp/familyroy-browser playwright@1.58.2
+          node /tmp/familyroy-browser/node_modules/playwright/cli.js install --with-deps chromium
+      - name: Exercise branch selection and reload in Chromium
+        env:
+          FAMILYROY_PLAYWRIGHT_MODULE: /tmp/familyroy-browser/node_modules/playwright
+        run: node --test familyroy-control-centre/tests/promotion-browser.test.mjs
