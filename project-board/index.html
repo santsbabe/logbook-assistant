@@ -332,7 +332,19 @@ const labels={defined:"Defined",specified:"Spec",built:"Built",integrated:"Integ
 function progress(m){const vals=Object.values(m||{}).map(v=>v==="done"?1:v==="active"?.5:0);return Math.round((vals.reduce((a,b)=>a+b,0)/6)*100)}
 function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function hc(h){return ["live","active","paused","blocked","closed"].includes(h)?h:"active"}
-function card(p){const pct=progress(p.milestones),ms=Object.keys(labels).map(k=>`<div class="milestone"><i class="dot ${p.milestones?.[k]||""}"></i><span>${labels[k]}</span></div>`).join(""),links=(p.links||[]).map(l=>`<a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label)} ↗</a>`).join(""),liveSub=p.health==="live"&&p.liveStage?` · ${({testing:"In testing",stable:"Stable",monitoring:"Monitoring"}[p.liveStage]||p.liveStage)}`:"",userNeed=p.needsUser&&p.userAction?`<div class="detail needsUserDetail"><b>Needs you:</b> ${esc(p.userAction)}</div>`:"";return `<article class="card health-${hc(p.health)}" data-project-id="${esc(p.id)}" tabindex="0" role="button" aria-expanded="false"><div class="cardTop"><div><div class="kicker">${esc(p.category)}</div><h3>${esc(p.name)}</h3></div><span class="state ${hc(p.health)}">${esc(p.status+liveSub)}</span></div>${p.parent?`<div class="parent">↳ ${esc(p.parent)}</div>`:""}<div class="summary">${esc(p.summary)}</div><div class="progressRow"><div class="bar"><i style="width:${pct}%"></i></div><div class="percent">${pct}%</div></div><div class="milestones">${ms}</div>${userNeed}<div class="detail"><b>Blocker:</b> ${esc(p.blocker)}</div><div class="detail"><b>Next:</b> ${esc(p.next)}</div><div class="links">${links}</div><div class="updated">Build changed ${esc(p.lastUpdated)} · Status reviewed ${esc(p.statusReviewed||p.lastUpdated)}</div></article>`}
+function card(p){const pct=progress(p.milestones),ms=Object.keys(labels).map(k=>`<div class="milestone"><i class="dot ${p.milestones?.[k]||""}"></i><span>${labels[k]}</span></div>`).join(""),links=(p.links||[]).map(l=>`<a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label)} ↗</a>`).join(""),liveSub=p.health==="live"&&p.liveStage?` · ${({testing:"In testing",stable:"Stable",monitoring:"Monitoring"}[p.liveStage]||p.liveStage)}`:"",userNeed=p.needsUser&&p.userAction?`<div class="detail needsUserDetail"><b>Needs you:</b> ${esc(p.userAction)}</div>`:"";return `<article class="card health-${hc(p.health)}" data-project-id="${esc(p.id)}" tabindex="0" role="button" title="Continue this project in ChatGPT"><div class="cardTop"><div><div class="kicker">${esc(p.category)}</div><h3>${esc(p.name)}</h3></div><span class="state ${hc(p.health)}">${esc(p.status+liveSub)}</span></div>${p.parent?`<div class="parent">↳ ${esc(p.parent)}</div>`:""}<div class="summary">${esc(p.summary)}</div><div class="progressRow"><div class="bar"><i style="width:${pct}%"></i></div><div class="percent">${pct}%</div></div><div class="milestones">${ms}</div>${userNeed}<div class="detail"><b>Blocker:</b> ${esc(p.blocker)}</div><div class="detail"><b>Next:</b> ${esc(p.next)}</div><div class="links">${links}</div><div class="updated">Build changed ${esc(p.lastUpdated)} · Status reviewed ${esc(p.statusReviewed||p.lastUpdated)}</div></article>`}
+function buildResumePrompt(p){return [
+  'Please continue work on the Build Garden project "'+p.name+'".',
+  p.parent?'Parent project: '+p.parent+'.':'',
+  p.summary?'Why we are building it: '+p.summary:'',
+  p.blocker?'Current blocker: '+p.blocker:'',
+  p.next?'Current next action: '+p.next:'',
+  'Recover the relevant prior project context and continue from the first genuinely incomplete step. Do not restart from scratch if prior work can be recovered.'
+].filter(Boolean).join('\n\n')}
+function originConversationId(p){const raw=p.chat||p.originChat||'';const m=String(raw).match(/chatgpt\.com\/c\/([^/?#]+)/i);return m?m[1]:(String(raw).match(/^[a-zA-Z0-9-]{8,}$/)?String(raw):'')}
+async function copyResumePrompt(prompt){try{await navigator.clipboard.writeText(prompt);return true}catch(e){try{const t=document.createElement('textarea');t.value=prompt;t.style.position='fixed';t.style.opacity='0';document.body.appendChild(t);t.select();document.execCommand('copy');t.remove();return true}catch(_){return false}}}
+async function resumeProject(p){const prompt=buildResumePrompt(p);await copyResumePrompt(prompt);const id=originConversationId(p);if(id){const appUrl='com.openai.chat://chatgpt.com/c/'+encodeURIComponent(id)+'/?prompt='+encodeURIComponent(prompt);const webUrl='https://chatgpt.com/c/'+encodeURIComponent(id)+'?prompt='+encodeURIComponent(prompt);window.location.href=appUrl;setTimeout(()=>{if(!document.hidden)window.location.href=webUrl},1400);return}
+const appUrl='com.openai.chat://?prompt='+encodeURIComponent(prompt),webUrl='https://chatgpt.com/?prompt='+encodeURIComponent(prompt);window.location.href=appUrl;setTimeout(()=>{if(!document.hidden)window.location.href=webUrl},1400)}
 let activeHealthFilter="";let activeAttentionFilter="";let preferredView="dashboard";
 function sortRows(rows){
   const mode=document.querySelector("#sortBy")?.value||"value";
@@ -447,22 +459,14 @@ document.querySelector("#cardsView").addEventListener("click",()=>{
 });
 document.querySelector("#grid").addEventListener("click",e=>{
   if(e.target.closest("a,button,select,input")) return;
-  const card=e.target.closest(".card");
-  if(!card) return;
-  const open=!card.classList.contains("expanded");
-  document.querySelectorAll(".card.expanded").forEach(c=>{
-    if(c!==card){c.classList.remove("expanded");c.setAttribute("aria-expanded","false");}
-  });
-  card.classList.toggle("expanded",open);
-  card.setAttribute("aria-expanded",String(open));
-  if(open) card.scrollIntoView({behavior:"smooth",block:"nearest"});
+  const card=e.target.closest(".card"); if(!card) return;
+  const p=data.projects.find(x=>x.id===card.dataset.projectId); if(p) resumeProject(p);
 });
 document.querySelector("#grid").addEventListener("keydown",e=>{
   if(!["Enter"," "].includes(e.key) || e.target.closest("a,button,select,input")) return;
-  const card=e.target.closest(".card");
-  if(!card) return;
+  const card=e.target.closest(".card"); if(!card) return;
   e.preventDefault();
-  card.click();
+  const p=data.projects.find(x=>x.id===card.dataset.projectId); if(p) resumeProject(p);
 });
 document.querySelector("#stickyRefresh").addEventListener("click",load);
 document.querySelector("#refresh")?.addEventListener("click",load);
