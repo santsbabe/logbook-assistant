@@ -1,5 +1,5 @@
 {
-  "updated": "2026-09-26T21:40:00+02:00",
+  "updated": "2026-10-05T18:19:00+02:00",
   "milestones": [
     "defined",
     "specified",
@@ -15,24 +15,25 @@
       "category": "Meta",
       "parent": null,
       "summary": "Live master index of every build, with milestone progress, blockers, next actions and links.",
-      "status": "Building now",
-      "health": "active",
-      "lastUpdated": "2026-09-18",
-      "blocker": "ChatGPT Sites publishing is not exposed in the current tool surface; a live GitHub Pages version is being used as the working board.",
-      "next": "Keep the project data file as the source of truth; update project states there so the board changes on refresh.",
+      "status": "Live / maintained",
+      "health": "live",
+      "lastUpdated": "2026-10-05",
+      "blocker": "No material blocker recorded.",
+      "next": "Keep projects.json current from recent worklogs and preserve project-specific snag/tracker links.",
       "milestones": {
         "defined": "done",
         "specified": "done",
-        "built": "active",
-        "integrated": "active",
-        "tested": "todo",
-        "live": "todo"
+        "built": "done",
+        "integrated": "done",
+        "tested": "done",
+        "live": "done"
       },
       "links": [],
       "needsUser": false,
       "readyToTest": false,
       "quickWin": false,
-      "statusReviewed": "2026-09-26"
+      "statusReviewed": "2026-10-05",
+      "liveStage": "stable"
     },
     {
       "id": "familyroy-control-centre",
@@ -40,11 +41,11 @@
       "category": "Family / Home",
       "parent": null,
       "summary": "Phone-first family operating system for actions, school inputs, personal admin, contacts/services and day-to-day control.",
-      "status": "Live / OAuth polish",
+      "status": "QA / integration active",
       "health": "active",
-      "lastUpdated": "2026-09-12",
-      "blocker": "Hosted Google sign-in still depends on the correct authorised JavaScript origin.",
-      "next": "Finish OAuth-origin configuration and restore/finish remaining modules without destabilising the live core.",
+      "lastUpdated": "2026-10-02",
+      "blocker": "Production remains deliberately untouched while the QA receiver and remaining intake/router flows are proven.",
+      "next": "Finish FamilyRoy Intake / School Router acceptance, then promote only with explicit production approval.",
       "milestones": {
         "defined": "done",
         "specified": "done",
@@ -64,9 +65,9 @@
         }
       ],
       "needsUser": false,
-      "readyToTest": false,
+      "readyToTest": true,
       "quickWin": false,
-      "statusReviewed": "2026-09-26"
+      "statusReviewed": "2026-10-05"
     },
     {
       "id": "school-notice-action-extractor",
@@ -74,17 +75,17 @@
       "category": "Family / Home",
       "parent": "FamilyRoy Control Centre",
       "summary": "Turns school emails, WhatsApps, newsletters, PDFs and notes into child/date/item/shopping actions.",
-      "status": "Implemented",
+      "status": "QA passed — parser v13",
       "health": "active",
-      "lastUpdated": "2026-09-12",
-      "blocker": "Hosted Gmail sync shares the Control Centre OAuth-origin dependency.",
-      "next": "Test real school notices end-to-end after OAuth is stable.",
+      "lastUpdated": "2026-10-02",
+      "blocker": "No parser blocker in the clean Gmail regression; production promotion remains separate.",
+      "next": "Keep the clean v13 parser in QA while FamilyRoy Intake / School Router is completed.",
       "milestones": {
         "defined": "done",
         "specified": "done",
         "built": "done",
         "integrated": "done",
-        "tested": "active",
+        "tested": "done",
         "live": "active"
       },
       "links": [
@@ -96,7 +97,7 @@
       "needsUser": false,
       "readyToTest": false,
       "quickWin": false,
-      "statusReviewed": "2026-09-26"
+      "statusReviewed": "2026-10-05"
     },
     {
       "id": "contacts-services",
@@ -191,24 +192,24 @@
       "category": "Family / Home",
       "parent": "FamilyRoy Control Centre",
       "summary": "Photo/date based electricity-meter usage log, intended to feed household tracking.",
-      "status": "Active build",
+      "status": "Preview working end-to-end",
       "health": "active",
-      "lastUpdated": "2026-09-13",
-      "blocker": "Automated number limiting/clean extraction and durable Control Centre ingestion are not fully closed.",
-      "next": "Finish meter-reading extraction rules and connect readings to the durable log.",
+      "lastUpdated": "2026-10-03",
+      "blocker": "Production is untouched; final iPhone Shortcut wiring remains.",
+      "next": "Finish the iPhone handoff from confirmed reading into the tested FamilyRoy intake flow.",
       "milestones": {
         "defined": "done",
         "specified": "done",
-        "built": "active",
-        "integrated": "active",
-        "tested": "active",
-        "live": "todo"
+        "built": "done",
+        "integrated": "done",
+        "tested": "done",
+        "live": "active"
       },
       "links": [],
       "needsUser": false,
-      "readyToTest": false,
+      "readyToTest": true,
       "quickWin": false,
-      "statusReviewed": "2026-09-26"
+      "statusReviewed": "2026-10-05"
     },
     {
       "id": "household-cashflow",
@@ -293,11 +294,11 @@
       "category": "Learning",
       "parent": null,
       "summary": "Child-facing homework game with learner profiles, quests, XP, badges and school-work support.",
-      "status": "Live / evolving",
+      "status": "Live / snag-led evolution",
       "health": "live",
-      "lastUpdated": "2026-09-14",
-      "blocker": "New processing-side changes must not destabilise the live learner Site.",
-      "next": "Keep learner-game changes deliberate and feed it only reviewed/approved Quest Packages.",
+      "lastUpdated": "2026-09-30",
+      "blocker": "Canonical snag tracker still has unresolved work; production changes remain gated.",
+      "next": "Continue from the canonical snag tracker rather than reopening resolved SNAG-008–010.",
       "milestones": {
         "defined": "done",
         "specified": "done",
@@ -314,13 +315,17 @@
         {
           "label": "GitHub",
           "url": "https://github.com/santsbabe/homework-quest"
+        },
+        {
+          "label": "Snag log",
+          "url": "https://github.com/santsbabe/homework-quest/tree/main/snag-tracker"
         }
       ],
       "needsUser": false,
       "readyToTest": false,
       "quickWin": false,
       "liveStage": "stable",
-      "statusReviewed": "2026-09-26"
+      "statusReviewed": "2026-10-05"
     },
     {
       "id": "homework-processing-system",
@@ -328,11 +333,11 @@
       "category": "Learning",
       "parent": "Homework Quest",
       "summary": "Modular intake, routing, archive, extraction, classification, resource verification and Quest Package pipeline.",
-      "status": "Built / acceptance testing",
+      "status": "Active / snag-led hardening",
       "health": "active",
-      "lastUpdated": "2026-09-14",
-      "blocker": "Real Google-source acceptance testing and deployment hardening remain.",
-      "next": "Run real source sync acceptance tests and close remaining integration regressions.",
+      "lastUpdated": "2026-10-02",
+      "blocker": "Google authentication durability work continues under the canonical Homework Quest snag process.",
+      "next": "Resolve remaining auth/processing snags against the canonical tracker and preserve preview-first testing.",
       "milestones": {
         "defined": "done",
         "specified": "done",
@@ -345,13 +350,17 @@
         {
           "label": "GitHub",
           "url": "https://github.com/santsbabe/homework-quest"
+        },
+        {
+          "label": "Snag log",
+          "url": "https://github.com/santsbabe/homework-quest/tree/main/snag-tracker"
         }
       ],
       "needsUser": true,
       "userAction": "Run a real Google-source acceptance test when ready.",
       "readyToTest": true,
       "quickWin": false,
-      "statusReviewed": "2026-09-26"
+      "statusReviewed": "2026-10-05"
     },
     {
       "id": "parent-console",
@@ -359,11 +368,11 @@
       "category": "Learning",
       "parent": "Homework Quest",
       "summary": "Separate parent review/control surface for source intake, Needs Attention, approvals and learner-feed governance.",
-      "status": "Live preview / snagging",
+      "status": "Preview / snag-led testing",
       "health": "active",
-      "lastUpdated": "2026-09-15",
-      "blocker": "Large snag backlog and real Google-sync acceptance remain.",
-      "next": "Work through the snag register and keep preview-first deployment discipline.",
+      "lastUpdated": "2026-10-02",
+      "blocker": "Remaining Google-sync and parent-console defects are tracked in the canonical Homework Quest snag register.",
+      "next": "Continue dependency-aware snag resolution and acceptance testing; no production drift.",
       "milestones": {
         "defined": "done",
         "specified": "done",
@@ -380,13 +389,17 @@
         {
           "label": "GitHub",
           "url": "https://github.com/santsbabe/homework-quest"
+        },
+        {
+          "label": "Snag log",
+          "url": "https://github.com/santsbabe/homework-quest/tree/main/snag-tracker"
         }
       ],
       "needsUser": true,
       "userAction": "Continue acceptance testing against the snag register.",
       "readyToTest": true,
       "quickWin": false,
-      "statusReviewed": "2026-09-26"
+      "statusReviewed": "2026-10-05"
     },
     {
       "id": "afrikaans-tutor",
@@ -394,11 +407,11 @@
       "category": "Learning",
       "parent": "Homework Quest",
       "summary": "Bilingual Afrikaans support with pronunciation/practice, inline help and standalone tutoring modes.",
-      "status": "Source complete / not live",
+      "status": "Active / preview-only",
       "health": "active",
-      "lastUpdated": "2026-09-13",
-      "blocker": "Needs preview/testing before publication into the live learner experience.",
-      "next": "Preview against real homework tasks, test natural audio, then publish intentionally.",
+      "lastUpdated": "2026-10-02",
+      "blocker": "Publication remains gated by real-homework preview and acceptance.",
+      "next": "Continue through the Homework Quest QA/snag path before any intentional publication.",
       "milestones": {
         "defined": "done",
         "specified": "done",
@@ -411,13 +424,17 @@
         {
           "label": "GitHub",
           "url": "https://github.com/santsbabe/homework-quest"
+        },
+        {
+          "label": "Snag log",
+          "url": "https://github.com/santsbabe/homework-quest/tree/main/snag-tracker"
         }
       ],
       "needsUser": true,
       "userAction": "Preview the tutor against real homework and approve publication.",
       "readyToTest": true,
       "quickWin": false,
-      "statusReviewed": "2026-09-26"
+      "statusReviewed": "2026-10-05"
     },
     {
       "id": "bloom",
@@ -425,11 +442,11 @@
       "category": "Personal / Health",
       "parent": null,
       "summary": "Private local-first mobile PWA for personal pattern tracking, check-ins, medication/cycle/history and health context.",
-      "status": "Live / production",
+      "status": "Live / fresh two-week trial",
       "health": "live",
-      "lastUpdated": "2026-09-26",
-      "blocker": "None — production build completed and launched.",
-      "next": "Use normally; record any amendments during the two-week trial rather than changing the app immediately.",
+      "lastUpdated": "2026-10-04",
+      "blocker": "Adoption blockers were repaired and promoted; remaining physical acceptance is tracked in the snag log.",
+      "next": "Use the repaired production build normally for the fresh two-week trial; capture amendments rather than polishing immediately.",
       "milestones": {
         "defined": "done",
         "specified": "done",
@@ -446,13 +463,17 @@
         {
           "label": "GitHub",
           "url": "https://github.com/santsbabe/bloom"
+        },
+        {
+          "label": "Snag log",
+          "url": "https://github.com/santsbabe/bloom/blob/main/docs/SNAG_TRACKER.md"
         }
       ],
       "needsUser": false,
       "readyToTest": false,
       "quickWin": false,
       "liveStage": "testing",
-      "statusReviewed": "2026-09-26"
+      "statusReviewed": "2026-10-05"
     },
     {
       "id": "bloom-health-bridge",
@@ -521,11 +542,11 @@
       "category": "Home Organisation",
       "parent": null,
       "summary": "Mobile app for photographing, measuring, pricing and judging whether storage containers deserve cupboard space.",
-      "status": "Live",
+      "status": "Live · real-world testing",
       "health": "live",
-      "lastUpdated": "2026-09-18",
-      "blocker": "No material blocker recorded after the latest iOS icon and saved-container fixes.",
-      "next": "Use it in real shops; only add features that emerge from real use.",
+      "lastUpdated": "2026-09-28",
+      "blocker": "No material blocker; latest captured ADDIS Clearly Neat 11L, 15L and 30L deal data is included.",
+      "next": "Keep using it in real shops and only add features prompted by actual use.",
       "milestones": {
         "defined": "done",
         "specified": "done",
@@ -548,7 +569,7 @@
       "readyToTest": false,
       "quickWin": false,
       "liveStage": "testing",
-      "statusReviewed": "2026-09-26"
+      "statusReviewed": "2026-10-05"
     },
     {
       "id": "logbook-assistant",
@@ -556,11 +577,11 @@
       "category": "Mobility / iOS",
       "parent": null,
       "summary": "Hosted vehicle logbook with Shortcut URL handoff, trip matching, SARS-friendly CSV and business/private totals.",
-      "status": "Live / end-to-end polish",
+      "status": "Active / canonical snag-led repair",
       "health": "active",
-      "lastUpdated": "2026-09-12",
-      "blocker": "The complete Shortcut → logbook → Rene evidence flow still needs final tidy-up.",
-      "next": "Finish the remaining Shortcut handoffs and run a full real-trip acceptance test.",
+      "lastUpdated": "2026-10-01",
+      "blocker": "Odo End handoff and remaining end-to-end evidence flow are still incomplete in the 25-item Logbook snag register.",
+      "next": "Resume at LB-001 Odo End handoff; exhaust the snag register systematically before calling for user testing.",
       "milestones": {
         "defined": "done",
         "specified": "done",
@@ -579,11 +600,11 @@
           "url": "https://github.com/santsbabe/logbook-assistant"
         }
       ],
-      "needsUser": true,
+      "needsUser": false,
       "userAction": "Run one full real-trip acceptance test.",
-      "readyToTest": true,
+      "readyToTest": false,
       "quickWin": false,
-      "statusReviewed": "2026-09-26"
+      "statusReviewed": "2026-10-05"
     },
     {
       "id": "odo-start",
@@ -622,11 +643,11 @@
       "category": "Mobility / iOS",
       "parent": "Logbook Assistant",
       "summary": "Capture ending odometer, match the most recent open trip, record arrival time and complete the trip.",
-      "status": "Built / tested",
-      "health": "live",
-      "lastUpdated": "2026-09-12",
-      "blocker": "No material blocker recorded.",
-      "next": "Use on live trips and only change if a matching edge case appears.",
+      "status": "Active repair — LB-001",
+      "health": "active",
+      "lastUpdated": "2026-10-01",
+      "blocker": "Current Odo End handoff misroutes the test time and omits required end fields.",
+      "next": "Fix the Odo End URL/handoff first, then verify the evidence-only Rene flow.",
       "milestones": {
         "defined": "done",
         "specified": "done",
@@ -644,8 +665,7 @@
       "needsUser": false,
       "readyToTest": false,
       "quickWin": false,
-      "liveStage": "stable",
-      "statusReviewed": "2026-09-26"
+      "statusReviewed": "2026-10-05"
     },
     {
       "id": "odo-manual",
@@ -678,11 +698,11 @@
       "category": "Mobility / iOS",
       "parent": "Logbook Assistant",
       "summary": "Send a dated mileage report plus odometer evidence photo to Rene; moved from unreliable WhatsApp to Apple Messages.",
-      "status": "Core workflow built",
+      "status": "Active / snag-led consolidation",
       "health": "active",
-      "lastUpdated": "2026-09-12",
-      "blocker": "Needs final consolidation with the Logbook Assistant so evidence is sent once, reliably.",
-      "next": "Run one real end-to-end trip and remove any obsolete duplicate actions.",
+      "lastUpdated": "2026-10-01",
+      "blocker": "Depends on the Odo End handoff and evidence-only send path being closed.",
+      "next": "After LB-001 is fixed, verify evidence is sent once to Rene with no duplicate/obsolete actions.",
       "milestones": {
         "defined": "done",
         "specified": "done",
@@ -692,11 +712,11 @@
         "live": "active"
       },
       "links": [],
-      "needsUser": true,
+      "needsUser": false,
       "userAction": "Run one real end-to-end trip once the handoff is ready.",
-      "readyToTest": true,
+      "readyToTest": false,
       "quickWin": false,
-      "statusReviewed": "2026-09-26"
+      "statusReviewed": "2026-10-05"
     },
     {
       "id": "meter-reading-shortcut",
@@ -704,11 +724,11 @@
       "category": "Utilities / iOS",
       "parent": "Electricity Usage Log",
       "summary": "Camera/OCR Shortcut for capturing household electricity meter readings into the tracking system.",
-      "status": "Built / refinement needed",
+      "status": "Final iPhone wiring pending",
       "health": "active",
-      "lastUpdated": "2026-09-12",
-      "blocker": "OCR number limiting still needs tightening.",
-      "next": "Add the number limiter/confirmation and connect the result to the durable usage log.",
+      "lastUpdated": "2026-10-03",
+      "blocker": "The preview intake path works; the Shortcut still needs the final confirmed-reading handoff.",
+      "next": "Complete and test the final iPhone Shortcut wiring against the working preview.",
       "milestones": {
         "defined": "done",
         "specified": "done",
@@ -718,10 +738,11 @@
         "live": "todo"
       },
       "links": [],
-      "needsUser": false,
-      "readyToTest": false,
+      "needsUser": true,
+      "readyToTest": true,
       "quickWin": false,
-      "statusReviewed": "2026-09-26"
+      "statusReviewed": "2026-10-05",
+      "userAction": "Complete the remaining on-device Shortcut wiring when ready."
     },
     {
       "id": "invite-importer",
@@ -1209,11 +1230,11 @@
       "category": "Learning",
       "parent": "Homework Quest Parent Console",
       "summary": "Canonical snag register for Homework Quest and Parent Console issues, dependencies, resolution state and acceptance follow-up.",
-      "status": "Live tracker — 131 snags",
+      "status": "Live tracker — 131 snags / 7 resolved",
       "health": "live",
-      "lastUpdated": "2026-09-20",
-      "blocker": "128 snags remain pending; the tracker itself is operational and is the canonical resolution register.",
-      "next": "Work the dependency-aware backlog from Needs you / Blocked / Ready to test / Quick wins without replacing or collapsing the 131-item source register.",
+      "lastUpdated": "2026-09-30",
+      "blocker": "124 of 131 canonical snags remain pending.",
+      "next": "Continue the dependency-aware backlog from the canonical snag tracker.",
       "milestones": {
         "defined": "done",
         "specified": "done",
@@ -1226,14 +1247,17 @@
         {
           "label": "GitHub",
           "url": "https://github.com/santsbabe/homework-quest"
+        },
+        {
+          "label": "Snag log",
+          "url": "https://github.com/santsbabe/homework-quest/tree/main/snag-tracker"
         }
       ],
-      "needsUser": true,
-      "userAction": "Work the items explicitly assigned to you in the snag register.",
-      "readyToTest": true,
+      "needsUser": false,
+      "readyToTest": false,
       "quickWin": false,
       "liveStage": "monitoring",
-      "statusReviewed": "2026-09-26"
+      "statusReviewed": "2026-10-05"
     },
     {
       "id": "reading-radar",
@@ -1241,11 +1265,11 @@
       "category": "Personal / Reading",
       "parent": null,
       "summary": "Personal reading discovery and prioritisation app using the Master Reading Roadmap, ownership and mood matching to surface what to read next.",
-      "status": "Live / published",
+      "status": "Live / testing with improvement log",
       "health": "live",
       "lastUpdated": "2026-09-26",
-      "blocker": "None — published live.",
-      "next": "Use normally and capture later refinements as feedback rather than reopening the launch build.",
+      "blocker": "No launch blocker; deferred discovery, reading-time, sync and UI work is deliberately held outside the stable baseline.",
+      "next": "Use the stable app; follow the improvement tracker rather than reopening cosmetic work during the trial.",
       "milestones": {
         "defined": "done",
         "specified": "done",
@@ -1262,13 +1286,111 @@
         {
           "label": "GitHub",
           "url": "https://github.com/santsbabe/logbook-assistant"
+        },
+        {
+          "label": "Improvement log",
+          "url": "https://github.com/santsbabe/reading-radar/blob/main/improvement-tracker.md"
         }
       ],
       "needsUser": false,
       "readyToTest": false,
       "quickWin": false,
       "liveStage": "testing",
-      "statusReviewed": "2026-09-26"
+      "statusReviewed": "2026-10-05"
+    },
+    {
+      "id": "project-treehouse",
+      "name": "Project Treehouse Checkpoint",
+      "category": "Homework / Learning",
+      "parent": "Homework Quest",
+      "summary": "New cosy-adventure Homework Quest game layer with Fidelity Lock, adaptive choices, child-specific play, physical-task capture and durable resume state.",
+      "status": "Preview / architecture and QA active",
+      "health": "active",
+      "lastUpdated": "2026-10-02",
+      "blocker": "Preview-only by design; existing Homework Quest must remain untouched until snag and acceptance gates are satisfied.",
+      "next": "Continue executable QA and preview refinement; do not deploy to production without explicit approval.",
+      "milestones": {
+        "defined": "done",
+        "specified": "done",
+        "built": "done",
+        "integrated": "active",
+        "tested": "active",
+        "live": "todo"
+      },
+      "links": [
+        {
+          "label": "GitHub",
+          "url": "https://github.com/santsbabe/project-treehouse"
+        },
+        {
+          "label": "QA log",
+          "url": "https://github.com/santsbabe/project-treehouse/blob/main/docs/EXECUTABLE_QA.md"
+        }
+      ],
+      "needsUser": false,
+      "readyToTest": false,
+      "quickWin": false,
+      "statusReviewed": "2026-10-05"
+    },
+    {
+      "id": "term-4-launch-pad",
+      "name": "Term 4 Launch Pad",
+      "category": "Family / Home",
+      "parent": "FamilyRoy Control Centre",
+      "summary": "Shared, colourful family launch-day task tool with owner swapping, XP, challenges and short timers.",
+      "status": "Live site / functionality snagging",
+      "health": "active",
+      "lastUpdated": "2026-10-04",
+      "blocker": "Published site is behind private sign-in and the current app interactions were reported as not working; full live verification is constrained.",
+      "next": "Repair the interaction layer without losing any existing or newly added tasks, including General household tasks.",
+      "milestones": {
+        "defined": "done",
+        "specified": "done",
+        "built": "done",
+        "integrated": "active",
+        "tested": "active",
+        "live": "done"
+      },
+      "links": [
+        {
+          "label": "Live",
+          "url": "https://term-4-launch-pad.santsbabe.chatgpt.site"
+        }
+      ],
+      "needsUser": false,
+      "readyToTest": false,
+      "quickWin": false,
+      "statusReviewed": "2026-10-05"
+    },
+    {
+      "id": "familyroy-intake",
+      "name": "FamilyRoy Intake / School Router",
+      "category": "Family / Home",
+      "parent": "FamilyRoy Control Centre",
+      "summary": "Source-agnostic secure intake layer for photos, WhatsApp and other evidence with dedupe, classification and routing into FamilyRoy modules.",
+      "status": "Preview / integration active",
+      "health": "active",
+      "lastUpdated": "2026-10-03",
+      "blocker": "Final source-specific iPhone handoffs and broader routing acceptance remain; production is intentionally untouched.",
+      "next": "Complete the School Router and remaining iPhone handoffs against the QA receiver, then regression-test before any production promotion.",
+      "milestones": {
+        "defined": "done",
+        "specified": "done",
+        "built": "done",
+        "integrated": "active",
+        "tested": "active",
+        "live": "todo"
+      },
+      "links": [
+        {
+          "label": "GitHub",
+          "url": "https://github.com/santsbabe/familyroy-intake"
+        }
+      ],
+      "needsUser": false,
+      "readyToTest": false,
+      "quickWin": false,
+      "statusReviewed": "2026-10-05"
     }
   ]
 }
