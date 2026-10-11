@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-11T22:00:00+02:00",
+  "updated": "2026-10-11T22:06:00+02:00",
   "milestones": [
     "defined",
     "specified",
@@ -390,7 +390,8 @@
             "also": "familyroy-intake",
             "state": "partial_evidence_verified",
             "remaining": "QA/production parity, router CI, manual-only Shopping Radar, meal/chore and device handoffs",
-            "verification": "130/130 Intake contract/CI tests and function compilation pass on audit branch; 7/7 QA receiver contract tests and inline JavaScript checks pass separately. Real browser/live Homework Quest consumer and device/preview runtime remain unverified."
+            "verification": "130/130 Intake contract/CI tests and function compilation pass on audit branch; 7/7 QA receiver contract tests and inline JavaScript checks pass separately. Real browser/live Homework Quest consumer and device/preview runtime remain unverified.",
+            "homeworkQuestHandoff": "Receiver source and focused regression verified on audit branch; real preview runtime, device and learner publisher delivery NOT verified."
           },
           {
             "id": "A3",
@@ -488,7 +489,22 @@
       "userAction": "Run a real Google-source acceptance test when ready.",
       "readyToTest": true,
       "quickWin": false,
-      "statusReviewed": "2026-10-05"
+      "statusReviewed": "2026-10-05",
+      "familyRoyHandoff": {
+        "state": "isolated_receiver_code_ci_passed__runtime_and_learner_delivery_pending",
+        "branch": "https://github.com/santsbabe/homework-quest/tree/audit/hq-familyroy-handoff-20261011",
+        "evidence": "https://github.com/santsbabe/homework-quest/actions/runs/38170743059",
+        "tests": "18/18 receiver and Parent Console-focused tests passed; JS syntax and local parent build passed",
+        "fullSuite": "82/84 passed; 2 unrelated canonical snag tracker assertion mismatches remain",
+        "content": "Intake homework route -> scoped browser handoff -> verified archive and draft/review persistence -> ack with retry and dedupe. No automatic learner approval.",
+        "blockers": [
+          "Exact-commit live preview smoke and iPhone Chrome handoff not done",
+          "Source archive and draft are browser-local, not verified on children's devices",
+          "Learner publisher, game fidelity/characters and actual 7 October homework are independent unresolved acceptance gates",
+          "Attachment bytes require explicit evidence retrieval/review"
+        ],
+        "deployment": "audit-only; no production merge or Netlify deploy"
+      }
     },
     {
       "id": "parent-console",
@@ -1556,7 +1572,10 @@
           "Homework Quest parent console has no verified FamilyRoy capability/handoff consumer in inspected parent-console and processing source",
           "Recipient must durably store source before acknowledging and recover if browser handoff fails",
           "iPhone Chrome/device acceptance is still required"
-        ]
+        ],
+        "homeworkQuestReceiverBranch": "https://github.com/santsbabe/homework-quest/tree/audit/hq-familyroy-handoff-20261011",
+        "homeworkQuestReceiverEvidence": "https://github.com/santsbabe/homework-quest/actions/runs/38170743059",
+        "homeworkQuestReceiverState": "isolated_receiver_code_ci_passed__runtime_and_learner_delivery_pending"
       }
     }
   ]
