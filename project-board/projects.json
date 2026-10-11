@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-11T20:53:00+02:00",
+  "updated": "2026-10-11T21:00:00+02:00",
   "milestones": [
     "defined",
     "specified",
@@ -386,7 +386,8 @@
             "destination": "familyroy-control-centre",
             "also": "familyroy-intake",
             "state": "partial_evidence_verified",
-            "remaining": "QA/production parity, router CI, manual-only Shopping Radar, meal/chore and device handoffs"
+            "remaining": "QA/production parity, router CI, manual-only Shopping Radar, meal/chore and device handoffs",
+            "verification": "Intake audit branch 124/124 tests + function compilation passed 11 Oct; PR9 and exact-commit smoke/device remain separate release gates"
           },
           {
             "id": "A3",
@@ -1538,9 +1539,12 @@
         "work": [
           "A2 School Router/Share Sheet receipt, dedupe, classification, delivery and recovery"
         ],
-        "state": "preflight_fix_in_isolated_branch",
+        "state": "isolated_preflight_ci_passed__live_smoke_and_device_acceptance_pending",
         "evidence": "https://github.com/santsbabe/familyroy-intake/tree/audit/intake-preflight-20261011",
-        "boundary": "Passing tests and outbox delivery acceptance are separate from app production and physical iPhone acceptance"
+        "boundary": "Passing tests and outbox delivery acceptance are separate from app production and physical iPhone acceptance",
+        "ciEvidence": "https://github.com/santsbabe/familyroy-intake/actions/runs/38166125892",
+        "ciCommit": "6c48575db536abd4edc9940e4cfc77a8b756e36c",
+        "ciResult": "124/124 unit/regression tests and Netlify-function compilation pass on audit branch; not PR9, live smoke or device acceptance"
       }
     }
   ]

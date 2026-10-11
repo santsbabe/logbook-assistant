@@ -54,3 +54,8 @@
 6. User explicitly approves any production deployment. Only then consider `notion-life-toolkit` closure after verified handoff; no standalone Notion build.
 
 **Current release decision:** preview branch only, no main merge, no production deploy.
+## Isolated preflight outcome — 11 October 2026
+- **PASS:** [GitHub CI run 38166125892](https://github.com/santsbabe/familyroy-intake/actions/runs/38166125892) on audit commit `6c48575db536abd4edc9940e4cfc77a8b756e36c`: **124/124 tests passing**, zero failures, and `npm run check:functions` passed.
+- Corrected a literal backslash-n causing a router syntax error, added empty alerts for unresolved calendar candidates, and aligned an obsolete route-projection test with existing domain/electricity candidate contracts.
+- **NOT YET PASSED:** the original stacked PR9 branch remains as originally failed; fixes are in an isolated audit branch and are **not merged**. Its Netlify deploy-preview smoke workflow previously failed while awaiting an exact-commit preview context, so this isolated GitHub test result is not a live smoke acceptance result.
+- **Still outstanding:** preview runtime acceptance for the corrected code, route-by-route outbox delivery confirmation, recovery/dedupe in the destination apps, and grouped iPhone/Chrome acceptance where unavoidable. There was **no production deployment or merge**.
