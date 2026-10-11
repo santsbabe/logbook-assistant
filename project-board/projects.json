@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-05T18:19:00+02:00",
+  "updated": "2026-10-11T10:49:00+02:00",
   "milestones": [
     "defined",
     "specified",
@@ -746,28 +746,29 @@
     },
     {
       "id": "invite-importer",
-      "name": "Invite Importer",
+      "name": "Create Event / Invite Importer",
       "category": "Utilities / iOS",
       "parent": null,
-      "summary": "Image/PDF invitation → OCR → title/date/time/location/notes → Calendar event.",
-      "status": "Core wired / parsing repair",
-      "health": "active",
-      "lastUpdated": "2026-09-17",
-      "blocker": "OCR dates/times such as split dates and time ranges still need reliable regex/group extraction.",
-      "next": "Finish the start/end time group extraction, then run a full invitation-to-calendar test.",
+      "summary": "Image/PDF invitation → OCR → ChatGPT structured calendar details → safety/confirmation gate → Apple Calendar event.",
+      "status": "Closed — working end-to-end",
+      "health": "closed",
+      "lastUpdated": "2026-10-11",
+      "blocker": "None — parsing, confirmation handling, date conversion, all-day handling and timed-event creation passed on-device testing.",
+      "next": "No further action. Reopen only if a real invitation exposes a new edge case.",
       "milestones": {
         "defined": "done",
         "specified": "done",
-        "built": "active",
+        "built": "done",
         "integrated": "done",
-        "tested": "active",
-        "live": "todo"
+        "tested": "done",
+        "live": "done"
       },
       "links": [],
       "needsUser": false,
       "readyToTest": false,
       "quickWin": false,
-      "statusReviewed": "2026-09-26"
+      "statusReviewed": "2026-10-11",
+      "liveStage": "stable"
     },
     {
       "id": "clipboard-reminders-importer",
