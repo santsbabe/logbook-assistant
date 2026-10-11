@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-11T21:00:00+02:00",
+  "updated": "2026-10-11T22:00:00+02:00",
   "milestones": [
     "defined",
     "specified",
@@ -78,7 +78,9 @@
           "M5 emergency references"
         ],
         "state": "assigned_pending_acceptance",
-        "boundary": "Do not replace live dashboard or promote QA features without approval"
+        "boundary": "Do not replace live dashboard or promote QA features without approval",
+        "receiverFixes": "https://github.com/santsbabe/logbook-assistant/tree/audit/readiness-handoff-20261011",
+        "receiverFixSummary": "Staged QA-only school dedupe includes due date/child; scoped endpoint allowlist; retry current handoff without duplicating source."
       }
     },
     {
@@ -116,7 +118,8 @@
           "A2 parser v13 parity and end-to-end intake acceptance"
         ],
         "state": "qa_evidence_only",
-        "boundary": "Do not confuse isolated parser regression success with delivered phone actions"
+        "boundary": "Do not confuse isolated parser regression success with delivered phone actions",
+        "receiverFix": "https://github.com/santsbabe/logbook-assistant/actions/runs/38169974734"
       }
     },
     {
@@ -387,7 +390,7 @@
             "also": "familyroy-intake",
             "state": "partial_evidence_verified",
             "remaining": "QA/production parity, router CI, manual-only Shopping Radar, meal/chore and device handoffs",
-            "verification": "Intake audit branch 124/124 tests + function compilation passed 11 Oct; PR9 and exact-commit smoke/device remain separate release gates"
+            "verification": "130/130 Intake contract/CI tests and function compilation pass on audit branch; 7/7 QA receiver contract tests and inline JavaScript checks pass separately. Real browser/live Homework Quest consumer and device/preview runtime remain unverified."
           },
           {
             "id": "A3",
@@ -1539,12 +1542,21 @@
         "work": [
           "A2 School Router/Share Sheet receipt, dedupe, classification, delivery and recovery"
         ],
-        "state": "isolated_preflight_ci_passed__live_smoke_and_device_acceptance_pending",
+        "state": "isolated_ci_passed__receiver_ci_passed__runtime_acceptance_pending",
         "evidence": "https://github.com/santsbabe/familyroy-intake/tree/audit/intake-preflight-20261011",
         "boundary": "Passing tests and outbox delivery acceptance are separate from app production and physical iPhone acceptance",
-        "ciEvidence": "https://github.com/santsbabe/familyroy-intake/actions/runs/38166125892",
-        "ciCommit": "6c48575db536abd4edc9940e4cfc77a8b756e36c",
-        "ciResult": "124/124 unit/regression tests and Netlify-function compilation pass on audit branch; not PR9, live smoke or device acceptance"
+        "ciEvidence": "https://github.com/santsbabe/familyroy-intake/actions/runs/38169768996",
+        "ciCommit": "a7fe4e8b73548448ec406786b703a233cbe6eec0",
+        "ciResult": "130/130 unit and contract tests passed, Netlify function compile passed; no Netlify preview smoke or device acceptance",
+        "receiverEvidence": "https://github.com/santsbabe/logbook-assistant/actions/runs/38169974734",
+        "receiverCommit": "28a663c49604ac6c61445c4c1257d6456e733167",
+        "receiverResult": "QA receiver audit: 7/7 tests passed; inline JavaScript syntax passed; unmerged, production unchanged",
+        "knownBlockers": [
+          "Exact-commit Netlify preview not tested; do not deploy merely to clear smoke",
+          "Homework Quest parent console has no verified FamilyRoy capability/handoff consumer in inspected parent-console and processing source",
+          "Recipient must durably store source before acknowledging and recover if browser handoff fails",
+          "iPhone Chrome/device acceptance is still required"
+        ]
       }
     }
   ]

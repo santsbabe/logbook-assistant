@@ -59,3 +59,21 @@
 - Corrected a literal backslash-n causing a router syntax error, added empty alerts for unresolved calendar candidates, and aligned an obsolete route-projection test with existing domain/electricity candidate contracts.
 - **NOT YET PASSED:** the original stacked PR9 branch remains as originally failed; fixes are in an isolated audit branch and are **not merged**. Its Netlify deploy-preview smoke workflow previously failed while awaiting an exact-commit preview context, so this isolated GitHub test result is not a live smoke acceptance result.
 - **Still outstanding:** preview runtime acceptance for the corrected code, route-by-route outbox delivery confirmation, recovery/dedupe in the destination apps, and grouped iPhone/Chrome acceptance where unavoidable. There was **no production deployment or merge**.
+
+## Delivery/recovery verification — 11 October 2026, Batch 2
+### Source and outbox contract
+- [Intake CI run 38169768996](https://github.com/santsbabe/familyroy-intake/actions/runs/38169768996) at `a7fe4e8b73548448ec406786b703a233cbe6eec0`: **130/130 tests passed; function compilation passed**. No preview or production deploy was started.
+- Verified in isolated code tests: one shared PNPS item produces separate homework/readiness/calendar route records; the same canonical source ID remains stable; an already-consumed destination is not requeued on re-share; pending routes remain separately recoverable.
+- Corrected `/handoff` duplicate POST handling to check explicit acknowledgement intent and matching source ID **before** responding as already acknowledged. A revoked/mismatched source cannot silently get a positive acknowledgement.
+- Corrected `usageInterval` for the actual **prepaid remaining-balance** convention: 129.06 → 125.39 is 3.67 kWh used; increases indicate recharge/top-up, not consumption. These are source-level changes, not live-device confirmation.
+
+### FamilyRoy QA receiver
+- [Receiver CI run 38169974734](https://github.com/santsbabe/logbook-assistant/actions/runs/38169974734) at `28a663c49604ac6c61445c4c1257d6456e733167`: **7/7 receiver contract tests passed** and inline syntax check passed. Branch `audit/readiness-handoff-20261011` is isolated and not published.
+- The previous title-only School Readiness dedupe could collapse a later week's identical Friday obligation. Staged identity incorporates title + child + due date; undated tasks remain source-scoped.
+- The QA handoff now restricts the endpoint to the known FamilyRoy Intake host(s) and provides a one-tap retry of the current scoped handoff after transient failure. Re-sharing after expiry remains deduplicated.
+- Production FamilyRoy and the existing published QA page are **unchanged** by this work.
+
+### Destination acceptance gap
+- The inspected Homework Quest `parent-console/app.js`, `parent-console/index.html`, processing modules and parent environment contain no verified FamilyRoy scoped-handoff consumption entry point. Intake emitting a `homework_quest` route or issuing a scoped capability must **not** be reported as homework delivered to the learner. A minimal existing Parent Console adapter and real Quest Package approval/persistence acceptance is needed before marking this route integrated.
+- Calendar, Contacts, Repairs, Shopping, Food, Personal Admin, Pets and Electricity may have structured review/outbox contracts but must each be marked *queued* until a real owning destination confirms durable consumption. Do not mark these as end-to-end working based on unit tests.
+- Remaining release gates: exact-commit preview runtime smoke (only if user authorises credit-consuming preview), destination persistence and acknowledgement verification, failure/retry check, smallest possible iPhone Chrome acceptance, and separate express production promotion approval.
