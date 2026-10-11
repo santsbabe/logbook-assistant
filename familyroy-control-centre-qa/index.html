@@ -3,6 +3,7 @@
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <script src="./google-connection.js"></script>
 <script src="./pnp-adapter.js"></script>
+<script src="./receiver-contracts.js"></script>
 <style>
 :root{--bg:#f5f1e8;--card:#fffdf8;--ink:#26352b;--muted:#6e776f;--line:#ded8cb;--accent:#3d624c;--soft:#e7eee8;--warn:#fff2c7;--danger:#ffe2dc}*{box-sizing:border-box}body{margin:0;background:linear-gradient(#faf6ee,#e9efe7);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);min-height:100vh}.app{max-width:850px;margin:auto;padding:16px 14px 90px}h1,h2{font-family:Georgia,serif;margin:.2em 0}.muted{color:var(--muted);font-size:13px}.tabs{display:flex;gap:7px;overflow:auto;padding:10px 0;position:sticky;top:0;background:rgba(245,241,232,.94);backdrop-filter:blur(10px);z-index:5}.tab,.btn{border:1px solid var(--line);background:white;border-radius:999px;padding:9px 12px;font-weight:750;cursor:pointer}.tab.active,.btn.primary{background:var(--accent);color:white;border-color:var(--accent)}.panel{display:none}.panel.active{display:block}.card{background:rgba(255,253,248,.96);border:1px solid var(--line);border-radius:20px;padding:15px;margin:10px 0;box-shadow:0 5px 18px rgba(30,50,38,.06)}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.kpi{padding:12px;border-radius:15px;background:var(--soft)}.kpi b{font-size:22px;display:block}.row{display:flex;gap:7px;flex-wrap:wrap;align-items:center}.task{border:1px solid var(--line);border-radius:15px;padding:11px;margin:8px 0;background:white}.task strong{display:block}.pill{display:inline-block;background:var(--soft);border-radius:999px;padding:4px 7px;font-size:11px;margin:5px 3px 0 0}.pill.hot{background:var(--danger)}.pill.wait{background:var(--warn)}input,textarea,select{width:100%;border:1px solid var(--line);border-radius:12px;padding:10px;font:inherit;background:white}textarea{min-height:140px}.form{display:grid;gap:8px}.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}.stage{display:grid;grid-template-columns:28px 1fr;gap:9px;margin:10px 0}.dot{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--soft);font-weight:800}.stage.done .dot{background:var(--accent);color:white}.status{padding:10px;border-radius:12px;background:var(--soft);font-size:13px}.status.warn{background:var(--warn)}.status.bad{background:var(--danger)}a{color:var(--accent)}.hidden{display:none}.before{border:2px solid #d79f3b;background:#fff9e7}.source{font-size:12px;margin-top:7px}.source a{text-decoration:none}.tiny{font-size:11px;color:var(--muted)}.shopHead{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.shopItem.done{opacity:.55}.shopItem.done strong{text-decoration:line-through}.branchBox{padding:10px;border-radius:14px;background:var(--soft);margin-top:8px}.deepBanner{border:2px solid #d79f3b;background:#fff9e7}.shopCount{font-size:28px;font-weight:800}.shopEmpty{padding:18px;text-align:center;color:var(--muted)}.shopRemove{color:var(--muted);background:transparent}
 body.driveMode .tabs,body.driveMode> .tabs{display:none}
@@ -117,7 +118,7 @@ function actionDueRank(t){
 }
 function actionSort(a,b){return actionDueRank(a)-actionDueRank(b)||(b.priority||0)-(a.priority||0)}
 function actionIsToday(t){return t.state==='Now'||actionDueRank(t)<=1}
-function ingestActions(items=[]){let ids=new Set(db.tasks.map(x=>x.id)),schoolKeys=new Set(db.tasks.filter(x=>x.module==='School Readiness'&&(x.gmailId||x.familyRoySourceId)).map(x=>schoolActionKey(x.title))),added=0;items.map(normaliseAction).forEach(x=>{let sk=x.module==='School Readiness'&&(x.gmailId||x.familyRoySourceId)?schoolActionKey(x.title):'';if(!ids.has(x.id)&&(!sk||!schoolKeys.has(sk))){db.tasks.push(x);ids.add(x.id);if(sk)schoolKeys.add(sk);added++}});save();return added}
+function ingestActions(items=[]){let ids=new Set(db.tasks.map(x=>x.id)),schoolKeys=new Set(db.tasks.filter(x=>x.module==='School Readiness'&&(x.gmailId||x.familyRoySourceId)).map(x=>FamilyRoyReceiverContracts.schoolActionIdentity(x,schoolActionKey))),added=0;items.map(normaliseAction).forEach(x=>{let sk=x.module==='School Readiness'&&(x.gmailId||x.familyRoySourceId)?FamilyRoyReceiverContracts.schoolActionIdentity(x,schoolActionKey):'';if(!ids.has(x.id)&&(!sk||!schoolKeys.has(sk))){db.tasks.push(x);ids.add(x.id);if(sk)schoolKeys.add(sk);added++}});save();return added}
 const purchaseSeed=[{id:'takealot-224867638',date:'2026-09-20',retailer:'Takealot',order:'224867638',total:368,shipping:0,items:[
 {name:'Astonish Lavender Blossom Floor Cleaner',size:'1L',price:42},
 {name:'Astonish Specialist Kitchen Cleaner – Zesty Lemon',size:'750ml',price:42},
@@ -402,7 +403,38 @@ function addShopItem(){let title=document.getElementById('shopItemTitle').value.
 function markShopGot(id){let x=db.shopping.find(y=>y.id===id);if(x){x.done=true;x.completedAt=new Date().toISOString()}save();renderShopping()}function restoreShopItem(id){let x=db.shopping.find(y=>y.id===id);if(x){x.done=false;delete x.completedAt}save();renderShopping()}
 function deleteShopItem(id){db.shopping=db.shopping.filter(x=>x.id!==id);save();renderShopping()}
 function handleDeepLink(){let q=new URLSearchParams(location.search);if(q.has('shop'))openPanel('shopping')}
-async function handleFamilyRoyDeepLink(){let h=new URLSearchParams(location.hash.replace(/^#/,'')),capability=h.get('familyroy'),endpoint=h.get('endpoint');if(!capability||!endpoint)return null;if(!/^https:\/\//i.test(endpoint)){history.replaceState(null,'',location.pathname+location.search);return null}history.replaceState(null,'',location.pathname+location.search);try{let result=await consumeFamilyRoyReadinessHandoff({endpoint,capability});openPanel('school');return result}catch(e){console.error('FamilyRoy handoff failed',e);let fb=document.getElementById('gmailFeedback');if(fb)fb.textContent='FamilyRoy item was not lost. Re-share it to retry the handoff.';openPanel('school');return null}}
+let pendingFamilyRoyHandoff=null;
+async function retryFamilyRoyHandoff(){
+ if(!pendingFamilyRoyHandoff)return null;
+ try{
+  let result=await consumeFamilyRoyReadinessHandoff(pendingFamilyRoyHandoff);
+  pendingFamilyRoyHandoff=null;
+  let fb=document.getElementById('gmailFeedback');
+  if(fb)fb.textContent='Saved school item received and acknowledged.';
+  openPanel('school');return result;
+ }catch(e){
+  console.error('FamilyRoy handoff failed',e);
+  let fb=document.getElementById('gmailFeedback');
+  if(fb){
+   fb.textContent='The saved FamilyRoy item has not been acknowledged. Retry the existing handoff; if it has expired, share the same item again (duplicates are protected). ';
+   let retry=document.createElement('button');retry.type='button';retry.className='btn';retry.textContent='Retry saved handoff';
+   retry.onclick=()=>retryFamilyRoyHandoff();fb.appendChild(retry);
+  }
+  openPanel('school');return null;
+ }
+}
+async function handleFamilyRoyDeepLink(){
+ let h=new URLSearchParams(location.hash.replace(/^#/,'')),capability=h.get('familyroy'),endpoint=h.get('endpoint');
+ if(!capability||!endpoint)return null;
+ history.replaceState(null,'',location.pathname+location.search);
+ if(!FamilyRoyReceiverContracts.endpointAllowed(endpoint)){
+  let fb=document.getElementById('gmailFeedback');
+  if(fb)fb.textContent='This handoff endpoint is not recognised. No FamilyRoy permission was sent.';
+  openPanel('school');return null;
+ }
+ pendingFamilyRoyHandoff={endpoint,capability};
+ return retryFamilyRoyHandoff();
+}
 
 function meterSortKey(r){return String(r.date||'')+'T'+(r.time||'23:59')+'-'+String(r.order||0).padStart(3,'0')}
 function meterRows(){return (db.electricity||[]).slice().sort((a,b)=>meterSortKey(a).localeCompare(meterSortKey(b)))}

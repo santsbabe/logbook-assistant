@@ -1,0 +1,25 @@
+name: FamilyRoy isolated receiver audit
+on:
+  push:
+    branches: ["audit/readiness-handoff-20261011"]
+jobs:
+  local-contract-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Syntax-check QA inline JavaScript without publishing
+        run: |
+          python - <<'PY'
+          import re
+          from pathlib import Path
+          p=Path("familyroy-control-centre-qa/index.html").read_text()
+          blocks=re.findall(r"<script(?:\\s[^>]*)?>(.*?)</script>",p,re.S|re.I)
+          Path("/tmp/familyroy-qa-audit-inline.js").write_text("\\n".join(blocks))
+          PY
+          node --check /tmp/familyroy-qa-audit-inline.js
+          node --check familyroy-control-centre-qa/receiver-contracts.js
+      - name: Run receiver contract regression tests
+        run: node --test familyroy-control-centre-qa/tests/receiver-contracts.test.cjs
