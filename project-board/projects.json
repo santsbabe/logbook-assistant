@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-11T10:49:00+02:00",
+  "updated": "2026-10-11T20:53:00+02:00",
   "milestones": [
     "defined",
     "specified",
@@ -67,7 +67,19 @@
       "needsUser": false,
       "readyToTest": true,
       "quickWin": false,
-      "statusReviewed": "2026-10-05"
+      "statusReviewed": "2026-10-05",
+      "handoffFromNotion": {
+        "reference": "notion-life-toolkit",
+        "work": [
+          "A2 School and household verification",
+          "A3 task/reminder/cross-system handoffs",
+          "M1 travel planning",
+          "M2 family medical admin",
+          "M5 emergency references"
+        ],
+        "state": "assigned_pending_acceptance",
+        "boundary": "Do not replace live dashboard or promote QA features without approval"
+      }
     },
     {
       "id": "school-notice-action-extractor",
@@ -97,7 +109,15 @@
       "needsUser": false,
       "readyToTest": false,
       "quickWin": false,
-      "statusReviewed": "2026-10-05"
+      "statusReviewed": "2026-10-05",
+      "handoffFromNotion": {
+        "reference": "notion-life-toolkit",
+        "work": [
+          "A2 parser v13 parity and end-to-end intake acceptance"
+        ],
+        "state": "qa_evidence_only",
+        "boundary": "Do not confuse isolated parser regression success with delivered phone actions"
+      }
     },
     {
       "id": "contacts-services",
@@ -153,7 +173,16 @@
       "readyToTest": false,
       "quickWin": false,
       "liveStage": "stable",
-      "statusReviewed": "2026-09-26"
+      "statusReviewed": "2026-09-26",
+      "handoffFromNotion": {
+        "reference": "notion-life-toolkit",
+        "work": [
+          "M3 document index/retrieval and renewal alerts",
+          "M4 dependency-aware life-event templates"
+        ],
+        "state": "assigned_pending_acceptance",
+        "boundary": "Keep original document case and per-device progress intact"
+      }
     },
     {
       "id": "before-we-leave",
@@ -234,7 +263,15 @@
       "needsUser": false,
       "readyToTest": false,
       "quickWin": false,
-      "statusReviewed": "2026-09-26"
+      "statusReviewed": "2026-09-26",
+      "handoffFromNotion": {
+        "reference": "notion-life-toolkit",
+        "work": [
+          "A1 ingestion completeness, debt/receipt evidence and reconciled FamilyRoy visibility"
+        ],
+        "state": "audit_gaps_identified",
+        "boundary": "Reuse current detailed workbook; do not assume missing bank statements or actuals"
+      }
     },
     {
       "id": "debt-workbook",
@@ -267,12 +304,12 @@
       "name": "Notion Life Management Toolkit",
       "category": "Family / Home",
       "parent": null,
-      "summary": "Older all-in-one life dashboard concept covering planning, medical/admin, travel, budget and family logistics.",
-      "status": "Dormant / superseded in parts",
-      "health": "paused",
-      "lastUpdated": "2025-06-16",
-      "blocker": "Much of its intended scope has since moved into FamilyRoy Control Centre.",
-      "next": "Decide which unique pieces still deserve migration rather than rebuilding duplicate systems.",
+      "summary": "Legacy life-management proposal retired as a standalone app. Nine scope decisions reconciled; only missing functions migrate into existing FamilyRoy, Bloom, BudgetRoy and Drive tools.",
+      "status": "Reconciled — targeted migration and verification open",
+      "health": "active",
+      "lastUpdated": "2026-10-11",
+      "blocker": "Audit-backed feature gaps remain in existing tools; preview verification, privacy checks and live-device acceptance are required before legacy closure.",
+      "next": "Track A1–A3 remediation and M1–M5 enhancement acceptance through existing owner projects. Close this legacy card only after each retained requirement has a verified destination.",
       "milestones": {
         "defined": "done",
         "specified": "done",
@@ -281,12 +318,99 @@
         "tested": "todo",
         "live": "todo"
       },
-      "links": [],
-      "needsUser": true,
-      "userAction": "Decide whether any unique Notion pieces are still worth migrating.",
+      "links": [
+        {
+          "label": "Migration handoff",
+          "url": "https://github.com/santsbabe/logbook-assistant/blob/audit/notion-migration-20261011/project-board/notion-life-toolkit-migration.md"
+        }
+      ],
+      "needsUser": false,
       "readyToTest": false,
       "quickWin": false,
-      "statusReviewed": "2026-09-26"
+      "statusReviewed": "2026-10-11",
+      "migration": {
+        "decisionDate": "2026-10-11",
+        "stage": "Scope reconciled; owner handoffs prepared; implementation evidence pending",
+        "rules": [
+          "No Notion or additional third-party app",
+          "No duplicate dashboard, work planner, budget engine, or recurring checklist system",
+          "Preview/test changes only; production requires explicit approval",
+          "Do not mark a route delivered because Intake classified or queued it",
+          "Only migrate verified functional gaps"
+        ],
+        "retained": [
+          {
+            "id": "M1",
+            "area": "Work and family travel planning",
+            "destination": "familyroy-control-centre",
+            "state": "not_started"
+          },
+          {
+            "id": "M2",
+            "area": "Family medical administration; Bloom stays personal health tracker",
+            "destination": "familyroy-control-centre",
+            "also": "bloom",
+            "state": "not_started"
+          },
+          {
+            "id": "M3",
+            "area": "Documents: organisation, secure links, renewals, missing records",
+            "destination": "personal-admin-tracker",
+            "state": "not_started"
+          },
+          {
+            "id": "M4",
+            "area": "Multi-step life-event cases",
+            "destination": "personal-admin-tracker",
+            "state": "not_started"
+          },
+          {
+            "id": "M5",
+            "area": "Emergency references and secure retrieval",
+            "destination": "familyroy-control-centre",
+            "also": "bloom",
+            "state": "not_started"
+          }
+        ],
+        "functionalAudits": [
+          {
+            "id": "A1",
+            "area": "Financial data/Personal Admin",
+            "destination": "household-cashflow",
+            "state": "partial_evidence_verified",
+            "remaining": "Santie ledger, January invoice gap, September statement and live dashboard reconciliation"
+          },
+          {
+            "id": "A2",
+            "area": "School/household/shopping operations",
+            "destination": "familyroy-control-centre",
+            "also": "familyroy-intake",
+            "state": "partial_evidence_verified",
+            "remaining": "QA/production parity, router CI, manual-only Shopping Radar, meal/chore and device handoffs"
+          },
+          {
+            "id": "A3",
+            "area": "Dashboards/reminder reliability and cross-system coordination",
+            "destination": "familyroy-control-centre",
+            "state": "partial_evidence_verified",
+            "remaining": "Durable cross-system state, source dedupe, notification delivery and real-device acceptance"
+          }
+        ],
+        "retired": [
+          "Standalone Notion application",
+          "Separate work planner and work templates hub",
+          "Duplicate household dashboard and budgeting engine",
+          "New general recurring administrative checklist platform",
+          "Homemade password vault"
+        ],
+        "closureCriteria": [
+          "All retained requirements have named owner and acceptance evidence",
+          "No duplication or sensitive-data exposure",
+          "Preview regression tests pass",
+          "All necessary device/runtime acceptance completed",
+          "Production deployment, if any, independently approved"
+        ]
+      }
     },
     {
       "id": "homework-quest",
@@ -473,7 +597,16 @@
       "readyToTest": false,
       "quickWin": false,
       "liveStage": "testing",
-      "statusReviewed": "2026-10-05"
+      "statusReviewed": "2026-10-05",
+      "handoffFromNotion": {
+        "reference": "notion-life-toolkit",
+        "work": [
+          "M2 personal-health source of truth",
+          "M5 link emergency reference without transferring raw health records"
+        ],
+        "state": "cross_app_boundary_defined",
+        "boundary": "Do not copy Bloom health payloads into public FamilyRoy code"
+      }
     },
     {
       "id": "bloom-health-bridge",
@@ -1097,7 +1230,15 @@
       "needsUser": false,
       "readyToTest": false,
       "quickWin": false,
-      "statusReviewed": "2026-09-26"
+      "statusReviewed": "2026-09-26",
+      "handoffFromNotion": {
+        "reference": "notion-life-toolkit",
+        "work": [
+          "A2 shared monitor result upsert into Shopping Radar with source/freshness, owner and dedupe"
+        ],
+        "state": "integration_pending",
+        "boundary": "Preserve manual shopping list and retailer/branch constraints"
+      }
     },
     {
       "id": "grocery-price-comparator",
@@ -1391,7 +1532,16 @@
       "needsUser": false,
       "readyToTest": false,
       "quickWin": false,
-      "statusReviewed": "2026-10-05"
+      "statusReviewed": "2026-10-05",
+      "handoffFromNotion": {
+        "reference": "notion-life-toolkit",
+        "work": [
+          "A2 School Router/Share Sheet receipt, dedupe, classification, delivery and recovery"
+        ],
+        "state": "preflight_fix_in_isolated_branch",
+        "evidence": "https://github.com/santsbabe/familyroy-intake/tree/audit/intake-preflight-20261011",
+        "boundary": "Passing tests and outbox delivery acceptance are separate from app production and physical iPhone acceptance"
+      }
     }
   ]
 }
