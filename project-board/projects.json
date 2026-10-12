@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-12T10:49:00+02:00",
+  "updated": "2026-10-12T17:53:00+02:00",
   "milestones": [
     "defined",
     "specified",
@@ -506,6 +506,22 @@
         "deployment": "audit-only; no production merge or Netlify deploy",
         "memo": "Source-to-draft, archive/ACK/dedupe, existing Parent Review route, Grade 2 exact homework parser; branch-only. Live Site and actual teacher PDF proof pending.",
         "noDeploy": true
+      },
+      "oct12Homework": {
+        "date": "2026-10-12",
+        "status": "four announcements verified; original Week 2 and Life Skills brief attachments pending Classroom retrieval",
+        "schoolWeekCurrent": "2026-10-12",
+        "priorWeek": "2026-10-05",
+        "sourceEvidence": "https://github.com/santsbabe/homework-quest/blob/fix/snags-through-060-20261012/fixtures/school/grade2-2026-10-12-intake-evidence.json",
+        "project": "Grade 2 Life Skills Project; corrected window 27–29 October 2026; full brief not retrieved",
+        "qa": "https://github.com/santsbabe/homework-quest/actions/runs/38272959500",
+        "carryOver": "Prior unfinished or unknown-completion source tasks stay in active carry-over; all weeks remain in history; no XP reset in model; actual Sites view not yet verified.",
+        "blockers": [
+          "Access authentic Grade 2 Classroom attachments posted on 12 Oct",
+          "Read real Harrison Site progress and integrate selector in original game",
+          "Owner-private Sites preview acceptance and explicit production approval",
+          "No Netlify/Sites deployment authorised"
+        ]
       }
     },
     {
@@ -1440,6 +1456,20 @@
         ],
         "acceptedScope": "Only internal GitHub governance verified for #59 and #60; external/device gates remain pending",
         "evidence": "https://github.com/santsbabe/homework-quest/blob/fix/snags-through-060-20261012/docs/SNAGS-001-060-AUTONOMOUS-CHECKPOINT-2026-10-12.md"
+      },
+      "oct12SourceAndCarryover": {
+        "branch": "https://github.com/santsbabe/homework-quest/tree/fix/snags-through-060-20261012",
+        "evidence": "https://github.com/santsbabe/homework-quest/blob/fix/snags-through-060-20261012/docs/OCT12-HOMEWORK-CLASSROOM-RUNTIME-ACCEPTANCE.md",
+        "affectedPending": [
+          29,
+          32,
+          34,
+          39,
+          45,
+          49
+        ],
+        "status": "CI passed but Classroom attachments, original Sites and actual learner persistence pending",
+        "noClosureClaim": true
       }
     },
     {
