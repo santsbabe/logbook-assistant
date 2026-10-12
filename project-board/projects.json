@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-11T22:06:00+02:00",
+  "updated": "2026-10-12T10:49:00+02:00",
   "milestones": [
     "defined",
     "specified",
@@ -491,9 +491,9 @@
       "quickWin": false,
       "statusReviewed": "2026-10-05",
       "familyRoyHandoff": {
-        "state": "isolated_receiver_code_ci_passed__runtime_and_learner_delivery_pending",
-        "branch": "https://github.com/santsbabe/homework-quest/tree/audit/hq-familyroy-handoff-20261011",
-        "evidence": "https://github.com/santsbabe/homework-quest/actions/runs/38170743059",
+        "state": "integrated_into_latest_fidelity_branch__full_ci_passed__live_runtime_acceptance_pending",
+        "branch": "https://github.com/santsbabe/homework-quest/tree/fix/snags-through-060-20261012",
+        "evidence": "https://github.com/santsbabe/homework-quest/actions/runs/38225752453",
         "tests": "18/18 receiver and Parent Console-focused tests passed; JS syntax and local parent build passed",
         "fullSuite": "82/84 passed; 2 unrelated canonical snag tracker assertion mismatches remain",
         "content": "Intake homework route -> scoped browser handoff -> verified archive and draft/review persistence -> ack with retry and dedupe. No automatic learner approval.",
@@ -503,7 +503,9 @@
           "Learner publisher, game fidelity/characters and actual 7 October homework are independent unresolved acceptance gates",
           "Attachment bytes require explicit evidence retrieval/review"
         ],
-        "deployment": "audit-only; no production merge or Netlify deploy"
+        "deployment": "audit-only; no production merge or Netlify deploy",
+        "memo": "Source-to-draft, archive/ACK/dedupe, existing Parent Review route, Grade 2 exact homework parser; branch-only. Live Site and actual teacher PDF proof pending.",
+        "noDeploy": true
       }
     },
     {
@@ -1419,7 +1421,26 @@
       "readyToTest": false,
       "quickWin": false,
       "liveStage": "monitoring",
-      "statusReviewed": "2026-10-05"
+      "statusReviewed": "2026-10-05",
+      "previewSnagThrough60": {
+        "branch": "https://github.com/santsbabe/homework-quest/tree/fix/snags-through-060-20261012",
+        "scope": "001-060",
+        "stagedResolved": 17,
+        "stagedPending": 43,
+        "overallStagedResolved": 19,
+        "overallStagedPending": 112,
+        "liveTrackerMainUnaffected": true,
+        "closedOnBranch": [
+          "SNAG-059",
+          "SNAG-060"
+        ],
+        "codeImprovedButPending": [
+          "SNAG-047",
+          "SNAG-056"
+        ],
+        "acceptedScope": "Only internal GitHub governance verified for #59 and #60; external/device gates remain pending",
+        "evidence": "https://github.com/santsbabe/homework-quest/blob/fix/snags-through-060-20261012/docs/SNAGS-001-060-AUTONOMOUS-CHECKPOINT-2026-10-12.md"
+      }
     },
     {
       "id": "reading-radar",
@@ -1573,9 +1594,9 @@
           "Recipient must durably store source before acknowledging and recover if browser handoff fails",
           "iPhone Chrome/device acceptance is still required"
         ],
-        "homeworkQuestReceiverBranch": "https://github.com/santsbabe/homework-quest/tree/audit/hq-familyroy-handoff-20261011",
+        "homeworkQuestReceiverBranch": "https://github.com/santsbabe/homework-quest/tree/fix/snags-through-060-20261012",
         "homeworkQuestReceiverEvidence": "https://github.com/santsbabe/homework-quest/actions/runs/38170743059",
-        "homeworkQuestReceiverState": "isolated_receiver_code_ci_passed__runtime_and_learner_delivery_pending"
+        "homeworkQuestReceiverState": "integrated_into_latest_fidelity_branch__full_ci_passed__live_runtime_acceptance_pending"
       }
     }
   ]
