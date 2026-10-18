@@ -19,13 +19,15 @@ assert.ok(!html.includes("d.tasks=d.tasks.filter(t=>!(t.module==='School Readine
 assert.ok(!html.includes("d.seen=d.seen.filter(x=>String(x).startsWith('attention:'))"));
 // The Today selector must exclude Done, Review and Waiting, including overdue items.
 const today=fromVm(codeBetween('function actionIsToday(','function schoolOccurrenceKey('),
-  'actionIsToday',{actionDueRank:t=>t.due==='overdue'?0:3});
+  'actionIsToday',{actionDueRank:t=>t.due==='overdue'?0:3,localISO:()=> '2026-10-18'});
 assert.equal(today({state:'Done',due:'overdue'}),false);
 assert.equal(today({state:'Review',due:'overdue'}),false);
 assert.equal(today({state:'Waiting',due:'overdue'}),false);
 assert.equal(today({state:'Next',due:'overdue'}),true);
 assert.equal(today({state:'Now'}),true);
 assert.equal(today({state:'Next'}),false);
+assert.equal(today({state:'Next',snoozedUntil:'2026-10-25',due:'overdue'}),false);
+assert.equal(today({state:'Next',snoozedUntil:'2026-10-18'}),true);
 // Distinct recurring dates and children are separate; replay of same id is idempotent.
 const taskDb={tasks:[]};
 const ingest=fromVm(codeBetween('function schoolOccurrenceKey(','const purchaseSeed='),
@@ -109,4 +111,37 @@ assert.equal(recurringDb.tasks.filter(t=>t.id===friday.id).length,1);
 // Both sources remain private-action records and should never auto-send invitations.
 assert.ok(annual.calendarSpec.subjects.length===8);
 
-console.log('PASS: no-loss migration, occurrence dedupe, Today, review fallback, meter, recurrence and recovery gates');
+// Review must expose the original captured evidence and distinguish dismiss from completion.
+const taskView=fromVm(codeBetween('function taskHtml(','function renderCapabilities('),'taskHtml',
+  {esc:x=>String(x).replace(/</g,'&lt;'),actionDueRank:()=>3});
+const reviewCard=taskView({id:'r1',title:'Review imported notice',
+  state:'Review',evidenceText:'Original note <with context>',source:'School'});
+assert.match(reviewCard,/Add now/);
+assert.match(reviewCard,/Add later/);
+assert.match(reviewCard,/Dismiss/);
+assert.match(reviewCard,/Original note &lt;with context>/);
+assert.match(reviewCard,/Original notice/);
+const taskRecords={tasks:[{id:'s1',title:'Due item',state:'Now',due:'2026-10-18'}]};
+let selectedDate='2026-10-25',saved=0;
+const handlers=fromVm(codeBetween('function move(','function done('),'snooze',{
+  db:taskRecords,prompt:()=>selectedDate,alert:()=>{},localISO:()=> '2026-10-18',
+  save:()=>{saved++},render:()=>{}});
+handlers('s1');
+assert.equal(taskRecords.tasks[0].state,'Next');
+assert.equal(taskRecords.tasks[0].snoozedUntil,'2026-10-25');
+assert.equal(taskRecords.tasks[0].due,'2026-10-18','Do not overwrite original deadline');
+selectedDate='2026-02-31';handlers('s1');
+assert.equal(saved,1,'Invalid calendar date is not persisted');
+const moveTask=fromVm(codeBetween('function move(','function snooze('),'move',{
+  db:taskRecords,save:()=>{},render:()=>{}});
+moveTask('s1','Now');
+assert.equal(taskRecords.tasks[0].snoozedUntil,undefined);
+const reviewTask={id:'review-x',state:'Review'};
+const reviewDb={tasks:[reviewTask]};
+const dismiss=fromVm(codeBetween('function done(','function addManual('),'done',{
+  db:reviewDb,save:()=>{},render:()=>{}});
+dismiss('review-x');
+assert.equal(reviewTask.state,'Done');
+assert.equal(reviewTask.resolution,'Dismissed');
+
+console.log('PASS: no-loss migration, occurrence dedupe, Today, review decisions, snooze, meter, recurrence and recovery gates');
