@@ -1,0 +1,20 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//FamilyRoy//School Reminders//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:pnps-aftercare-early-collection-20261030@familyroy.local
+DTSTAMP:20261018T160000Z
+DTSTART;VALUE=DATE:20261030
+DTEND;VALUE=DATE:20261031
+SUMMARY:PNPS After Care - early collection requested if possible
+LOCATION:PNPS After Care\, Pinelands\, Cape Town
+DESCRIPTION:Optional request to collect earlier than usual because Red-a-Fair setup affects After Care. No specific time given.
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Consider earlier After Care collection tomorrow
+TRIGGER:-P1D
+END:VALARM
+END:VEVENT
+END:VCALENDAR
