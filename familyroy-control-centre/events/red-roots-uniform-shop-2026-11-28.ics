@@ -1,0 +1,14 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//FamilyRoy//Calendar//EN
+CALSCALE:GREGORIAN
+BEGIN:VEVENT
+UID:redroots-uniform-20261128@familyroy.local
+DTSTAMP:20261018T150000Z
+DTSTART;TZID=Africa/Johannesburg:20261128T090000
+DTEND;TZID=Africa/Johannesburg:20261128T120000
+SUMMARY:Red Roots Uniform Shop
+LOCATION:Red Roots Pre-Primary\, Pinelands\, Cape Town
+DESCRIPTION:Uniform shop 09:00 to 12:00.
+END:VEVENT
+END:VCALENDAR
