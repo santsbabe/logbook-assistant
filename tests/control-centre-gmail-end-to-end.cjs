@@ -56,7 +56,7 @@ class LocalPg{
       const row=this.state.get(tenant);
       return{rows:row?[{revision:row.revision,encrypted_snapshot:row.encrypted}]:[]};
     }
-    if(sql.startsWith('INSERT INTO control_centre_state')){
+    if(sql.startsWith('WITH updated AS (')){
       if(this.failNextCas){this.failNextCas=false;return{rows:[]}}
       const current=this.state.get(tenant),rev=current?.revision||0;
       if(rev!==key)return{rows:[]};
