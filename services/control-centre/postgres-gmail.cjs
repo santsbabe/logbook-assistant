@@ -100,8 +100,11 @@ function createPgLeaseProvider(pool){
       if(!taken)return null;
       return await run();
     }finally{
-      if(taken)await client.query('SELECT pg_advisory_unlock(hashtextextended($1,0)) AS released',[key]);
-      client.release();
+      try{
+        if(taken)await client.query('SELECT pg_advisory_unlock(hashtextextended($1,0)) AS released',[key]);
+      }finally{
+        client.release();
+      }
     }
   }};
 }
