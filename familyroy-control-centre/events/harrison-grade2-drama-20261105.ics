@@ -1,0 +1,23 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//FamilyRoy//Grade 2 School Assessments//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:harrison-grade2-drama-20261105@familyroy.local
+DTSTAMP:20261018T190000Z
+DTSTART;VALUE=DATE:20261105
+DTEND;VALUE=DATE:20261106
+SUMMARY:Harrison - Grade 2 Drama assessment
+LOCATION:Pinelands North Primary School\, Pinelands\, Cape Town
+DESCRIPTION:South African Animals skit. Exact assessment time\, costume and
+  props were not specified. Source: https://drive.google.com/file/d/1DGJBiW
+ Vh4CCHsIVa_yEbmdCbG-ZtjW1z/view
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT6H
+DESCRIPTION:Prepare for Harrison - Grade 2 Drama assessment
+END:VALARM
+END:VEVENT
+END:VCALENDAR
