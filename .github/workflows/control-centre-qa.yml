@@ -30,6 +30,11 @@ jobs:
         run: |
           node --check familyroy-control-centre-qa/cloud-sync.js
           node --check services/control-centre/gmail-worker.cjs
+      - name: Authenticated private-backend and adversarial concurrency tests
+        run: node tests/control-centre-private-backend.cjs
+      - name: Syntax-check staged backend modules
+        run: |
+          for file in services/control-centre/*.cjs; do node --check "$file"; done
       - name: Render QA in Chrome at phone and desktop widths
         run: node tests/control-centre-browser-smoke.cjs
       - name: Check FamilyRoy browser credential boundary
