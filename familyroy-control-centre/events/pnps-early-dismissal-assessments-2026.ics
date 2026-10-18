@@ -1,0 +1,20 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//FamilyRoy//PNPS School Reminders//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:pnps-early-dismissal-term4-2026@familyroy.local
+DTSTAMP:20261018T160000Z
+DTSTART:20261116T113000Z
+RRULE:FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR;UNTIL=20261208T113000Z
+SUMMARY:PNPS - Early dismissal at 13:30
+LOCATION:Pinelands North Primary School\, Pinelands\, Cape Town
+DESCRIPTION:School dismissal at 13:30 on school weekdays 16 November to 8 December 2026. 9 December 11:00 closing is separate.
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:PNPS dismissal at 13:30 today
+TRIGGER:-PT60M
+END:VALARM
+END:VEVENT
+END:VCALENDAR
