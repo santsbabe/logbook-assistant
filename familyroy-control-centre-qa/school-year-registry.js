@@ -102,8 +102,8 @@
   const cls=[...t.matchAll(/\b(?:class\s*)?(2M|2D|2E|[1-9][A-Z])\b/ig)].map(x=>x[1].toUpperCase());
   const classes=[...new Set(cls)];
   const grades=[...new Set([...explicit,...classes.map(x=>x.slice(0,-1))])];
-  if(grades.length>1||classes.length>1)return{grade:null,classCode:'',conflict:true};
-  return{grade:grades[0]||'',classCode:classes[0]||'',conflict:false};
+  return{grade:grades.length===1?grades[0]:'',grades,
+    classCode:classes.length===1?classes[0]:'',classes,conflict:false};
  }
  function mentionedChildren(text,sourceChildren=[]){
   const source=String(text||'');
@@ -124,15 +124,12 @@
   const {year,reason:yearReason}=relevantYear(text,sourceDate);
   const children=mentionedChildren(text,sourceChildren);
   const level=inferGrade(text+'\n'+source);
-  if(!year||level.conflict)return{status:'review',school:institution||null,year,
-    children:[],reason:!year?yearReason:'Conflicting grade/class evidence'};
-  if(institution==='PNPS'&&level.classCode==='2E'&&!children.length)
-    return{status:'ignore',school:institution,year,children:[],reason:'PNPS class 2E excluded by confirmed rule'};
+  if(!year)return{status:'review',school:institution||null,year,children:[],reason:yearReason};
   if(children.length){
-    if(institution==='PNPS'&&level.grade){
-      const known=d.records.filter(r=>r.year===year&&r.school==='PNPS'&&r.grade===level.grade&&
-         (!r.classCode||r.classCode===level.classCode));
-      if(known.length&&children.some(c=>!known.some(r=>r.child===c))&&!wholeSchool(text))
+    if(institution==='PNPS'&&level.grades.length===1&&!wholeSchool(text)){
+      const known=d.records.filter(r=>r.year===year&&r.school==='PNPS'&&r.grade===level.grades[0]&&
+        (!level.classes.length?!r.classCode:level.classes.includes(r.classCode)));
+      if(known.length&&children.some(c=>!known.some(r=>r.child===c)))
         return{status:'review',school:institution,year,children,reason:'Explicit learner conflicts with school-year registry'};
     }
     return{status:'matched',school:institution||null,year,children,reason:'Explicit named learners'};
@@ -140,7 +137,9 @@
   if(!institution)return{status:'review',school:null,year,children:[],reason:'School not identified'};
   if(institution==='PNPS'&&wholeSchool(text))return{status:'matched',school:institution,year,
     children:['Harrison','Alexander'],reason:'Whole-school PNPS notice'};
-  if(!level.grade){
+  if(institution==='PNPS'&&level.classes.length&&level.classes.every(c=>c==='2E'))
+    return{status:'ignore',school:institution,year,children:[],reason:'PNPS class 2E excluded by confirmed rule'};
+  if(!level.grades.length){
     const schoolOnly=[...new Set(d.records.filter(r=>r.year===year&&r.school===institution&&
       r.grade===''&&r.classCode==='').map(r=>r.child))];
     if(schoolOnly.length===1)return{status:'matched',school:institution,year,
@@ -148,16 +147,26 @@
     return{status:'review',school:institution,year,children:[],
       reason:schoolOnly.length>1?'Conflicting school-only learner records':'No learner grade or class; confirm the intended children'};
   }
-  let found=d.records.filter(r=>r.year===year&&r.school===institution&&r.grade===level.grade);
-  if(level.classCode){
-    const specific=found.filter(r=>r.classCode===level.classCode);
-    found=specific.length?specific:found.filter(r=>!r.classCode);
-  }else found=found.filter(r=>!r.classCode);
-  const resolved=[...new Set(found.map(r=>r.child))];
-  if(resolved.length===1)return{status:'matched',school:institution,year,children:resolved,
-    reason:'Verified '+year+' '+institution+' Grade '+level.grade+(level.classCode?' '+level.classCode:'')+' mapping'};
-  return{status:'review',school:institution,year,children:[],
-    reason:resolved.length>1?'Conflicting learner-year records':'Unknown learner grade, class or school-year mapping'};
+  const targets=[],unknown=[];
+  for(const grade of level.grades){
+    const classes=level.classes.filter(c=>c.slice(0,-1)===grade&&!(institution==='PNPS'&&c==='2E'));
+    const onlyExcluded=institution==='PNPS'&&level.classes.some(c=>c==='2E'&&grade==='2')&&classes.length===0;
+    if(onlyExcluded)continue;
+    const matches=classes.length?classes.map(code=>d.records.filter(r=>r.year===year&&r.school===institution&&
+      r.grade===grade&&r.classCode===code)):
+      [d.records.filter(r=>r.year===year&&r.school===institution&&r.grade===grade&&!r.classCode)];
+    for(const records of matches){
+      const names=[...new Set(records.map(r=>r.child))];
+      if(names.length!==1)unknown.push(grade);
+      else targets.push(names[0]);
+    }
+  }
+  if(unknown.length)return{status:'review',school:institution,year,children:[],
+    reason:'Unknown or conflicting learner mapping for grade '+[...new Set(unknown)].join(', ')};
+  const unique=[...new Set(targets)];
+  if(unique.length)return{status:'matched',school:institution,year,children:unique,
+    reason:'Verified '+year+' '+institution+' grade/class registry'};
+  return{status:'ignore',school:institution,year,children:[],reason:'Only excluded PNPS class 2E targeted'};
  }
  return{YEARS,PEOPLE,SEED,defaults,ensure,validRow,annualRequired,confirm,change,remove,
   schoolName,canonicalSchool,gradeCode,classCode,relevantYear,inferGrade,mentionedChildren,resolve};
