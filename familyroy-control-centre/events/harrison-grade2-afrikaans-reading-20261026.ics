@@ -1,0 +1,24 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//FamilyRoy//PNPS Grade 2 Assessments//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:harrison-grade2-afrikaans-reading-20261026@familyroy.local
+DTSTAMP:20261018T191100Z
+DTSTART;VALUE=DATE:20261026
+DTEND;VALUE=DATE:20261027
+SUMMARY:Harrison - Grade 2 Afrikaans Reading assessment
+LOCATION:Pinelands North Primary School\, Pinelands\, Cape Town
+DESCRIPTION:Afrikaans - Lees woorde en sinne (reading words and sentences).
+  No exact assessment time or prescribed word list in the school schedule. 
+ Sunday 25 October 18:00 preparation reminder. Source: https://drive.google
+ .com/file/d/1DGJBiWVh4CCHsIVa_yEbmdCbG-ZtjW1z/view
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT6H
+DESCRIPTION:Prepare for Harrison's Afrikaans reading assessment tomorrow
+END:VALARM
+END:VEVENT
+END:VCALENDAR
