@@ -32,7 +32,7 @@ async function readGmailJson(fetchImpl,accessToken,url){
 }
 function checkSink(sink){
   if(!sink||typeof sink.hasProcessed!=='function'||typeof sink.deliver!=='function'||
-     typeof sink.markProcessed!=='function')throw new Error('Durable private message sink required');
+     typeof sink.markProcessed!=='function'||typeof sink.readCursor!=='function'||typeof sink.commitCursor!=='function')throw new Error('Durable private message sink and cursor required');
 }
 async function runGmailPoll({fetchImpl,accessToken,sink,query=DEFAULT_QUERY,maxMessages=MAX_PER_RUN,namespace}={}){
   if(typeof fetchImpl!=='function')throw new Error('Fetch transport required');
@@ -42,11 +42,15 @@ async function runGmailPoll({fetchImpl,accessToken,sink,query=DEFAULT_QUERY,maxM
   checkSink(sink);
   if(!Number.isInteger(maxMessages)||maxMessages<1||maxMessages>MAX_PER_RUN)throw new Error('Unsafe poll batch limit');
   if(typeof query!=='string'||query.length>1000)throw new Error('Invalid Gmail query');
+  const cursorKey=namespace+':gmail:cursor';
+  const previousCursor=await sink.readCursor(cursorKey);
+  if(previousCursor!==null&&previousCursor!==undefined&&typeof previousCursor!=='string')throw new Error('Invalid durable Gmail cursor');
   const url=new URL(GMAIL+'/messages');
   url.searchParams.set('maxResults',String(maxMessages));
   url.searchParams.set('q',query);
+  if(previousCursor)url.searchParams.set('pageToken',previousCursor);
   const list=await readGmailJson(fetchImpl,accessToken,url.href);
-  if(!Array.isArray(list.messages))list.messages=[];
+  if(!Array.isArray(list.messages))throw new Error('Gmail returned an invalid message list');
   let dispatched=0,duplicates=0,scanned=0;
   for(const msg of list.messages.slice(0,maxMessages)){
     if(!safeId(msg.id))continue;
@@ -68,6 +72,9 @@ async function runGmailPoll({fetchImpl,accessToken,sink,query=DEFAULT_QUERY,maxM
     await sink.markProcessed(key);
     dispatched++;
   }
+  // Only advance the pagination cursor after every delivered item is recorded.
+  // If any operation above fails, this cursor stays put for safe retry.
+  await sink.commitCursor(cursorKey,list.nextPageToken||'');
   return{scanned,dispatched,duplicates,moreAvailable:Boolean(list.nextPageToken)};
 }
 module.exports={GMAIL,DEFAULT_QUERY,MAX_PER_RUN,decodeBody,runGmailPoll};
