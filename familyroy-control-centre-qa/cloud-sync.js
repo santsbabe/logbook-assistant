@@ -27,6 +27,21 @@
        !Number.isFinite(Date.parse(snapshot.savedAt)))throw new Error('Unrecognised or incomplete Control Centre cloud copy');
     return snapshot;
   }
+  function compareTaskCopies(local,remote){
+    if(!validData(local)||!validData(remote))throw new Error('Cannot compare invalid Control Centre action collections');
+    const byId=items=>{
+      let map=new Map();
+      for(const item of items){if(map.has(item.id))throw new Error('Duplicate task identifiers prevent a safe restore comparison');map.set(item.id,item)}
+      return map;
+    };
+    const l=byId(local.tasks),r=byId(remote.tasks);
+    let localOnly=0,remoteOnly=0,changed=0,unchanged=0;
+    // Compare stable workflow fields, not incidental ordering or import metadata.
+    const stable=t=>JSON.stringify(['title','state','owner','due','child','priority','snoozedUntil','completedAt','resolution'].map(k=>t[k]??null));
+    for(const [id,item]of l){if(!r.has(id))localOnly++;else if(stable(item)===stable(r.get(id)))unchanged++;else changed++}
+    for(const id of r.keys())if(!l.has(id))remoteOnly++;
+    return{localOnly,remoteOnly,changed,unchanged};
+  }
   function authorizeHeaders(token){
     if(!token||typeof token!=='string')throw new Error('Google Drive authorisation is required');
     return {Authorization:'Bearer '+token};
@@ -80,5 +95,5 @@
     if(!created||typeof created.id!=='string'||created.name!==name)throw new Error('Google Drive could not confirm creation');
     return {id:created.id,name:created.name,savedAt,taskCount:data.tasks.length};
   }
-  return{SCOPE,FORMAT,PREFIX,MAX_BYTES,validData,safeSnapshot,listCopies,readCopy,createCopy};
+  return{SCOPE,FORMAT,PREFIX,MAX_BYTES,validData,safeSnapshot,compareTaskCopies,listCopies,readCopy,createCopy};
 });
