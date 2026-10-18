@@ -25,7 +25,7 @@
       }
     }
     for(const t of data.tasks){
-      if(!plain(t)||typeof t.id!=='string'||!t.id||t.id.length>300||ids.has(t.id))return false;
+      if(!plain(t)||typeof t.id!=='string'||!/^[a-zA-Z0-9_.:@-]{1,300}$/.test(t.id)||ids.has(t.id))return false;
       ids.add(t.id);
     }
     return true;
