@@ -1,0 +1,15 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//FamilyRoy//School Events//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:red-roots-picnic-20261207@familyroy.local
+DTSTAMP:20261018T150000Z
+DTSTART:20261207T150000Z
+DTEND:20261207T170000Z
+SUMMARY:Red Roots - End-of-Year Picnic
+LOCATION:Red Roots Pre-Primary\, Pinelands\, Cape Town
+DESCRIPTION:End-of-year picnic celebration for children and families. Monday 7 December from 17:00 to 19:00 South African time.
+END:VEVENT
+END:VCALENDAR
