@@ -207,4 +207,46 @@ assert.equal(legacyFix(oldDb),0,'The repair must not recreate completed/reviewed
 // School packing screen must not surface uncertain Review items as confirmed obligations.
 assert.ok(html.includes("!['Done','Waiting','Review'].includes(t.state)"));
 
-console.log('PASS: no-loss migration, occurrence dedupe, Today, review decisions, school parser, snooze, meter, recurrence and recovery gates');
+
+const snapshotFns=codeBetween('function validateLocalSnapshot(','function load(){');
+const snapshotVm=vm.runInNewContext(snapshotFns+'; ({validateLocalSnapshot,readLocalSnapshot,writeLocalSnapshot})',
+  {document:{getElementById:()=>null},localStorage:null});
+function fakeStorage(){
+ const data=new Map();
+ return{getItem:key=>data.has(key)?data.get(key):null,
+   setItem:(key,v)=>data.set(key,String(v)),removeItem:key=>data.delete(key),data};
+}
+const recordStore=fakeStorage();
+const snapshotKey='control-centre-test';
+assert.equal(snapshotVm.readLocalSnapshot(recordStore,snapshotKey).status,'new');
+const first={tasks:[{id:'first',state:'Now'}],seen:['a']};
+const second={tasks:[{id:'first',state:'Done'}],seen:['a']};
+snapshotVm.writeLocalSnapshot(recordStore,snapshotKey,first);
+assert.equal(snapshotVm.readLocalSnapshot(recordStore,snapshotKey).status,'ok');
+snapshotVm.writeLocalSnapshot(recordStore,snapshotKey,second);
+assert.equal(JSON.parse(recordStore.getItem(snapshotKey+'_previous')).tasks[0].state,'Now');
+assert.equal(JSON.parse(recordStore.getItem(snapshotKey)).tasks[0].state,'Done');
+const damagedCurrent=recordStore.getItem(snapshotKey);
+recordStore.setItem(snapshotKey,'{bad json');
+assert.equal(snapshotVm.readLocalSnapshot(recordStore,snapshotKey).status,'recovery');
+assert.equal(snapshotVm.readLocalSnapshot(recordStore,snapshotKey).data.tasks[0].state,'Now');
+assert.throws(()=>snapshotVm.writeLocalSnapshot(recordStore,snapshotKey,first),
+ /damaged/,'Invalid local JSON must never be overwritten silently');
+assert.equal(recordStore.getItem(snapshotKey),'{bad json');
+recordStore.setItem(snapshotKey+'_previous','{also bad');
+assert.equal(snapshotVm.readLocalSnapshot(recordStore,snapshotKey).status,'unrecoverable');
+recordStore.setItem(snapshotKey,damagedCurrent);
+recordStore.setItem(snapshotKey+'_previous',JSON.stringify(first));
+const blockedStore={getItem:recordStore.getItem,setItem:(key,value)=>{
+ if(key===snapshotKey+'_previous')throw new Error('Storage quota reached');
+ recordStore.setItem(key,value);
+}};
+assert.throws(()=>snapshotVm.writeLocalSnapshot(blockedStore,snapshotKey,
+ {tasks:[{id:'a',state:'Waiting'}]}),/Storage quota reached/);
+assert.equal(recordStore.getItem(snapshotKey),damagedCurrent,
+ 'Storage errors must not overwrite the last intact primary version');
+assert.ok(html.includes('id="storageWarning"'));
+assert.ok(html.includes('onclick="downloadDamagedLocalData()"'));
+assert.ok(html.includes('id="recoverLocalSnapshot"'));
+
+console.log('PASS: no-loss migration, occurrence dedupe, Today, review decisions, school parser, snooze, meter, recurrence, snapshot-integrity and recovery gates');
