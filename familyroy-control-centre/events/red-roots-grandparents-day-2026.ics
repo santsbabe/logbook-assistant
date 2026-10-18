@@ -5,11 +5,11 @@ CALSCALE:GREGORIAN
 METHOD:PUBLISH
 BEGIN:VEVENT
 UID:redroots-grandparents-20261127@familyroy.local
-DTSTAMP:20261018T150000Z
+DTSTAMP:20261018T180000Z
 DTSTART;TZID=Africa/Johannesburg:20261127T093000
 DTEND;TZID=Africa/Johannesburg:20261127T111500
-SUMMARY:Red Roots Grandparents Day
+SUMMARY:Red Roots and PNPS Foundation Phase - Grandparents Day
 LOCATION:Red Roots Pre-Primary\, Pinelands\, Cape Town
-DESCRIPTION:Tea 09:30 to 10:15. Children's concert 10:15 to 11:15.
+DESCRIPTION:Tea 09:30-10:15 and concert 10:15-11:15. Both Red Roots and PNPS Foundation Phase grandparents invited per PNPS Newsletter 18. No separate PNPS programme or venue confirmed.
 END:VEVENT
 END:VCALENDAR
