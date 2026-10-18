@@ -144,4 +144,50 @@ dismiss('review-x');
 assert.equal(reviewTask.state,'Done');
 assert.equal(reviewTask.resolution,'Dismissed');
 
-console.log('PASS: no-loss migration, occurrence dedupe, Today, review decisions, snooze, meter, recurrence and recovery gates');
+// Regression from an actual phone screenshot: homework and packing are separate decisions.
+const parseSchool=fromVm(codeBetween('function schoolNeed(','function familyRoyReadinessItems('),
+  'parseNotice',{Date,detectChild:()=> 'Alexander',
+    normText:value=>String(value).toLowerCase().trim(),
+    actionDueRank:({due})=>due<'2026-10-18'?0:due==='2026-10-18'?1:due==='2026-10-19'?2:3});
+const screenshotText='PNPS: Alexander homework is revise klanke. Bring library bag on Friday';
+const parsedSchool=parseSchool(screenshotText,'PNPS school homework','mail-sample',
+  new Date('2026-10-18T10:00:00Z'));
+assert.equal(parsedSchool.length,2,'Each independent instruction must have its own task');
+assert.equal(parsedSchool[0].title,'Alexander: revise klanke');
+assert.equal(parsedSchool[0].morning,false,'Homework revision is not a packed item');
+assert.equal(parsedSchool[0].due,'','A later school-bag date is not the homework deadline');
+assert.equal(parsedSchool[1].title,'Alexander: Bring library bag on Friday');
+assert.equal(parsedSchool[1].morning,true);
+assert.equal(parsedSchool[1].due,'2026-10-23');
+assert.ok(!parsedSchool.some(x=>/Alexander:.*Alexander/i.test(x.title)));
+const overdueMail=parseSchool(screenshotText,'PNPS school homework','mail-old',
+  new Date('2026-10-01T10:00:00Z'));
+assert.equal(overdueMail.length,2);
+assert.equal(overdueMail[1].state,'Review','Historical school note is reviewed, not shown overdue in Today');
+assert.equal(overdueMail[1].due,'');
+assert.equal(overdueMail[1].originalDue,'2026-10-02');
+const unrelatedDates=parseSchool('PNPS: Alexander homework is revise klanke. Bring library bag on Friday. Submit a form on 3 November 2026',
+  'PNPS school homework','mail-mixed',new Date('2026-10-18T10:00:00Z'));
+assert.equal(unrelatedDates[0].due,'','Do not borrow dates from unrelated sentences');
+const legacyFix=fromVm(codeBetween('function correctLegacyCombinedSchoolTasks(','const purchaseSeed='),
+ 'correctLegacyCombinedSchoolTasks',{normaliseAction:x=>x,Date});
+const originalTask={id:'school-mail-42',module:'School Readiness',state:'Now',
+ title:'Alexander: PNPS: Alexander homework is revise klanke. Bring library bag on Friday',
+ child:'Alexander',due:'2026-10-16',gmailId:'mail-42',source:'PNPS school'};
+const oldDb={tasks:[originalTask]};
+assert.equal(legacyFix(oldDb),1);
+assert.equal(oldDb.tasks.length,3);
+assert.equal(originalTask.state,'Done');
+assert.match(originalTask.resolution,/Superseded/);
+assert.equal(oldDb.tasks[1].state,'Review');
+assert.equal(oldDb.tasks[2].state,'Review');
+assert.equal(oldDb.tasks[1].due,'');
+assert.equal(oldDb.tasks[2].due,'');
+assert.equal(oldDb.tasks[1].title,'Alexander: Revise klanke');
+assert.equal(oldDb.tasks[2].title,'Alexander: Bring library bag on Friday');
+assert.equal(oldDb.tasks[2].evidenceText,originalTask.title);
+assert.equal(legacyFix(oldDb),0,'The repair must not recreate completed/reviewed tasks');
+// School packing screen must not surface uncertain Review items as confirmed obligations.
+assert.ok(html.includes("!['Done','Waiting','Review'].includes(t.state)"));
+
+console.log('PASS: no-loss migration, occurrence dedupe, Today, review decisions, school parser, snooze, meter, recurrence and recovery gates');

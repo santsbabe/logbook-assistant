@@ -47,4 +47,16 @@ const server=createServer((req,res)=>{
     assert.ok(bytes>10000,'Rendered screenshot was unexpectedly empty');
     console.log('PASS '+spec.name+': task metrics, capabilities and electricity rendered; PNG '+bytes+' bytes');
   }
+  const designUrl='http://127.0.0.1:'+port+'/familyroy-control-centre-qa/design-preview.html';
+  const previewFile='/tmp/cc-browser-qa/whimsical-design-preview.png';
+  const previewArgs=['--headless=new','--no-sandbox','--disable-dev-shm-usage','--disable-gpu',
+    '--window-size=390,844','--virtual-time-budget=2000','--screenshot='+previewFile,
+    '--dump-dom',designUrl];
+  const preview=await execFileAsync(executable,previewArgs,{timeout:40000,maxBuffer:16*1024*1024});
+  assert.match(preview.stdout,/DESIGN PREVIEW — NOT THE LIVE APP/);
+  assert.match(preview.stdout,/Inbox of possibilities/);
+  assert.match(preview.stdout,/aria-selected="true"/);
+  assert.match(preview.stdout,/library bag on Friday/i);
+  assert.ok(statSync(previewFile).size>10000,'Whimsical preview screenshot is missing');
+  console.log('PASS: standalone whimsical preview renders at iPhone width');
 })().catch(e=>{console.error(e);process.exitCode=1}).finally(()=>server.close());
