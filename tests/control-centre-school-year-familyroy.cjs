@@ -57,8 +57,8 @@ const ready=vm.runInContext('familyRoyReadinessItems',context);
 const mixed='PNPS Grade 2 homework: revise klanke. Bring library bag on Friday.';
 const entries=parsed(mixed,'PNPS', 'mail-test',new Date('2026-10-18T10:00:00Z'));
 assert.equal(entries.length,2);
-assert.deepEqual(entries.map(x=>x.child),['Harrison','Harrison']);
-assert.deepEqual(entries.map(x=>x.schoolKind),['homework','readiness']);
+assert.deepEqual(Array.from(entries.map(x=>x.child)),['Harrison','Harrison']);
+assert.deepEqual(Array.from(entries.map(x=>x.schoolKind)),['homework','readiness']);
 assert.equal(entries[0].due,'');
 assert.equal(entries[1].due,'2026-10-23');
 assert.equal(entries[0].morning,false);
@@ -123,7 +123,7 @@ async function familyroy(){
  assert.ok(imported.every(x=>x.module!=='School Homework'&&x.module!=='School Calendar Candidate'));
  const repeat=ready({source_id:record.source_id,route:ROUTES.SCHOOL_READINESS,
   payload:record.route_payloads[ROUTES.SCHOOL_READINESS]});
- assert.deepEqual(repeat.map(x=>x.id),imported.map(x=>x.id),'Idempotent source and item IDs');
+ assert.deepEqual(Array.from(repeat.map(x=>x.id)),Array.from(imported.map(x=>x.id)),'Idempotent source and item IDs');
  const mystery=buildRecord({source_type:'ios_share',text:'Grade 2 homework: multiplication. Bring library bag Friday',
   attachments:[{name:'school.jpg',mime_type:'image/jpeg',sha256:'mystery',size:42}],
   ocr_text_present:true});
