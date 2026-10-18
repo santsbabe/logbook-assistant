@@ -208,7 +208,7 @@ function actionDueRank(t){
 }
 function actionSort(a,b){return actionDueRank(a)-actionDueRank(b)||(b.priority||0)-(a.priority||0)}
 function actionIsToday(t){if(['Done','Waiting','Review'].includes(t.state))return false;if(t.snoozedUntil){return t.snoozedUntil<=localISO(new Date())}return t.state==='Now'||(t.state==='Next'&&actionDueRank(t)<=1)}
-function schoolOccurrenceKey(x){return schoolActionKey(x.title)+'|'+(x.child||'Children')+'|'+(x.due||'unscheduled')}
+function schoolOccurrenceKey(x){return schoolActionKey(x.title)+'|'+(x.child||'Children')+'|'+(x.due||'unscheduled')+'|'+(x.schoolYear||'')+'|'+(x.schoolKind||'readiness')}
 function ingestActions(items=[]){let ids=new Set(db.tasks.map(x=>x.id)),schoolKeys=new Set(db.tasks.filter(x=>x.module==='School Readiness'&&(x.gmailId||x.familyRoySourceId)).map(schoolOccurrenceKey)),added=0;items.map(normaliseAction).forEach(x=>{let sk=x.module==='School Readiness'&&(x.gmailId||x.familyRoySourceId)?schoolOccurrenceKey(x):'';if(!ids.has(x.id)&&(!sk||!schoolKeys.has(sk))){db.tasks.push(x);ids.add(x.id);if(sk)schoolKeys.add(sk);added++}});save();return added}
 // Keep each Friday distinct; a completed week remains in Done history and never reappears.
 function seedPnpsSwimming(d,now=new Date()){
@@ -462,8 +462,104 @@ function schoolActionLine(line,whole=''){let l=line.toLowerCase(),w=whole.toLowe
 function schoolCanonicalAction(line,whole=''){let l=line.toLowerCase(),w=whole.toLowerCase();let homework=line.match(/^(?:(?:harrison|alexander|imogen)\s*:\s*)?(?:pnps\s*:\s*)?(?:(?:harrison|alexander|imogen)\s+)?homework\s+(?:is|:)\s+(.+)$/i);if(homework)return homework[1].trim();if(/foundation phase gala/.test(w)&&/already changed|black costume|red swimming cap|towel/.test(l))return 'Wear swimming costume and cap; pack towel for gala';if(/kaskar/.test(w)&&/forms? and money|bring the kaskar/.test(l))return 'Return Kaskar form and money';if(/holiday care reminder/.test(w)&&/pack a snack and a lunchbox/.test(l))return 'Pack snack and lunchbox for Holiday Care';if(/holiday care reminder/.test(w)&&/bring along a white top/.test(l))return 'Bring white top for Holiday Care';if(/assessment (?:file|folder)|red book/.test(w)&&/return|not been returned|ensure.*done/.test(l))return 'Return signed assessment folder / red book';if(/update on alexander'?s hair|green hair/.test(w)&&/cut|redye|sort this out|natural hair colours/.test(l))return "Fix Alexander's hair colour for school";if(/red-a-fair donations/.test(w)&&/donations?.*(?:due|required)|due this coming/.test(l))return 'Bring Red-a-Fair donations';if(/aftercare.*red a fair set up/.test(w)&&/collected straight after school|fetch.*early/.test(l))return 'Collect children early from Aftercare';if(/outstanding book/.test(w)&&/outstanding library book/.test(w)){let m=whole.match(/outstanding library book:\s*\n?([^\n]+)/i);return 'Return outstanding library book'+(m?' — '+m[1].trim():'')};if(/raffle forms?/.test(w)&&(/closing date for raffle money and forms|incomplete forms.*returned|forms?.*handed in/.test(l)))return 'Return Red-a-Fair raffle form and money';if(/sna parent signature|sna document/.test(w)&&/pack/.test(l))return 'Pack signed SNA form';if(/sna parent signature|sna document/.test(w)&&/drop it by|return/.test(l))return 'Return SNA form to Kwakwadi';if(/english poem/.test(w)&&/goes over it|ready for monday|practi[cs]e/.test(l))return 'Practise English poem';if(/red-a-fair form/.test(w)&&/fill it in|complete.*form/.test(l))return 'Complete Red-a-Fair contribution form';if(/aftercare.*2027/.test(w)&&/fill in|complete.*form/.test(l))return 'Complete 2027 Aftercare intentions form';if(/read-a-fair|red-a-fair/.test(w)&&/sign up/.test(l))return 'Sign up for a Read-a-Fair volunteer slot';if(/overdue notice|overdue book|return this item to the library/.test(w)&&(/overdue notice|overdue book|return this item to the library/.test(l)||/^fw:\s*overdue notice/i.test(line))){let m=whole.match(/Title:\s*([^\n]+)/i)||whole.match(/overdue notice:\s*([^\n]+?)\s+due\s+\d/i);return 'Return overdue library book'+(m?' — '+m[1].trim():'')}if(/raffle/.test(w)&&(/forms?.*(?:return|hand(?:ed)? in)|(?:return|hand(?:ed)? in).*forms?|incomplete forms.*returned/.test(l))){return 'Return Red-a-Fair raffle form'}if(/raffle/.test(w)&&/(raffle )?money|payment/.test(l)&&/hand(?:ed)? in|pay/.test(l)){return 'Return Red-a-Fair raffle form and payment'}let practical=line.match(/(?:^|[.!?]\s+)((?:please\s+)?(?:bring|pack|wear|return|take|send|hand|drop off|collect)\b[^.!?]*)/i);if(practical)return practical[1].trim();return line}
 function schoolActionKey(x){let k=normText(String(x||'').replace(/^(harrison|alexander|imogen|children):\s*/i,'')).replace(/\bplease\b/g,'').replace(/[^a-z0-9 ]/g,'').trim();let m=k.match(/return (?:overdue )?library book\s+(.+)/);if(m)return'library-return:'+m[1];return k}
 function splitSchoolInstructions(line){return String(line).split(/[.!?]\s+(?=(?:please\s+)?(?:bring|pack|wear|return|take|send|hand|drop\s+off|collect|revise|practi[cs]e|read|complete|submit|sign)\b)/i).map(x=>x.trim()).filter(Boolean)}
-function parseNotice(text,source='Manual notice',gmailId='',baseDate=new Date()){text=currentSchoolMessage(text);if(!schoolMessageGate(text,source))return[];let child=detectChild(text,source,baseDate);let url=(text.match(/https?:\/\/[^\s)\]]+/)||[])[0]||'';let cleaned=text.split(/["“]All views or opinions expressed/i)[0];let linkedNotice=/weekly notices?|notices and reminders|newsletter/i.test(source+' '+text)&&/https?:\/\//.test(text);if(/holiday care sign ups? open/i.test(cleaned)&&!/please|must|required|need to|complete|fill/i.test(cleaned))return[];let bits=cleaned.split(/\n|[•▪◦]/).flatMap(splitSchoolInstructions).map(x=>x.trim()).filter(x=>x.length>7);let actions=bits.filter(x=>schoolActionLine(x,cleaned)).map(x=>schoolCanonicalAction(x,cleaned));if(/red-a-fair raffle forms?/i.test(source+' '+cleaned)){let rr=actions.find(x=>/return red-a-fair raffle form and money/i.test(x));actions=rr?[rr]:[]}actions=[...new Map(actions.map(x=>[schoolActionKey(x),x])).values()].slice(0,8);if(!actions.length&&linkedNotice){let age=(Date.now()-new Date(baseDate).getTime())/86400000;if(age<=14)actions=[`Review linked school notice: ${source.split(' · ')[0]}`]};return actions.map((a,i)=>{let clean=a.replace(/https?:\/\/\S+/g,'').trim().replace(/^[-–—]\s*/,'').slice(0,160);let review=/^review /i.test(clean);if(/^(fw:|re:)?\s*(overdue notice|due date\s*:|title\s*:)/i.test(clean))return null;let morning=/\b(bring(?:ing)?|wear(?:ing)?|civv(?:ies)?|library|costume|kit|hat|shoes?|shirts?|cake|money|project|permission slip|reply slip|sports?|return(?:ed|ing)?|drop off|hand(?:ed)? in|donation|raffle|pack(?:s|ed|ing)?|hair|collect children|collect .* early)\b/i.test(clean);let priority=/today|tomorrow|by friday|due|must|please could i ask|please can i ask|remember/i.test(clean)?92:(morning?86:review?50:72);let due=(/return red-a-fair raffle form and money/i.test(a)?'2026-10-23':'')||schoolDateFromText(a,baseDate),rank=due?actionDueRank({due}):99,urgent=/today|tomorrow|must|remember|due\b|please could i ask|please can i ask/i.test(clean);let stale=Boolean(due&&rank===0&&!/overdue|outstanding|still|not received|missing/i.test(clean));let state=stale||review?'Review':(due?(rank<=2?'Now':'Next'):(urgent?'Now':'Next'));return{id:(gmailId||'p'+Date.now())+'_'+i,title:`${child}: ${clean}`,state,owner:'Santie',cat:'School',priority,source,gmailId,sourceUrl:url,child,morning,due:stale?'':due,originalDue:stale?due:'',reviewReason:stale?'Historical date requires confirmation':'',module:'School Readiness'}}).filter(Boolean)}
-function familyRoyReadinessItems(outboxItem){let p=outboxItem?.payload||{},sourceId=outboxItem?.source_id||'';if(!/^[a-f0-9]{64}$/i.test(sourceId)||outboxItem?.route!=='control_centre.school_readiness')return[];let base=p.source_timestamp?new Date(p.source_timestamp):new Date(outboxItem?.created_at||Date.now()),source='FamilyRoy Intake'+(p.source_chat?' · '+p.source_chat:''),route='control_centre.school_readiness',parsed=parseNotice(p.text||'',source,'familyroy:'+sourceId,base).map(x=>({...x,familyRoySourceId:sourceId,familyRoyRoute:route}));if(parsed.length)return parsed;let excerpt=String(p.text||'').replace(/\s+/g,' ').trim().slice(0,140);return[{id:'familyroy-review:'+sourceId,title:'Review shared school notice'+(excerpt?': '+excerpt:''),state:'Review',owner:'Santie',cat:'School',priority:65,source,familyRoySourceId:sourceId,familyRoyRoute:route,module:'School Readiness'}]}
+function schoolActionKind(action){
+ const v=String(action||'').toLowerCase();
+ if(/^(?:please\s+)?(?:bring|pack|wear|return|take|send|hand|drop off|collect|sign|submit|fill|pay)\b/.test(v))return'readiness';
+ if(/\b(homework|huiswerk|revise|hersien|klanke|practis[ec]|learn|spelling|worksheet|read page|reading|phonics|sight words|poem)\b/.test(v))return'homework';
+ if(/\b(rsvp|save the date|attend|event|gala|sports day)\b/.test(v))return'calendar-candidate';
+ return'readiness';
+}
+function schoolRouting(text,source,baseDate,context={}){
+ if(typeof ControlCentreSchoolRegistry!=='undefined'){
+  return ControlCentreSchoolRegistry.resolve({text,source,school:context.school||'',
+   sourceChildren:context.children||[],sourceDate:baseDate,
+   registry:typeof db!=='undefined'?db.schoolRegistry:null});
+ }
+ return{status:'matched',children:[detectChild(text,source,baseDate)],school:null,
+   year:new Date(baseDate).getFullYear(),reason:'Legacy testing fallback'};
+}
+function parseNotice(text,source='Manual notice',gmailId='',baseDate=new Date(),context={}){
+ text=currentSchoolMessage(text);
+ if(!schoolMessageGate(text,source))return[];
+ const route=schoolRouting(text,source,baseDate,context);
+ if(route.status==='ignore')return[];
+ const url=(text.match(/https?:\/\/[^\s)\]]+/)||[])[0]||'';
+ const cleaned=text.split(/["“]All views or opinions expressed/i)[0];
+ const linkedNotice=/weekly notices?|notices and reminders|newsletter/i.test(source+' '+text)&&/https?:\/\//.test(text);
+ if(/holiday care sign ups? open/i.test(cleaned)&&!/please|must|required|need to|complete|fill/i.test(cleaned))return[];
+ const bits=cleaned.split(/\n|[•▪◦]/).flatMap(splitSchoolInstructions).map(x=>x.trim()).filter(x=>x.length>7);
+ let actions=bits.filter(x=>schoolActionLine(x,cleaned)).map(x=>schoolCanonicalAction(x,cleaned));
+ if(/red-a-fair raffle forms?/i.test(source+' '+cleaned)){
+  const raffle=actions.find(x=>/return red-a-fair raffle form and money/i.test(x));
+  actions=raffle?[raffle]:[];
+ }
+ actions=[...new Map(actions.map(x=>[schoolActionKey(x),x])).values()].slice(0,8);
+ if(!actions.length&&linkedNotice){
+  const age=(Date.now()-new Date(baseDate).getTime())/86400000;
+  if(age<=14)actions=['Review linked school notice: '+source.split(' · ')[0]];
+ }
+ const children=route.status==='matched'?route.children:['Children'];
+ return actions.flatMap((action,i)=>{
+  const clean=action.replace(/https?:\/\/\S+/g,'').trim().replace(/^[-–—]\s*/,'').slice(0,160);
+  if(/^(fw:|re:)?\s*(overdue notice|due date\s*:|title\s*:)/i.test(clean))return[];
+  const schoolKind=schoolActionKind(clean);
+  const morning=schoolKind==='readiness'&&/\b(bring(?:ing)?|wear(?:ing)?|civv(?:ies)?|library|costume|kit|hat|shoes?|shirts?|cake|money|project|permission slip|reply slip|sports?|return(?:ed|ing)?|drop off|hand(?:ed)? in|donation|raffle|pack(?:s|ed|ing)?|hair|collect children|collect .* early)\b/i.test(clean);
+  const priority=/today|tomorrow|by friday|due|must|please could i ask|please can i ask|remember/i.test(clean)?92:(morning?86:72);
+  const due=(/return red-a-fair raffle form and money/i.test(action)?'2026-10-23':'')||schoolDateFromText(action,baseDate);
+  const rank=due?actionDueRank({due}):99;
+  const urgent=/today|tomorrow|must|remember|due\b|please could i ask|please can i ask/i.test(clean);
+  const stale=Boolean(due&&rank===0&&!/overdue|outstanding|still|not received|missing/i.test(clean));
+  const needReview=stale||/^review /i.test(clean)||route.status!=='matched'||schoolKind==='calendar-candidate';
+  const state=needReview?'Review':(due?(rank<=2?'Now':'Next'):(urgent?'Now':'Next'));
+  const reason=route.status!=='matched'?route.reason:stale?'Historical date requires confirmation':schoolKind==='calendar-candidate'?'Calendar candidate requires date/venue confirmation':'';
+  return children.map((child,j)=>({
+   id:(gmailId||'p'+Date.now())+'_'+i+'_'+j,
+   title:child+': '+clean,
+   state,owner:needReview?'Unassigned':'Santie',cat:'School',priority,
+   source,gmailId,sourceUrl:url,child:needReview&&route.status!=='matched'?'':child,
+   morning,due:needReview&&route.status!=='matched'||stale?'':due,
+   originalDue:stale?due:'',
+   reviewReason:reason,
+   school:route.school||'',schoolYear:route.year,schoolKind,
+   schoolRegistryStatus:route.status,schoolRoutingReason:route.reason,
+   evidenceText:String(text).slice(0,12000),sourceTimestamp:new Date(baseDate).toISOString(),
+   module:schoolKind==='homework'?'School Homework':schoolKind==='calendar-candidate'?'School Calendar Candidate':'School Readiness'
+  }));
+ });
+}
+function familyRoyReadinessItems(outboxItem){
+ const p=outboxItem?.payload||{},sourceId=outboxItem?.source_id||'';
+ if(!/^[a-f0-9]{64}$/i.test(sourceId)||outboxItem?.route!=='control_centre.school_readiness')return[];
+ const base=p.source_timestamp?new Date(p.source_timestamp):new Date(outboxItem?.created_at||Date.now());
+ if(!Number.isFinite(base.getTime()))return[];
+ const source='FamilyRoy Intake'+(p.school?' · '+p.school:'')+(p.source_chat?' · '+p.source_chat:'');
+ const route='control_centre.school_readiness';
+ const routed=schoolRouting(p.text||'',source,base,{school:p.school,children:p.children||[]});
+ if(routed.status==='ignore')return[];
+ const parsed=parseNotice(p.text||'',source,'familyroy:'+sourceId,base,
+  {school:p.school,children:p.children||[]}).filter(x=>x.schoolKind==='readiness').map(x=>({
+   ...x,familyRoySourceId:sourceId,familyRoyRoute:route,
+   familyRoyEvidence:Array.isArray(p.evidence)?p.evidence:[],
+   originalSourceType:p.source_type||'',originalSourceChat:p.source_chat||'',
+   originalSender:p.sender||'',originalSourceTimestamp:p.source_timestamp||''
+  }));
+ if(parsed.length)return parsed;
+ const excerpt=String(p.text||'').replace(/\s+/g,' ').trim().slice(0,140);
+ return[{
+  id:'familyroy-review:'+sourceId,
+  title:'Review shared school notice'+(excerpt?': '+excerpt:''),
+  state:'Review',owner:'Unassigned',cat:'School',priority:65,
+  source,school:routed.school||'',schoolYear:routed.year||null,
+  reviewReason:routed.status==='review'?routed.reason:'Readiness route needs manual verification',
+  familyRoySourceId:sourceId,familyRoyRoute:route,
+  evidenceText:String(p.text||'').slice(0,12000),
+  familyRoyEvidence:Array.isArray(p.evidence)?p.evidence:[],
+  originalSourceType:p.source_type||'',originalSourceChat:p.source_chat||'',
+  originalSender:p.sender||'',originalSourceTimestamp:p.source_timestamp||'',
+  sourceTimestamp:base.toISOString(),
+  module:'School Readiness'
+ }];
+}
 function ingestFamilyRoyReadiness(items=[]){let added=0,accepted=[];for(let item of items){let actions=familyRoyReadinessItems(item);added+=ingestActions(actions);accepted.push(item?.source_id||null)}save();render();return{received:items.length,added,accepted:accepted.filter(Boolean)}}
 async function consumeFamilyRoyReadinessHandoff({endpoint,capability,fetchImpl=fetch}={}){if(!endpoint||!capability)throw new Error('FamilyRoy handoff is incomplete.');let base=String(endpoint).replace(/\/$/,''),url=base+'/handoff',auth={Authorization:'Handoff '+capability},res=await fetchImpl(url,{headers:auth});if(!res.ok)throw new Error('FamilyRoy handoff '+res.status);let data=await res.json();if(data.route!=='control_centre.school_readiness'||!/^[a-f0-9]{64}$/i.test(data.source_id||''))throw new Error('FamilyRoy handoff route mismatch.');let result=ingestFamilyRoyReadiness([{source_id:data.source_id,route:data.route,payload:data.payload}]);let ack=await fetchImpl(url,{method:'POST',headers:{...auth,'Content-Type':'application/json'},body:JSON.stringify({acknowledge:true,consumer:'control_centre.school_readiness',source_id:data.source_id})});if(!ack.ok)throw new Error('FamilyRoy handoff acknowledgement '+ack.status);return{...result,acknowledged:true}}
 function parsePasted(){let text=document.getElementById('noticeText').value.trim(),src=document.getElementById('noticeSource').value,preview=document.getElementById('pastePreview');if(!text){preview.innerHTML='<div class="status warn" style="margin-top:9px">Paste a notice first.</div>';return}let items=parseNotice(text,src),unclassified=items.length===0;if(unclassified){let fingerprint=2166136261;for(let c of src+'|'+text){fingerprint=Math.imul(fingerprint^c.charCodeAt(0),16777619)}items=[{id:'manual-notice-review-'+(fingerprint>>>0).toString(16),title:'Review imported notice — no clear action extracted',state:'Review',owner:'Unassigned',cat:'School',module:'School Readiness',priority:45,source:src,evidenceText:text,created:new Date().toISOString()}]}let added=ingestActions(items);render();openPanel('school');preview.innerHTML=items.length?`<div class="status" style="margin-top:9px"><b>${added} action${added===1?'':'s'} added.</b> They are now in School Readiness/Today where applicable.</div>`+items.map(x=>`<div class="task"><strong>${esc(x.title)}</strong><span class="pill">${esc(x.state)}</span></div>`).join(''):'<div class="status warn" style="margin-top:9px">No actionable item was found in that notice.</div>';if(unclassified)preview.innerHTML='<div class="status warn" style="margin-top:9px">Saved the original notice in Review for your decision. No task or date was invented. '+(added?'1 item added.':'This notice was already recorded.')+'</div>';preview.scrollIntoView({behavior:'smooth',block:'nearest'})}
