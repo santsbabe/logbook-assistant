@@ -72,9 +72,25 @@ function createGmailPostgres({db,dataKey}={}){
       await db.query('INSERT INTO cc_gmail_credentials(tenant_id,encrypted_refresh,gmail_enabled) VALUES($1,$2::jsonb,true) ON CONFLICT(tenant_id) DO UPDATE SET encrypted_refresh=EXCLUDED.encrypted_refresh,gmail_enabled=true,updated_at=now()',
         [tenant,JSON.stringify(envelope)]);
     },
+    async disableGmail(id){
+      const tenant=requireTenant(id);
+      // Fail closed FIRST. Existing encrypted refresh token is kept solely
+      // for a retry if Google's revocation endpoint is temporarily unavailable.
+      await db.query('UPDATE cc_gmail_credentials SET gmail_enabled=false,updated_at=now() WHERE tenant_id=$1',[tenant]);
+    },
+    async getRevocationToken(id){
+      const tenant=requireTenant(id);
+      const result=await db.query('SELECT encrypted_refresh FROM cc_gmail_credentials WHERE tenant_id=$1 AND gmail_enabled=false',[tenant]);
+      if(!result.rows?.length)return null;
+      return open(result.rows[0].encrypted_refresh,dataKey,tenant+':oauth-refresh');
+    },
+    async listRevocationsPending(){
+      const result=await db.query('SELECT tenant_id FROM cc_gmail_credentials WHERE gmail_enabled=false ORDER BY tenant_id LIMIT 30');
+      return(result.rows||[]).map(r=>({tenantId:r.tenant_id}));
+    },
     async revoke(id){
       const tenant=requireTenant(id);
-      await db.query('DELETE FROM cc_gmail_credentials WHERE tenant_id=$1',[tenant]);
+      await db.query('DELETE FROM cc_gmail_credentials WHERE tenant_id=$1 AND gmail_enabled=false',[tenant]);
     },
     async listEnabled(){
       const result=await db.query('SELECT tenant_id FROM cc_gmail_credentials WHERE gmail_enabled=true ORDER BY tenant_id');
