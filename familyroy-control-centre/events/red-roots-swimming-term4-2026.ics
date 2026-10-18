@@ -6,16 +6,18 @@ METHOD:PUBLISH
 X-WR-CALNAME:Red Roots Term 4 Reminders
 BEGIN:VEVENT
 UID:red-roots-pe-swimming-term4-2026@familyroy.local
-DTSTAMP:20261018T145500Z
+DTSTAMP:20261018T165700Z
 DTSTART;VALUE=DATE:20261105
 DTEND;VALUE=DATE:20261106
 RRULE:FREQ=WEEKLY;BYDAY=TH;COUNT=5
 SUMMARY:🏊 Red Roots — Swimming PE (pack swimming kit)
 LOCATION:Red Roots Pre-Primary\, Pinelands\, Cape Town
-DESCRIPTION:Red Roots PE swimming starts Thursday 5 November 2026. Weekly r
- eminder every Thursday until school closes 9 December 2026. Prepare swimmi
- ng kit the previous evening. Exact PE time not specified in the school not
- ice. Source: Red Roots Term 4 Week 2 reminder.
+DESCRIPTION:Every Thursday from 5 November to 3 December (five sessions). A
+ rrive wearing swimming costume under school uniform. Pack a swimming cap\,
+  spare underwear and a plastic bag for wet items\; goggles optional. Do no
+ t bring armbands: school provides pool noodles and kickboards. Teachers su
+ pervise swimming. Prepare kit on Wednesday evening at 18:00. Exact class t
+ ime not specified.
 TRANSP:TRANSPARENT
 BEGIN:VALARM
 ACTION:DISPLAY
