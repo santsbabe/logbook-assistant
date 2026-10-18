@@ -201,6 +201,15 @@ async function callApi(handler,req){const res=mockRes();await handler(req,res);
   const lease=pgGmail.createPgLeaseProvider(pool);
   assert.equal(await lease.withLease('gmail:'+t1,async()=>++called),1);
   assert.equal(called,1);assert.equal(released,1);assert.equal(unlockCount,1);
+  let releasedOnFailure=0;
+  const brokenPool={connect:async()=>({query:async sql=>{
+    if(sql.includes('pg_try'))return{rows:[{acquired:true}]};
+    throw Error('Unable to unlock connection');
+  },release:()=>releasedOnFailure++})};
+  await assert.rejects(()=>pgGmail.createPgLeaseProvider(brokenPool).withLease(
+    'gmail:'+t1,async()=>true),/Unable to unlock connection/);
+  assert.equal(releasedOnFailure,1,'Never leak a pooled connection after unlock failure');
+
 
   const refreshFake=async url=>{
     assert.equal(url,gmailRuntime.TOKEN_URL);
