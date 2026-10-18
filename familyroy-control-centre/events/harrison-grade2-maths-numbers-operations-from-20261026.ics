@@ -1,0 +1,27 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//FamilyRoy//School Assessment Calendar//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:harrison-grade2-maths-number-operations-from-20261026@familyroy.local
+DTSTAMP:20261018T191500Z
+DTSTART;VALUE=DATE:20261026
+DTEND;VALUE=DATE:20261027
+SUMMARY:Harrison - Maths Numbers & Operations assessment begins FROM 26 Oct
+  (day TBC)
+LOCATION:Pinelands North Primary School\, Pinelands\, Cape Town
+DESCRIPTION:This marks the EARLIEST POSSIBLE START\, not a confirmed assess
+ ment day. PNPS says 'From 26 October'. Actual day(s) still need confirmati
+ on. Assessments cover doubling\, halving\, addition\, subtraction\, multip
+ lication\, division\, ordinal numbers and fractions.\nSchool source: https
+ ://drive.google.com/file/d/1DGJBiWVh4CCHsIVa_yEbmdCbG-ZtjW1z/view
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER;VALUE=DATE-TIME:20261025T160000Z
+DESCRIPTION:Prepare Maths Numbers & Operations\; check actual assessment da
+ te with Grade 2 teacher.
+END:VALARM
+END:VEVENT
+END:VCALENDAR
