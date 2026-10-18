@@ -2,9 +2,9 @@
  * The initial entries are user-established routing rules, NOT annual confirmations.
  */
 (function(root,factory){
- const module=factory();
- if(typeof exports==='object'&&typeof module!=='undefined'&&module.exports)module.exports=factory();
- else root.ControlCentreSchoolRegistry=module;
+ const api=factory();
+ if(typeof module==='object'&&module.exports)module.exports=api;
+ else root.ControlCentreSchoolRegistry=api;
 })(typeof window==='undefined'?globalThis:window,function(){
  'use strict';
  const YEARS=[2026,2027];
