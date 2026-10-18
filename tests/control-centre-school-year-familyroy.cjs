@@ -13,6 +13,13 @@ assert.deepEqual(status('2M classroom: bring books on Friday').children,['Harris
 assert.deepEqual(status('2D class: pack swimming kit').children,['Harrison']);
 assert.equal(status('2E class: bring a library bag').status,'ignore');
 assert.deepEqual(status('Grade R: Bring reading folder').children,['Alexander']);
+assert.deepEqual(status('Grade R: Bring reading folder','2026-10-05','Red Roots').children,['Alexander']);
+assert.deepEqual(status('Bring bag for school','2026-10-05','Red Roots').children,['Alexander'],
+ 'Keep established 2026 Red Roots school-only learner inference');
+assert.deepEqual(status('Bring backpack for school','2026-10-05','100 Acre Wood').children,['Imogen'],
+ 'Keep established 2026 100 Acre Wood school-only learner inference');
+assert.equal(status('Bring bag for school','2027-01-10','Red Roots').status,'review',
+ 'Do not project historic preschool affiliation into unconfirmed future years');
 assert.deepEqual(status('Grade 3 homework: spelling','2027-02-03').children,['Harrison']);
 assert.deepEqual(status('Grade 1 library bag','2027-02-03').children,['Alexander']);
 assert.deepEqual(status('2027 Grade 3 homework','2026-12-06').children,['Harrison']);
