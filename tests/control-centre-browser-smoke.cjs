@@ -44,6 +44,10 @@ const server=createServer((req,res)=>{
     assert.match(stdout,/id="privateCloudBackup"/);
     assert.match(stdout,/id="cloudRestoreBtn"/);
     assert.match(stdout,/cloud-sync\.js/);
+    assert.match(stdout,/id="authenticatedBackendSync"/);
+    assert.match(stdout,/data-api-state="disabled"/);
+    assert.match(stdout,/Try a conflict example/);
+    assert.match(stdout,/backend-sync-ui\.js/);
     assert.match(stdout,/id="beforeList">/);
     assert.match(stdout,/id="nowList">/);
     const bytes=statSync(file).size;
