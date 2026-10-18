@@ -1,0 +1,16 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//FamilyRoy//School Events//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:pnps-foundation-phase-gala-20261113@familyroy.local
+DTSTAMP:20261018T160000Z
+DTSTART;VALUE=DATE:20261113
+DTEND;VALUE=DATE:20261114
+SUMMARY:PNPS Foundation Phase Gala
+LOCATION:Pinelands North Primary School\, Pinelands\, Cape Town
+DESCRIPTION:Foundation Phase swimming gala. Exact time not specified in PNPS Newsletter 18.
+TRANSP:TRANSPARENT
+END:VEVENT
+END:VCALENDAR
