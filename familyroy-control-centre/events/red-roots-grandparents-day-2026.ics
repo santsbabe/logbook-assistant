@@ -1,0 +1,15 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//FamilyRoy//Calendar//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:redroots-grandparents-20261127@familyroy.local
+DTSTAMP:20261018T150000Z
+DTSTART;TZID=Africa/Johannesburg:20261127T093000
+DTEND;TZID=Africa/Johannesburg:20261127T111500
+SUMMARY:Red Roots Grandparents Day
+LOCATION:Red Roots Pre-Primary\, Pinelands\, Cape Town
+DESCRIPTION:Tea 09:30 to 10:15. Children's concert 10:15 to 11:15.
+END:VEVENT
+END:VCALENDAR
