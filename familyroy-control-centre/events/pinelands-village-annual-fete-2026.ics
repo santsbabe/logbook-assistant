@@ -1,0 +1,15 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//FamilyRoy//PRRA Events//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:pinelands-village-annual-fete-20261128@familyroy.local
+DTSTAMP:20261018T155100Z
+DTSTART:20261128T070000Z
+DTEND:20261128T110000Z
+SUMMARY:Pinelands Village Annual Fete
+LOCATION:Pinelands Village\, Pinelands\, Cape Town
+DESCRIPTION:Plant sales\, book sales\, bric-a-brac\, craft stalls\, food and drinks. From PRRA October/November 2026 poster.
+END:VEVENT
+END:VCALENDAR
