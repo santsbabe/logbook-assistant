@@ -94,7 +94,7 @@ async function http(base,method,path,authorization,origin,host){
   const stateParam=authorise.searchParams.get('state'),callback='/v1/gmail/callback?state='+stateParam+'&code=test-authorisation';
   assert.equal((await http(base,'GET',callback,null,null,'evil.example')).status,400);
   const success=await http(base,'GET',callback,null,null,'private.example');
-  assert.equal(success.status,200);
+  assert.equal(success.status,200,success.body);
   assert.equal(success.headers.get('referrer-policy'),'no-referrer');
   assert.ok(!success.body.includes(stateParam)&&!success.body.includes(secret));
   assert.equal((await http(base,'GET',callback,null,null,'private.example')).status,400);
