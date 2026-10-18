@@ -1,0 +1,28 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//FamilyRoy//School Events//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:pnps-aftercare-party-20261130@familyroy.local
+DTSTAMP:20261018T165700Z
+DTSTART;VALUE=DATE:20261130
+DTEND;VALUE=DATE:20261201
+SUMMARY:PNPS After Care End-of-Year Parties
+LOCATION:PNPS After Care\, Pinelands\, Cape Town
+DESCRIPTION:Grade-group parties. Arrange one sweet or savoury treat or juice. Tell Miss Megan in advance. Time not specified.
+END:VEVENT
+BEGIN:VEVENT
+UID:pnps-aftercare-party-prepare-20261129@familyroy.local
+DTSTAMP:20261018T165700Z
+DTSTART:20261129T160000Z
+DTEND:20261129T161000Z
+SUMMARY:Prepare PNPS After Care party contribution
+DESCRIPTION:Bring one sweet treat\, savoury treat or juice. Notify Miss Megan in advance.
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT0M
+DESCRIPTION:Prepare After Care contribution for tomorrow
+END:VALARM
+END:VEVENT
+END:VCALENDAR
