@@ -121,6 +121,23 @@ assert.match(reviewCard,/Add later/);
 assert.match(reviewCard,/Dismiss/);
 assert.match(reviewCard,/Original note &lt;with context>/);
 assert.match(reviewCard,/Original notice/);
+
+const nowCard=taskView({id:'active-1',title:'Pack library bag',
+  state:'Now',cat:'School',child:'Alexander',morning:true});
+assert.match(nowCard,/✓ Done/);
+assert.match(nowCard,/Snooze/);
+assert.match(nowCard,/More options/);
+assert.match(nowCard,/Now/);
+assert.match(nowCard,/Later/);
+assert.match(nowCard,/Waiting/);
+assert.equal((nowCard.match(/<button\b/g)||[]).length,5,
+  'Active cards should show only two primary actions and three collapsed choices');
+assert.doesNotMatch(nowCard,/>Add now</);
+assert.equal((reviewCard.match(/<button\b/g)||[]).length,3,
+  'Review cards should have three clear decisions, not five unrelated controls');
+assert.ok(html.includes('id="quick-capture"'), 'Quick capture target must exist');
+assert.ok(html.includes('class="btn captureShortcut"'), 'Quick capture should be reachable from top');
+
 const taskRecords={tasks:[{id:'s1',title:'Due item',state:'Now',due:'2026-10-18'}]};
 let selectedDate='2026-10-25',saved=0;
 const handlers=fromVm(codeBetween('function move(','function done('),'snooze',{
