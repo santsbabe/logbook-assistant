@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Control Centre · Whimsical UI preview</title>
+<style>
+:root{--forest:#234b43;--forest2:#346855;--ink:#233a34;--muted:#586c65;--cream:#fff9ef;--paper:#fffefb;--mint:#dcefe5;--peach:#ffe1d8;--lavender:#ebe2fb;--yellow:#ffe5a5;--sky:#e2f1f8;--stroke:#e8decf}
+*{box-sizing:border-box}body{margin:0;color:var(--ink);background:radial-gradient(circle at 4% 3%,#eddef9,transparent 30%),radial-gradient(circle at 95% 26%,#ffd9cc,transparent 35%),linear-gradient(125deg,#fffaf2,#eaf5ed);font-family:ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:15px}
+button,a{font:inherit}button{cursor:pointer}a{color:var(--forest2)}button:focus-visible,a:focus-visible{outline:3px solid #8c64d5;outline-offset:4px}
+.shell{max-width:1140px;margin:auto;padding:22px 22px 70px}.intro{display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap}.eyebrow{font-size:12px;color:var(--forest2);font-weight:800;letter-spacing:.14em;text-transform:uppercase}
+h1,h2,h3{letter-spacing:-.045em}h1{font-size:clamp(32px,5vw,52px);line-height:1.05;margin:8px 0}p{line-height:1.5}
+.subtitle{max-width:560px;color:var(--muted);margin:8px 0 16px}.pill{display:inline-block;padding:7px 11px;border-radius:99px;background:#f1e8ff;font-size:12px;font-weight:800}
+.notice{max-width:430px;padding:12px 16px;background:#fffdf9a9;border:1px solid var(--stroke);border-radius:15px;color:var(--muted);font-size:13px}
+.area{display:grid;grid-template-columns:minmax(175px,220px) minmax(300px,1fr);gap:24px;align-items:start;margin-top:20px}
+nav{position:sticky;top:12px;background:rgba(255,254,251,.9);border:1px solid var(--stroke);border-radius:24px;padding:10px;box-shadow:0 10px 30px #364c3712}
+.nav-item{display:flex;align-items:center;gap:12px;width:100%;padding:13px;border:0;background:transparent;color:var(--ink);border-radius:15px;text-align:left;font-weight:750;min-height:48px}
+.nav-item[aria-selected=true]{background:var(--forest);color:white}.nav-icon{font-size:19px}
+.preview{width:100%;max-width:700px;margin:auto;background:var(--cream);border:1px solid #eee6d7;border-radius:32px;box-shadow:0 18px 65px #334a3523;overflow:hidden}
+.preview-header{height:32px;display:flex;align-items:center;justify-content:center;gap:7px;background:#f0f3ed;border-bottom:1px solid #e4e8df}
+.preview-header i{width:8px;height:8px;border-radius:100%;background:#c8d4cc;display:block}
+.panel{padding:26px 26px 30px;min-height:580px}.panel[hidden]{display:none}
+.screen-top{font-weight:800;text-transform:uppercase;color:var(--forest2);font-size:11px;letter-spacing:.15em}.screen-top:before{content:'✦ ';color:#e69776}
+.screen-title{font-size:clamp(30px,4vw,39px);line-height:1.08;margin:10px 0 7px;letter-spacing:-.045em}.description{font-size:14px;color:var(--muted);margin:0 0 21px}
+.hero{background:var(--mint);border:1px solid #bbdbc8;border-radius:22px;padding:19px 20px;margin:0 0 19px;position:relative;overflow:hidden}
+.hero:after{content:'✧';position:absolute;right:16px;top:0;color:#a5cdb2;font-size:76px;line-height:1;transform:rotate(-12deg);pointer-events:none}
+.hero h3{font-size:19px;margin:0 0 5px}.hero p{margin:0;color:#4b645a;font-size:13px;max-width:360px}
+.strap{font-size:11px;color:var(--forest2);font-weight:850;letter-spacing:.11em;text-transform:uppercase;margin:21px 0 11px}
+.card{background:var(--paper);border:1px solid #ebe5dc;border-radius:19px;padding:17px 18px;margin:10px 0;box-shadow:0 5px 15px #243a2710}
+.card.peach{background:#fff0eb;border-color:#ffddd4}.card.lav{background:#f4edfe;border-color:#e6d9fb}.card.sky{background:#edf8fd;border-color:#d6e8f3}
+.card h3{font-size:17px;margin:7px 0 4px}.card p{margin:0;color:var(--muted);font-size:13px}.meta{font-size:11px;color:var(--forest2);font-weight:850;letter-spacing:.07em}.hint{font-size:12px;color:var(--muted)}
+.actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}.action{border:1px solid #c6dace;background:#fff;border-radius:12px;padding:9px 12px;font-size:12px;font-weight:800;min-height:40px;color:var(--forest)}
+.action.primary{background:var(--forest2);color:#fff;border-color:var(--forest2)}
+.big-cta{display:block;width:100%;padding:15px 16px;margin-top:14px;background:var(--yellow);border:0;border-radius:15px;font-size:14px;font-weight:800;color:var(--ink);text-align:left}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.kpi{background:#ffefbf;padding:15px;border-radius:18px}.kpi b{font-size:27px;display:block}.kpi span{font-size:12px;color:var(--muted)}
+.bottom{display:flex;flex-wrap:wrap;gap:8px;margin-top:25px;border-top:1px solid #e6dfd3;padding-top:16px;font-size:12px;color:var(--forest2)}
+.status{margin-top:12px;min-height:22px;color:var(--forest2);font-size:12px;font-weight:750}
+@media(max-width:750px){.shell{padding:18px 12px 40px}.area{display:block}nav{position:sticky;top:0;display:flex;overflow-x:auto;gap:5px;padding:7px;margin-bottom:13px;z-index:5;border-radius:17px}.nav-item{width:auto;min-width:max-content;padding:11px 13px;gap:7px;font-size:13px}.nav-icon{font-size:16px}.preview{border-radius:24px}.panel{padding:22px 18px 28px;min-height:590px}.screen-title{font-size:31px}.notice{font-size:12px}.duo{gap:8px}}
+</style></head><body>
+<div class="shell">
+<div class="intro"><div><div class="eyebrow">✿ FamilyRoy · design exploration</div><h1>A little order. A little wonder. ✨</h1><p class="subtitle">Control Centre with a sense of whimsy — without burying the jobs you actually need to do.</p></div>
+<div class="notice"><b>DESIGN PREVIEW — NOT THE LIVE APP</b><div>These are example screens for reviewing the look and flow. Nothing here changes your real tasks or data.</div></div></div>
+<div class="area"><nav aria-label="Preview screens">
+<button class="nav-item" data-screen="today" aria-selected="true"><span class="nav-icon">☀️</span> Today</button>
+<button class="nav-item" data-screen="inbox" aria-selected="false"><span class="nav-icon">✉️</span> Inbox &amp; Review</button>
+<button class="nav-item" data-screen="school" aria-selected="false"><span class="nav-icon">🎒</span> School</button>
+<button class="nav-item" data-screen="shopping" aria-selected="false"><span class="nav-icon">🍓</span> Shopping</button>
+<button class="nav-item" data-screen="electricity" aria-selected="false"><span class="nav-icon">⚡</span> Electricity</button>
+<button class="nav-item" data-screen="more" aria-selected="false"><span class="nav-icon">✨</span> More</button>
+</nav>
+<div class="preview"><div class="preview-header" aria-hidden="true"><i></i><i></i><i></i></div>
+<section class="panel" id="today" aria-label="Today preview"><div class="screen-top">Today, with a little sparkle</div><h2 class="screen-title">Let's make today lighter ☀️</h2><p class="description">Just the important things. The rest can wait.</p><div class="hero"><h3>One little victory at a time</h3><p>Five priorities at most, with room to breathe.</p></div><div class="duo"><div class="kpi"><b>3</b><span>Things for today</span></div><div class="kpi" style="background:var(--lavender)"><b>2</b><span>Need a decision</span></div></div><div class="strap">Your next little wins</div><div class="card"><div class="meta">🎒 SCHOOL · BEFORE WE LEAVE</div><h3>Pack library bag</h3><p>One practical instruction, with the source and date attached.</p><div class="actions"><button class="action primary" data-feedback="Example task marked done">✓ Done</button><button class="action" data-feedback="Example task snoozed">Snooze</button></div></div><div class="card peach"><div class="meta">✉ REVIEW</div><h3>One notice needs a decision</h3><p>Add to the list, correct it, or dismiss it.</p></div><button class="big-cta" data-feedback="Example: quick capture opened">＋ Catch a thought before it flies away</button><div class="status" aria-live="polite"></div></section>
+<section class="panel" id="inbox" aria-label="Review preview" hidden><div class="screen-top">Inbox &amp; decisions</div><h2 class="screen-title">Inbox of possibilities ✉️</h2><p class="description">Nothing disappears until you decide what happens next.</p><div class="hero" style="background:var(--lavender);border-color:#d9caef"><h3>Two things need your say</h3><p>Original evidence stays attached, and uncertain dates don't turn into overdue warnings.</p></div><div class="card"><div class="meta">🎒 SCHOOL NOTICE · EXAMPLE</div><h3>Bring library bag on Friday</h3><p>School notice · Friday date awaiting confirmation</p><div class="actions"><button class="action primary" data-feedback="Example added to Today">Add now</button><button class="action" data-feedback="Example added to Next">Add later</button><button class="action" data-feedback="Example dismissed">Dismiss</button></div></div><div class="card"><div class="meta">📚 HOMEWORK · EXAMPLE</div><h3>Revise klanke</h3><p>Separate from the library bag reminder.</p><div class="actions"><button class="action primary" data-feedback="Example added to Next">Add</button><button class="action" data-feedback="Example edited">Edit</button><button class="action" data-feedback="Example dismissed">Dismiss</button></div></div><div class="status" aria-live="polite"></div></section>
+<section class="panel" id="school" aria-label="School preview" hidden><div class="screen-top">School readiness</div><h2 class="screen-title">School days, sorted ✏️</h2><p class="description">The wear, pack, bring and return bits — not a jumble of homework and packing.</p><div class="hero"><h3>Before we leave 🎒</h3><p>Only confirmed packing instructions appear here.</p></div><div class="card"><div class="meta">📗 PRACTICE · EXAMPLE</div><h3>Revise klanke</h3><p>Schoolwork, separate from the practical reminder.</p></div><div class="card sky"><div class="meta">🎒 PACK · EXAMPLE</div><h3>Bring library bag on Friday</h3><p>Date and child need confirmation when the source is old.</p></div><button class="big-cta" data-feedback="Example school source opened">✧ Review school notices</button><div class="status" aria-live="polite"></div></section>
+<section class="panel" id="shopping" aria-label="Shopping preview" hidden><div class="screen-top">Shopping radar</div><h2 class="screen-title">A little market magic 🍓</h2><p class="description">Products first. Offers only when dates, pack sizes and branches check out.</p><div class="hero" style="background:var(--yellow);border-color:#ebd496"><h3>Shopping basket 🧺</h3><p>Compare what you need, not just whatever is on special.</p></div><div class="card"><div class="meta">🍓 SEASONAL FRUIT</div><h3>Strawberries</h3><p>Compare cost per 100 g and quality.</p></div><div class="card"><div class="meta">🌱 VEGAN STAPLES</div><h3>Fry's favourites</h3><p>Watch stock and verified promotions.</p></div><div class="card peach"><div class="meta">☁️ HOUSEHOLD</div><h3>Tissues. Always tissues.</h3><p>Unit-price check and sensible stock-up.</p></div><div class="status" aria-live="polite"></div></section>
+<section class="panel" id="electricity" aria-label="Electricity preview" hidden><div class="screen-top">Electricity</div><h2 class="screen-title">Power, without puzzles ⚡</h2><p class="description">A clear reading history, with strange readings routed for review.</p><div class="hero" style="background:var(--sky);border-color:#cde3ed"><h3>Current meter balance: —</h3><p>Waiting for a confirmed reading. No invented totals.</p></div><div class="card"><div class="meta">✍️ QUICK CAPTURE</div><h3>Record a reading</h3><p>Enter a number or attach photographic evidence.</p><div class="actions"><button class="action primary" data-feedback="Preview only: camera not connected">📷 Take photo</button><button class="action" data-feedback="Preview only: upload not connected">▧ Choose photo</button></div></div><div class="card"><div class="meta">↗ HISTORY</div><h3>Recent usage &amp; exceptions</h3><p>Automatic warning when a reading is inconsistent or unclear.</p></div><div class="status" aria-live="polite"></div></section>
+<section class="panel" id="more" aria-label="More preview" hidden><div class="screen-top">Behind the scenes</div><h2 class="screen-title">The backstage bits ✨</h2><p class="description">The practical controls stay easy to find without crowding Today.</p><div class="card"><div class="meta">🔌 CONNECTIONS</div><h3>What can Control Centre access?</h3><p>Clear statuses, no surprise permissions.</p></div><div class="card"><div class="meta">♻ YOUR DATA</div><h3>Backups &amp; recovery</h3><p>Keep a copy. Restore when needed.</p></div><div class="card lav"><div class="meta">🪄 SNAGS &amp; IMPROVEMENTS</div><h3>What's being fixed?</h3><p>The dedicated Control Centre master tracker, not Build Garden.</p><div class="actions"><a class="action" href="https://docs.google.com/spreadsheets/d/1PuvUxEk9L5t1ezieAxeIGjrm_iautFM6YI2YuzkZBYI/edit" target="_blank" rel="noopener" style="text-decoration:none">Open snag tracker ↗</a></div></div><div class="status" aria-live="polite"></div></section>
+<div class="bottom" style="padding:14px 24px 21px"><b>✿</b> Editable design exploration · Real features are in the separate QA application.</div>
+</div></div></div>
+<script>
+document.querySelectorAll('.nav-item').forEach(button=>button.addEventListener('click',()=>{
+ const id=button.dataset.screen;
+ document.querySelectorAll('.nav-item').forEach(n=>n.setAttribute('aria-selected',String(n===button)));
+ document.querySelectorAll('.panel').forEach(p=>p.hidden=p.id!==id);
+ const active=document.getElementById(id);active.querySelector('.status').textContent='';
+}));
+document.querySelectorAll('[data-feedback]').forEach(button=>button.addEventListener('click',()=>{
+ const parent=button.closest('.panel');parent.querySelector('.status').textContent=button.dataset.feedback+'. This is a design preview; no real task changed.';
+}));
+</script></body></html>
