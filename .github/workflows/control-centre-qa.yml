@@ -54,3 +54,33 @@ jobs:
           grep -q "Authorization:'Handoff '" familyroy-control-centre-qa/index.html
           grep -q "history.replaceState" familyroy-control-centre-qa/index.html
           grep -q "familyroy-review:" familyroy-control-centre-qa/index.html
+
+  real-postgres-integration:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: control_centre_ci
+          POSTGRES_PASSWORD: test-only-secret
+          POSTGRES_DB: control_centre_ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U control_centre_ci -d control_centre_ci"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    env:
+      PG_TEST_URL: postgresql://control_centre_ci:test-only-secret@127.0.0.1:5432/control_centre_ci
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install isolated PostgreSQL driver for CI only
+        run: npm install --no-save --no-package-lock --ignore-scripts --no-audit pg@8.13.1
+      - name: Execute actual private API over loopback HTTP and PostgreSQL
+        run: node tests/control-centre-http-postgres.cjs
