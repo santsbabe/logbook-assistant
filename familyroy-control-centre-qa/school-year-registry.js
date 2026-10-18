@@ -13,6 +13,9 @@
   {year:2026,school:'PNPS',grade:'2',classCode:'2M',child:'Harrison'},
   {year:2026,school:'PNPS',grade:'2',classCode:'2D',child:'Harrison'},
   {year:2026,school:'PNPS',grade:'R',classCode:'',child:'Alexander'},
+  {year:2026,school:'Red Roots',grade:'R',classCode:'',child:'Alexander'},
+  {year:2026,school:'Red Roots',grade:'',classCode:'',child:'Alexander'},
+  {year:2026,school:'100 Acre Wood',grade:'',classCode:'',child:'Imogen'},
   {year:2027,school:'PNPS',grade:'3',classCode:'',child:'Harrison'},
   {year:2027,school:'PNPS',grade:'1',classCode:'',child:'Alexander'}
  ];
@@ -32,7 +35,7 @@
   confirmations:[],history:[]}}
  function validRow(row){return row&&Number.isInteger(Number(row.year))&&Number(row.year)>=2000&&Number(row.year)<=2100&&
   typeof row.school==='string'&&row.school.length>0&&row.school.length<=85&&
-  gradeCode(row.grade)!==''&&PEOPLE.includes(row.child)&&
+  (gradeCode(row.grade)!==''||(row.grade===''&&row.classCode===''))&&PEOPLE.includes(row.child)&&
   typeof row.classCode==='string'&&row.classCode.length<=10&&/^[A-Z0-9]*$/.test(row.classCode);}
  function ensure(snapshot){
   if(!snapshot||!Array.isArray(snapshot.records))return defaults();
@@ -137,8 +140,14 @@
   if(!institution)return{status:'review',school:null,year,children:[],reason:'School not identified'};
   if(institution==='PNPS'&&wholeSchool(text))return{status:'matched',school:institution,year,
     children:['Harrison','Alexander'],reason:'Whole-school PNPS notice'};
-  if(!level.grade)return{status:'review',school:institution,year,children:[],
-    reason:'No learner grade or class; confirm the intended children'};
+  if(!level.grade){
+    const schoolOnly=[...new Set(d.records.filter(r=>r.year===year&&r.school===institution&&
+      r.grade===''&&r.classCode==='').map(r=>r.child))];
+    if(schoolOnly.length===1)return{status:'matched',school:institution,year,
+      children:schoolOnly,reason:'Verified '+year+' school-only affiliation'};
+    return{status:'review',school:institution,year,children:[],
+      reason:schoolOnly.length>1?'Conflicting school-only learner records':'No learner grade or class; confirm the intended children'};
+  }
   let found=d.records.filter(r=>r.year===year&&r.school===institution&&r.grade===level.grade);
   if(level.classCode){
     const specific=found.filter(r=>r.classCode===level.classCode);
