@@ -74,11 +74,18 @@ function createGmailRoutes({vault,oauthStates,googleClientId,googleClientSecret,
         return response(res,400,'Google connection could not be completed. Reopen Control Centre to try again.','html');
       }
     }
-    if(!['/v1/gmail/start','/v1/gmail/disconnect'].includes(url.pathname)||req.method!=='POST')
+    if(!['/v1/gmail/start','/v1/gmail/disconnect'].includes(url.pathname))
       return response(res,404,{error:'Not found'});
     const origin=req.headers?.origin;
     if(origin!==frontendOrigin)return response(res,403,{error:'Unapproved browser origin'});
     res.setHeader('Access-Control-Allow-Origin',frontendOrigin);
+    if(req.method==='OPTIONS'){
+      res.setHeader('Access-Control-Allow-Methods','POST, OPTIONS');
+      res.setHeader('Access-Control-Allow-Headers','Authorization, Content-Type');
+      res.setHeader('Access-Control-Max-Age','600');
+      res.statusCode=204;return res.end();
+    }
+    if(req.method!=='POST')return response(res,405,{error:'Method not allowed'});
     let tenant;
     try{
       const idToken=parseBearer(req.headers?.authorization);
