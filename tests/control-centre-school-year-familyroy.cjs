@@ -30,7 +30,14 @@ assert.equal(status('School homework: practice reading','2026-09-01','Unknown ac
 assert.equal(status('Grade 2 homework','2027-02-03').status,'review');
 assert.equal(status('Grade 2 homework','2026-02-03','Unknown school').status,'review');
 assert.equal(status('Grade 2 homework for Alexander').status,'review','A conflicting named child requires Review');
-assert.equal(status('Grade 2 and Grade R homework').status,'review');
+assert.deepEqual(status('Grade 2 and Grade R homework').children,['Harrison','Alexander']);
+assert.deepEqual(status('2M and 2D: bring books Friday').children,['Harrison'],
+ 'Known 2M and 2D share Harrison without a spurious conflict');
+assert.deepEqual(status('2M and 2E: bring books Friday').children,['Harrison'],
+ 'Ignore the excluded 2E class without discarding 2M');
+assert.equal(status('2B class: bring books Friday').status,'review',
+ 'Unknown class 2B cannot inherit a generic Grade 2 assignment');
+assert.deepEqual(status('2027 Grade 1 and Grade 3: bring books Friday','2026-11-05').children,['Alexander','Harrison']);
 assert.equal(status('2E classroom homework for Harrison').status,'matched','Explicit named child takes precedence over default ignored class');
 assert.equal(status('No grade context for this PNPS newsletter').status,'review');
 const start=School.defaults();
