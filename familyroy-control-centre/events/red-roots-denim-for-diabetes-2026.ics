@@ -1,0 +1,25 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//FamilyRoy//Red Roots School Events//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Red Roots School Events
+BEGIN:VEVENT
+UID:red-roots-denim-for-diabetes-20261106@familyroy.local
+DTSTAMP:20261018T150000Z
+DTSTART;VALUE=DATE:20261106
+DTEND;VALUE=DATE:20261107
+SUMMARY:Red Roots - Denim for Diabetes Civvies Day
+LOCATION:Red Roots Pre-Primary\, Pinelands\, Cape Town
+DESCRIPTION:Wear denim instead of usual school uniform to support diabetes 
+ awareness. Lay out denim clothing on Thursday 5 November. From the Red Roo
+ ts Term 4 Week 2 school reminder.
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Prepare denim clothes for Red Roots Denim for Diabetes Day tomo
+ rrow
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+END:VCALENDAR
