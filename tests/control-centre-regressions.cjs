@@ -245,8 +245,8 @@ assert.throws(()=>snapshotVm.writeLocalSnapshot(blockedStore,snapshotKey,
  {tasks:[{id:'a',state:'Waiting'}]}),/Storage quota reached/);
 assert.equal(recordStore.getItem(snapshotKey),damagedCurrent,
  'Storage errors must not overwrite the last intact primary version');
-assert.ok(html.includes("id=\\"storageWarning\\"")||html.includes('id="storageWarning"'));
+assert.ok(html.includes('id="storageWarning"'));
 assert.ok(html.includes('onclick="downloadDamagedLocalData()"'));
-assert.ok(html.includes("id=\\"recoverLocalSnapshot\\"")||html.includes('id="recoverLocalSnapshot"'));
+assert.ok(html.includes('id="recoverLocalSnapshot"'));
 
 console.log('PASS: no-loss migration, occurrence dedupe, Today, review decisions, school parser, snooze, meter, recurrence, snapshot-integrity and recovery gates');
