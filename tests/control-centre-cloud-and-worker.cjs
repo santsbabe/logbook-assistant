@@ -64,11 +64,13 @@ const worker=require('../services/control-centre/gmail-worker.cjs');
         parts:[{mimeType:'text/plain',body:{data:encoded}}]}});
     throw new Error('Unexpected Gmail URL');
   };
-  const processed=new Set(),received=[];
+  const processed=new Set(),received=[],cursorState=new Map();
   const sink={
     hasProcessed:async key=>processed.has(key),
     deliver:async envelope=>{assert.ok(envelope.key.startsWith('user-1:gmail:'));received.push(envelope)},
-    markProcessed:async key=>{processed.add(key)}
+    markProcessed:async key=>{processed.add(key)},
+    readCursor:async key=>cursorState.get(key)||'',
+    commitCursor:async (key,value)=>cursorState.set(key,value)
   };
   const first=await worker.runGmailPoll({fetchImpl:gmailFetch,accessToken:'access-only',namespace:'user-1',sink});
   assert.equal(first.dispatched,1);
@@ -85,10 +87,38 @@ const worker=require('../services/control-centre/gmail-worker.cjs');
   const failingSink={
     hasProcessed:async()=>false,
     deliver:async()=>{deliveries++;throw new Error('Durable queue rejected')},
-    markProcessed:async()=>{marked++}
+    markProcessed:async()=>{marked++},
+    readCursor:async()=>'',commitCursor:async()=>{marked++}
   };
   await assert.rejects(()=>worker.runGmailPoll({fetchImpl:gmailFetch,accessToken:'access-only',namespace:'user-1',sink:failingSink}),/queue rejected/);
   assert.equal(marked,0);
   assert.equal(deliveries,1);
+  assert.equal(cursorState.get('user-1:gmail:cursor'),'');
+  // Progress through more than one Gmail page without ever acknowledging a failed message.
+  const pagedCursor=new Map(),processedPages=new Set(),pagedUrls=[];
+  const pagedFetch=async(url,init)=>{
+    pagedUrls.push(url);
+    if(url.includes('/messages?')){
+      const page=new URL(url).searchParams.get('pageToken');
+      return ok(page==='second-page'?{messages:[{id:'mailSecond123'}]}:
+        {messages:[{id:'mailFirst123'}],nextPageToken:'second-page'});
+    }
+    const id=url.match(/\/messages\/([^?]+)/)?.[1];
+    return ok({id,threadId:'thread-x',payload:{headers:[],parts:[]}});
+  };
+  const pagedSink={
+    hasProcessed:async k=>processedPages.has(k),
+    deliver:async item=>{assert.ok(item.key.includes('gmail:mail'))},
+    markProcessed:async k=>processedPages.add(k),
+    readCursor:async k=>pagedCursor.get(k)||'',
+    commitCursor:async(k,v)=>pagedCursor.set(k,v)
+  };
+  await worker.runGmailPoll({fetchImpl:pagedFetch,accessToken:'token',namespace:'user-2',sink:pagedSink});
+  assert.equal(pagedCursor.get('user-2:gmail:cursor'),'second-page');
+  await worker.runGmailPoll({fetchImpl:pagedFetch,accessToken:'token',namespace:'user-2',sink:pagedSink});
+  assert.equal(pagedCursor.get('user-2:gmail:cursor'),'');
+  assert.equal(processedPages.size,2);
+  assert.ok(pagedUrls.some(u=>u.includes('pageToken=second-page')));
+
   console.log('PASS: private cloud appData snapshots, safe restore validation, Gmail durable idempotent queue and fail-closed processing');
 })().catch(e=>{console.error(e);process.exitCode=1});
