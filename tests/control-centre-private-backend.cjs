@@ -36,7 +36,7 @@ class FakePg{
       const value=this.state.get(args[0]);
       return{rows:value?[{revision:value.revision,encrypted_snapshot:value.encrypted_snapshot}]:[]};
     }
-    if(sql.startsWith('INSERT INTO control_centre_state')){
+    if(sql.startsWith('WITH updated AS (')){
       const current=this.state.get(args[0]),existing=current?.revision||0;
       if(existing!==args[1])return{rows:[]};
       const revision=existing+1;
