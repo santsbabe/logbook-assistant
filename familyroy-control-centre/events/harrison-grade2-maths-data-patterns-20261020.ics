@@ -1,0 +1,27 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//FamilyRoy//PNPS Grade 2 School Calendar//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-TIMEZONE:Africa/Johannesburg
+BEGIN:VEVENT
+UID:harrison-grade2-maths-data-patterns-20261020@familyroy.local
+DTSTAMP:20261018T180000Z
+DTSTART;VALUE=DATE:20261020
+DTEND;VALUE=DATE:20261021
+SUMMARY:Harrison - Grade 2 Maths assessment (Data Handling and Patterns)
+LOCATION:Pinelands North Primary School\, Pinelands\, Cape Town
+DESCRIPTION:Mathematics assessment: Data Handling (pictographs)\; Patterns\
+ , Functions & Algebra (number patterns\, geometric patterns and growing pa
+ tterns). Time not supplied by school. Prepare on Monday 19 October at 18:0
+ 0. School source: https://drive.google.com/file/d/1DGJBiWVh4CCHsIVa_yEbmdC
+ bG-ZtjW1z/view
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT6H
+DESCRIPTION:Tonight: revise pictographs and number, geometric and growing p
+ atterns with Harrison
+END:VALARM
+END:VEVENT
+END:VCALENDAR
