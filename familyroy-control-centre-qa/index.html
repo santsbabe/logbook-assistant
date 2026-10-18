@@ -352,7 +352,87 @@ let todayFilter=null;function setTodayFilter(state){todayFilter=todayFilter===st
 function render(){showStorageWarning();renderSchoolRegistry();renderCapabilities();renderElectricity();renderAttention();renderSchoolReadiness();document.getElementById('kpis').innerHTML=[['Now','Now'],['Waiting','Waiting'],['Review','Review'],['Next','Next']].map(([s,label])=>`<button type="button" class="statusFilter ${todayFilter===s?'active':''}" data-state="${s}" onclick="setTodayFilter('${s}')"><b>${db.tasks.filter(t=>t.state===s).length}</b><span>${label}</span></button>`).join('');let focus=document.getElementById('todayFocus');if(focus){let n=db.tasks.filter(t=>actionIsToday(t)&&(!(t.module==='School Readiness'&&t.gmailId)||t.morning)).length;focus.textContent=n?n+' thing'+(n===1?'':'s')+' need'+(n===1?'s':'')+' you':'Nothing urgent right now';}let visibleTasks=db.tasks.filter(t=>!(t.module==='School Readiness'&&t.gmailId)||t.morning),before=visibleTasks.filter(t=>t.morning&&actionIsToday(t)).sort(actionSort).slice(0,5);document.getElementById('beforeList').innerHTML=before.map(taskHtml).join('')||'<div class="muted">Nothing special to carry out right now.</div>';let now=visibleTasks.filter(t=>actionIsToday(t)&&!t.morning).sort(actionSort).slice(0,Math.max(0,5-before.length));document.getElementById('nowList').innerHTML=now.map(taskHtml).join('')||'<div class="muted">Nothing screaming right now 🎉</div>';document.getElementById('waitingList').innerHTML=db.tasks.filter(t=>t.state==='Waiting').map(taskHtml).join('')||'<div class="muted">Nothing waiting.</div>';document.getElementById('reviewList').innerHTML=db.tasks.filter(t=>t.state==='Review').map(taskHtml).join('')||'<div class="muted">Review queue clear.</div>';document.getElementById('nextList').innerHTML=db.tasks.filter(t=>t.state==='Next').sort(actionSort).map(taskHtml).join('')||'<div class="muted">Nothing queued next.</div>';renderTodayFilter();renderShopping();renderPrices();renderDocs();updateOAuth()}
 function move(id,state){let t=db.tasks.find(x=>x.id===id);if(t){t.state=state;delete t.snoozedUntil;t.updatedAt=new Date().toISOString()}save();render()}
 function snooze(id){let t=db.tasks.find(x=>x.id===id);if(!t)return;let date=prompt('Snooze until (YYYY-MM-DD):',localISO(new Date(Date.now()+86400000)));if(date===null)return;date=date.trim();if(!/^\d{4}-\d{2}-\d{2}$/.test(date)||Number.isNaN(Date.parse(date+'T12:00:00'))||new Date(date+'T12:00:00').toISOString().slice(0,10)!==date||date<=localISO(new Date())){alert('Choose a real future date in YYYY-MM-DD format.');return}t.state='Next';t.snoozedUntil=date;t.updatedAt=new Date().toISOString();save();render()}function done(id){let t=db.tasks.find(x=>x.id===id);if(t&&t.recurrence==='annual-school-calendar'){t.lastCompletedYear=t.targetYear;t.targetYear=Number(t.targetYear)+1;t.title='Prepare '+t.targetYear+' PNPS school term invitations ZIP';t.state='Waiting';t.updatedAt=new Date().toISOString();t.lastYearCompletedAt=t.updatedAt}else if(t){if(t.state==='Review')t.resolution='Dismissed';t.state='Done';t.completedAt=new Date().toISOString();t.updatedAt=t.completedAt}save();render()}function addManual(){let title=document.getElementById('newTitle').value.trim();if(!title)return;ingestActions([{id:'m'+Date.now(),title,state:document.getElementById('newState').value,owner:document.getElementById('newOwner').value,cat:'Manual',module:'Capture',priority:50,source:'Quick capture'}]);document.getElementById('newTitle').value='';save();render()}
-function detectChild(text,source='',baseDate=new Date()){let low=(text+' '+source).toLowerCase();if(/alexander|\balex\b|aloe class/.test(low))return'Alexander';if(/imogen|100acrewood|100 acre wood|hundred acre wood|tigger|pooh/.test(low))return'Imogen';if(/harrison|grade\s*2|grade two|classroom.*grade 2|kwakwadimaditsi/.test(low))return'Harrison';if(/red roots/.test(low)){let y=new Date(baseDate).getFullYear();return y<=2024?'Harrison':'Alexander'}return'Children'}
+function detectChild(text,source='',baseDate=new Date()){
+ const route=ControlCentreSchoolRegistry.resolve({text,source,sourceDate:baseDate,registry:db?.schoolRegistry});
+ if(route.status==='matched')return route.children.join(' + ');
+ const low=String(text||'')+' '+String(source||'');
+ if(/\b(?:alexander|alex)\b/i.test(low))return 'Alexander';
+ if(/\bimogen\b/i.test(low))return 'Imogen';
+ if(/\bharrison\b/i.test(low))return 'Harrison';
+ return 'Children';
+}
+function renderSchoolRegistry(){
+ const api=ControlCentreSchoolRegistry,select=document.getElementById('schoolRegistryYear');
+ if(!select)return;
+ const currentYear=new Date().getFullYear(),old=Number(select.value)||currentYear;
+ const years=[...new Set([...api.YEARS,currentYear,currentYear+1,...db.schoolRegistry.records.map(r=>r.year)])].sort((a,b)=>a-b);
+ select.innerHTML=years.map(y=>'<option value="'+y+'">'+y+'</option>').join('');
+ select.value=String(years.includes(old)?old:currentYear);
+ const year=Number(select.value),reg=db.schoolRegistry;
+ const reminder=document.getElementById('schoolYearAlert');
+ if(reminder){
+  const due=api.annualRequired(reg,currentYear);
+  reminder.hidden=!due;
+  if(due)reminder.innerHTML='<strong>School year confirmation needed:</strong> Check the '+currentYear+' children, schools, grades and classes. <button type="button" class="btn" onclick="openPanel(\'settings\');document.getElementById(\'schoolYearRegistryCard\').scrollIntoView({behavior:\'smooth\'})">Review mappings</button>';
+ }
+ const status=document.getElementById('schoolRegistryStatus');
+ status.textContent=api.annualRequired(reg,year)?'Year '+year+' still needs your confirmation. Existing established assignments continue to work.':'Year '+year+' assignments confirmed.';
+ const rows=reg.records.filter(r=>r.year===year);
+ document.getElementById('schoolRegistryRows').innerHTML=rows.length?rows.map(r=>
+  '<div class="task"><strong>'+esc(r.child)+'</strong> · '+esc(r.school)+' · Grade '+esc(r.grade)+(r.classCode?' · '+esc(r.classCode):'')+'</div>').join(''):
+  '<div class="status warn">No mappings saved for '+year+'. Add learners before confirming.</div>';
+ const dropdown=document.getElementById('schoolRegistryEdit'),selected=dropdown.value;
+ dropdown.innerHTML='<option value="">New mapping</option>'+rows.map(r=>
+  '<option value="'+esc(r.id)+'">'+esc(r.child)+' — '+esc(r.school)+' '+esc(r.grade)+(r.classCode?' / '+esc(r.classCode):'')+'</option>').join('');
+ dropdown.value=rows.some(r=>r.id===selected)?selected:'';
+}
+function loadSchoolMappingEditor(){
+ const id=document.getElementById('schoolRegistryEdit').value;
+ const row=db.schoolRegistry.records.find(r=>r.id===id);
+ document.getElementById('schoolMappingChild').value=row?.child||'Harrison';
+ document.getElementById('schoolMappingSchool').value=row?.school||'PNPS';
+ document.getElementById('schoolMappingGrade').value=row?.grade||'R';
+ document.getElementById('schoolMappingClass').value=row?.classCode||'';
+}
+function schoolRegistryError(err){document.getElementById('schoolRegistryStatus').textContent=err.message||String(err)}
+function saveSchoolMapping(){
+ try{
+  if(storageReadOnly)throw Error('Repair local storage before editing school records.');
+  const select=document.getElementById('schoolRegistryEdit');
+  const next=ControlCentreSchoolRegistry.change(db.schoolRegistry,{
+   originalId:select.value,year:Number(document.getElementById('schoolRegistryYear').value),
+   child:document.getElementById('schoolMappingChild').value,
+   school:document.getElementById('schoolMappingSchool').value,
+   grade:document.getElementById('schoolMappingGrade').value,
+   classCode:document.getElementById('schoolMappingClass').value
+  });
+  db.schoolRegistry=next;
+  if(!save())throw Error('Could not persist learner mapping');
+  renderSchoolRegistry();
+  document.getElementById('schoolRegistryStatus').textContent='Mapping saved with history. Reconfirm the school year.';
+ }catch(e){schoolRegistryError(e)}
+}
+function removeSchoolMapping(){
+ const id=document.getElementById('schoolRegistryEdit').value;
+ if(!id){schoolRegistryError(Error('Choose an existing mapping first.'));return}
+ if(!confirm('Remove the selected year-specific mapping? Its prior value remains in the audit history.'))return;
+ try{
+  if(storageReadOnly)throw Error('Repair local storage before editing school records.');
+  db.schoolRegistry=ControlCentreSchoolRegistry.remove(db.schoolRegistry,id);
+  if(!save())throw Error('Could not persist school mapping removal');
+  renderSchoolRegistry();
+ }catch(e){schoolRegistryError(e)}
+}
+function confirmSchoolRegistryYear(){
+ try{
+  if(storageReadOnly)throw Error('Repair local storage before confirming school year.');
+  const year=Number(document.getElementById('schoolRegistryYear').value);
+  if(!confirm('Have you checked every child, school, grade and class for '+year+'?'))return;
+  db.schoolRegistry=ControlCentreSchoolRegistry.confirm(db.schoolRegistry,year);
+  if(!save())throw Error('Could not persist school-year confirmation');
+  renderSchoolRegistry();
+ }catch(e){schoolRegistryError(e)}
+}
 function emailHeader(full,name){return (full.payload?.headers||[]).find(h=>h.name.toLowerCase()===name.toLowerCase())?.value||''}
 function classifyAttention(text,subject='',sender='',gmailId=''){
  let raw=(subject+'\n'+text).trim(),low=raw.toLowerCase();
