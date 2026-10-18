@@ -1,0 +1,27 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//FamilyRoy//PNPS Grade 2 Assessments//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:harrison-grade2-bk-animal-project-20261027-29@familyroy.local
+DTSTAMP:20261018T193000Z
+DTSTART;VALUE=DATE:20261027
+DTEND;VALUE=DATE:20261030
+SUMMARY:Harrison - Beginning Knowledge animal collage/3D model (27-29 Oct d
+ ue window)
+LOCATION:Pinelands North Primary School\, Pinelands\, Cape Town
+DESCRIPTION:ONE project due-date window 27-29 Oct\, not three separate due 
+ dates. Harrison's personal hand-in day is not specified. Choose the SAME S
+ outh African animal assigned for Drama. Create either a collage with pictu
+ res and keywords or a 3D model showing habitat\, diet\, interesting facts 
+ and characteristics. REUSE this ONE project as the visual aid for the sepa
+ rate English oral (maximum 3 minutes). Both assessments share the same pre
+ paration task\; no duplicate alarm in this file. Project instructions: htt
+ ps://docs.google.com/document/d/19rBeBpnckWVrFdRfGUfu88uJLPDTcuh_FYNNQkslS
+ Sg/edit
+URL:https://docs.google.com/document/d/19rBeBpnckWVrFdRfGUfu88uJLPDTcuh_FYN
+ NQkslSSg/edit
+TRANSP:TRANSPARENT
+END:VEVENT
+END:VCALENDAR
