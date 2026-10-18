@@ -613,6 +613,7 @@ function runPrivateCloud(mode){
   try{
     const oauth=google.accounts.oauth2.initTokenClient({
       client_id:clientId,scope:ControlCentreCloud.SCOPE,
+      error_callback:()=>{cloudStatus('Google authorisation window closed or blocked. No data was uploaded.',true);cloudBusyState(false)},
       callback:async reply=>{
         if(reply.error||!reply.access_token){cloudStatus('Google Drive authorisation was cancelled or failed.',true);cloudBusyState(false);return}
         const token=reply.access_token; // memory only; never stored or logged
