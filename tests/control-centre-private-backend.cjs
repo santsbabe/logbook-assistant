@@ -91,7 +91,7 @@ class FakePg{
 }
 function mockReq({method='GET',token,origin='https://santsbabe.github.io',
   body,path='/v1/state',headers={}}={}){
-  const stream=Readable.from(body===undefined?[]:[JSON.stringify(body)]);
+  const stream=Readable.from(body===undefined?[]:[Buffer.from(JSON.stringify(body))]);
   stream.method=method;stream.url=path;stream.headers={origin,
     ...(token?{authorization:'Bearer '+token}:{}),
     ...(body!==undefined?{'content-type':'application/json'}:{}),...headers};
