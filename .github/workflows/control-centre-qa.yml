@@ -22,6 +22,8 @@ jobs:
           Path("/tmp/control-centre-inline.js").write_text("\n".join(blocks))
           PY
           node --check /tmp/control-centre-inline.js
+      - name: Control Centre functional regression tests
+        run: node tests/control-centre-regressions.cjs
       - name: Check FamilyRoy browser credential boundary
         run: |
           ! grep -q "FAMILYROY_INTAKE_TOKEN" familyroy-control-centre-qa/index.html
