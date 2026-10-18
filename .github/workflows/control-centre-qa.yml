@@ -35,6 +35,16 @@ jobs:
       - name: Syntax-check staged backend modules
         run: |
           for file in services/control-centre/*.cjs; do node --check "$file"; done
+      - name: Test authenticated frontend and conflict decisions
+        run: node tests/control-centre-authenticated-client.cjs
+      - name: Test fully staged Gmail queue to Review integration
+        run: node tests/control-centre-gmail-end-to-end.cjs
+      - name: Syntax-check staged browser and review modules
+        run: |
+          node --check familyroy-control-centre-qa/backend-config.js
+          node --check familyroy-control-centre-qa/authenticated-sync.js
+          node --check familyroy-control-centre-qa/backend-sync-ui.js
+          node --check services/control-centre/gmail-review.cjs
       - name: Render QA in Chrome at phone and desktop widths
         run: node tests/control-centre-browser-smoke.cjs
       - name: Check FamilyRoy browser credential boundary
