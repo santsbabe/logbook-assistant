@@ -2,7 +2,7 @@
 /*
  * Private, encrypted, revisioned state store.
  * db.query must connect to a durable transactional PostgreSQL database.
- * The single UPSERT predicate is the atomic compare-and-swap, not a JS lock.
+ * A single atomic CTE combines guarded UPDATE and first-time INSERT; no JS lock.
  */
 const {randomBytes,createCipheriv,createDecipheriv}=require('node:crypto');
 const {validState}=require('./conflict-merge.cjs');
@@ -43,11 +43,16 @@ function decrypt(envelope,tenantId,rev,key){
   }catch{throw Error('Private stored state failed integrity verification')}
 }
 const READ_SQL='SELECT revision, encrypted_snapshot FROM '+TABLE+' WHERE tenant_id=$1';
-const CAS_SQL='INSERT INTO '+TABLE+
- ' (tenant_id,revision,encrypted_snapshot,updated_at) SELECT $1,1,$3::jsonb,now() WHERE $2::bigint=0'+
- ' ON CONFLICT (tenant_id) DO UPDATE SET revision='+TABLE+'.revision+1,'+
- ' encrypted_snapshot=EXCLUDED.encrypted_snapshot,updated_at=now()'+
- ' WHERE '+TABLE+'.revision=$2::bigint RETURNING revision';
+// A guarded UPDATE handles subsequent revisions; first-time INSERT is permitted
+// only for expected=0. Either branch succeeds atomically or no row is returned.
+const CAS_SQL='WITH updated AS ('+
+ ' UPDATE '+TABLE+' SET revision=revision+1,encrypted_snapshot=$3::jsonb,updated_at=now()'+
+ ' WHERE tenant_id=$1 AND revision=$2::bigint AND $2::bigint>0 RETURNING revision'+
+ '), inserted AS ('+
+ ' INSERT INTO '+TABLE+' (tenant_id,revision,encrypted_snapshot,updated_at)'+
+ ' SELECT $1,1,$3::jsonb,now() WHERE $2::bigint=0'+
+ ' ON CONFLICT(tenant_id) DO NOTHING RETURNING revision'+
+ ') SELECT revision FROM updated UNION ALL SELECT revision FROM inserted';
 function createPostgresStateStore({db,encryptionKey}={}){
   if(!db||typeof db.query!=='function')throw Error('Durable database required');
   keyBuffer(encryptionKey);
