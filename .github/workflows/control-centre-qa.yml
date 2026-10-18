@@ -26,6 +26,23 @@ jobs:
         run: node tests/control-centre-regressions.cjs
       - name: Test private Drive transfer and background Gmail worker contracts
         run: node tests/control-centre-cloud-and-worker.cjs
+      - name: Retrieve pinned FamilyRoy image/OCR fix for combined acceptance
+        uses: actions/checkout@v4
+        with:
+          repository: santsbabe/familyroy-intake
+          ref: 76b9a5f90a5dbef49d6adec9f5bffe73bf7f71b0
+          path: familyroy-fixture
+          persist-credentials: false
+      - name: Run held FamilyRoy image-intake regression suite (no deployment)
+        working-directory: familyroy-fixture
+        run: |
+          npm install --ignore-scripts --no-package-lock --no-audit --no-fund
+          npm test
+          npm run check:functions
+      - name: Verify shared school-year routing and actual FamilyRoy handoff contract
+        run: |
+          node --check familyroy-control-centre-qa/school-year-registry.js
+          node tests/control-centre-school-year-familyroy.cjs
       - name: Syntax-check cloud and worker modules
         run: |
           node --check familyroy-control-centre-qa/cloud-sync.js
