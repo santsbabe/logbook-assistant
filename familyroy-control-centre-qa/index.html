@@ -464,7 +464,7 @@ function schoolActionKey(x){let k=normText(String(x||'').replace(/^(harrison|ale
 function splitSchoolInstructions(line){return String(line).split(/[.!?]\s+(?=(?:please\s+)?(?:bring|pack|wear|return|take|send|hand|drop\s+off|collect|revise|practi[cs]e|read|complete|submit|sign)\b)/i).map(x=>x.trim()).filter(Boolean)}
 function schoolActionKind(action){
  const v=String(action||'').toLowerCase();
- if(/^(?:please\s+)?(?:bring|pack|wear|return|take|send|hand|drop off|collect|sign|submit|fill|pay)\b/.test(v))return'readiness';
+ if(/\b(?:bring|pack|wear|return|take|send|hand\s+in|drop\s+off|collect|sign|submit|fill|pay)\b/.test(v))return'readiness';
  if(/\b(homework|huiswerk|revise|hersien|klanke|practis[ec]|learn|spelling|worksheet|read page|reading|phonics|sight words|poem)\b/.test(v))return'homework';
  if(/\b(rsvp|save the date|attend|event|gala|sports day)\b/.test(v))return'calendar-candidate';
  return'readiness';
