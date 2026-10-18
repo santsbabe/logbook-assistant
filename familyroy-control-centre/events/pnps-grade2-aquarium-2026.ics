@@ -1,0 +1,23 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//FamilyRoy Control Centre//PNPS Outings//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:pnps-grade2-aquarium-20261124@familyroy.local
+DTSTAMP:20261018T180000Z
+DTSTART;VALUE=DATE:20261124
+DTEND;VALUE=DATE:20261125
+SUMMARY:Harrison - PNPS Grade 2 Two Oceans Aquarium outing
+LOCATION:Two Oceans Aquarium\, V&A Waterfront\, Cape Town
+DESCRIPTION:Harrison's PNPS Grade 2 outing to Two Oceans Aquarium. Exact de
+ parture/return times\, transport\, cost and packing details not yet confir
+ med. Consent and indemnity form is REQUIRED\; PNPS issued a corrected link
+  after a glitch: https://docs.google.com/forms/d/e/1FAIpQLSeZr2ujOxtsp5kts
+ 0Dckrh2ppqYwpy2mZu4IMkY-a0OCSa9Kg/viewform. No consent submission has been
+  confirmed.
+URL:https://docs.google.com/forms/d/e/1FAIpQLSeZr2ujOxtsp5kts0Dckrh2ppqYwpy
+ 2mZu4IMkY-a0OCSa9Kg/viewform
+TRANSP:TRANSPARENT
+END:VEVENT
+END:VCALENDAR
