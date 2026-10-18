@@ -65,11 +65,27 @@ assert.equal(entries[0].morning,false);
 assert.equal(entries[1].morning,true);
 assert.ok(entries.every(x=>x.evidenceText===mixed));
 const id='a'.repeat(64);
+context.ingestActions=items=>items.length;
+context.save=()=>false;
+context.render=()=>{};
+context.storageReadOnly=false;
+vm.runInContext(codeBetween('function ingestFamilyRoyReadiness(','function parsePasted('),context,{timeout:3000});
+const ingestFamily=vm.runInContext('ingestFamilyRoyReadiness',context);
+
 function handoff(text,{year='2026',school='PNPS',children=[],sourceTimestamp=year+'-10-18T08:00:00+02:00',evidence=[{sha256:'evidence-hash',mime_type:'image/jpeg'}]}={}){
  return{source_id:id,route:'control_centre.school_readiness',payload:{
   text,school,children,source_timestamp:sourceTimestamp,source_type:'ios_share',
   source_chat:'PNPS Parents',sender:'Teacher',evidence}};
 }
+
+assert.throws(()=>ingestFamily([handoff(mixed)]),/NOT acknowledged/,'A local storage failure must not acknowledge the upstream handoff');
+context.save=()=>true;
+const accepted=ingestFamily([handoff(mixed)]);
+assert.equal(accepted.persistence,'local-device-only','Local ACK is not evidence of cloud synchronisation');
+assert.equal(accepted.added,1);
+const replayedIds=ready(handoff(mixed)).map(x=>x.id);
+assert.equal(new Set(replayedIds).size,replayedIds.length);
+
 const readiness=ready(handoff(mixed));
 assert.equal(readiness.length,1,'Readiness handoff does not also import homework');
 assert.equal(readiness[0].child,'Harrison');
