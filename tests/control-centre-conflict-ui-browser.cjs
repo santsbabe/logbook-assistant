@@ -74,7 +74,44 @@ const srv=createServer((req,res)=>{
   const finalRecords=await page.evaluate(()=>Object.keys(localStorage).map(k=>[k,localStorage.getItem(k)]));
   assert.deepEqual(finalRecords,initial.records,'Conflict preview cannot mutate saved tasks');
   assert.equal(remoteRequests.length,0,'Disabled private backend must make no private API calls');
-  console.log('PASS real Chromium mobile UI: feature flag off, explicit conflict selection, focus restoration, no writes or remote traffic');
+
+  // The parent is prompted at the start of each calendar year, but established
+  // 2026/2027 child inference works even before annual confirmation.
+  const registry=await page.evaluate(()=>{
+    const annual=document.querySelector('#schoolYearAlert');
+    const prompted=!annual.hidden&&annual.textContent.includes('School year confirmation');
+    const year=document.getElementById('schoolRegistryYear');
+    year.value='2027';renderSchoolRegistry();
+    const rows=db.schoolRegistry.records;
+    const row=rows.find(x=>x.year===2027&&x.school==='PNPS'&&x.child==='Harrison'&&x.grade==='3');
+    const edit=document.getElementById('schoolRegistryEdit');
+    edit.value=row.id;loadSchoolMappingEditor();
+    document.getElementById('schoolMappingClass').value='3A';
+    saveSchoolMapping();
+    const audit=db.schoolRegistry.history.filter(x=>x.change==='amend');
+    const amended=db.schoolRegistry.records.find(x=>x.id===row.id);
+    const preserved=db.schoolRegistry.records.some(x=>x.year===2026&&x.child==='Harrison'&&x.grade==='2');
+    window.confirm=()=>true;
+    confirmSchoolRegistryYear();
+    return {prompted,preserved,amendedClass:amended.classCode,
+      audited:audit.length,confirmed2027:!ControlCentreSchoolRegistry.annualRequired(db.schoolRegistry,2027),
+      stillNeeds2026:ControlCentreSchoolRegistry.annualRequired(db.schoolRegistry,2026),
+      history:db.schoolRegistry.history.length,
+      route2026:ControlCentreSchoolRegistry.resolve({text:'Grade 2 homework',source:'PNPS',
+        sourceDate:new Date('2026-04-05'),registry:db.schoolRegistry}).children.join(','),
+      saved:!!localStorage.getItem(KEY)};
+  });
+  assert.equal(registry.prompted,true,'Show annual school-year confirmation reminder when not yet confirmed');
+  assert.equal(registry.amendedClass,'3A');
+  assert.ok(registry.audited>0,'Edited class retained in audit history');
+  assert.equal(registry.confirmed2027,true);
+  assert.equal(registry.stillNeeds2026,true);
+  assert.equal(registry.preserved,true);
+  assert.equal(registry.route2026,'Harrison','Historical 2026 Grade 2 child inference persists after changing 2027');
+  assert.equal(registry.saved,true,'Confirmation and edits must persist on this device');
+  assert.equal(remoteRequests.length,0,'School-year editing never contacts disabled private backend');
+
+  console.log('PASS real Chromium mobile UI: conflict decisions, historical learner-year edits, annual confirmation, browser persistence and no private API traffic');
  }finally{
   await browser.close();
  }
