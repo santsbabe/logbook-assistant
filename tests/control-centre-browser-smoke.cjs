@@ -41,6 +41,9 @@ const server=createServer((req,res)=>{
     assert.match(stdout,/id="kpis">\s*<button[^>]*statusFilter/);
     assert.match(stdout,/id="capabilityList">\s*<div class="task"/);
     assert.match(stdout,/id="meterHistory">\s*<div class="task"/);
+    assert.match(stdout,/id="privateCloudBackup"/);
+    assert.match(stdout,/id="cloudRestoreBtn"/);
+    assert.match(stdout,/cloud-sync\.js/);
     assert.match(stdout,/id="beforeList">/);
     assert.match(stdout,/id="nowList">/);
     const bytes=statSync(file).size;
