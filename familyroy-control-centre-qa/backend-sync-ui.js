@@ -149,6 +149,7 @@
         append(card,'p','Cloud: '+describe(conflict.remote),'muted');
         const select=append(card,'select');
         select.setAttribute('aria-label','Resolve '+conflict.kind+' '+conflict.id);
+        select.setAttribute('data-conflict-key',conflict.key);
         for(const [value,label]of [['','Choose which version to keep'],['local','Keep this device'],['remote','Keep cloud version']]){
           const option=append(select,'option',label);option.value=value;
         }
@@ -157,18 +158,41 @@
           if(isDemo){
             if(select.value)demoChoices[conflict.key]=select.value;else delete demoChoices[conflict.key];
             showPlan(ctl.reviewDemo(demoChoices),{isDemo:true});
+            const target=Array.from(panel.querySelectorAll('select')).find(x=>x.getAttribute('data-conflict-key')===conflict.key);
+            if(target)target.focus();
           }else if(select.value){
-            try{showPlan(ctl.choose(conflict.key,select.value))}
+            try{showPlan(ctl.choose(conflict.key,select.value));
+              const target=Array.from(panel.querySelectorAll('select')).find(x=>x.getAttribute('data-conflict-key')===conflict.key);
+              if(target)target.focus();}
             catch(e){status.textContent=e.message}
           }
         });
       }
       if(plan.ready){
         append(panel,'p','All differences accounted for. The merged result retains '+plan.candidate.tasks.length+' tasks.','muted');
+        const before=getLocal();
+        const ids=new Map((before.tasks||[]).map(t=>[t.id,t]));
+        const after=new Map(plan.candidate.tasks.map(t=>[t.id,t]));
+        const removed=[...ids.keys()].filter(id=>!after.has(id)).length;
+        const altered=[...ids.keys()].filter(id=>after.has(id)&&JSON.stringify(ids.get(id))!==JSON.stringify(after.get(id))).length;
+        const added=[...after.keys()].filter(id=>!ids.has(id)).length;
+        const sections=Object.keys(before).filter(k=>k!=='tasks'&&JSON.stringify(before[k])!==JSON.stringify(plan.candidate[k])).length;
+        const summary=removed+' tasks removed · '+altered+' changed · '+added+' added · '+sections+' other data sections affected.';
+        const consequence=append(panel,'p',summary,'muted');
+        consequence.setAttribute('role','status');
+        if(removed||altered||sections)append(panel,'p',
+          'Warning: choosing a different version can replace or remove existing household data. Save a backup and inspect the decisions before proceeding.','status warn');
         if(isDemo){
           append(panel,'p','This is an example only; no device or cloud data will be changed.','muted');
         }else{
-          makeButton(panel,'Back up and submit reviewed changes',()=>safeAction(async()=>{
+          const acknowledgment=append(panel,'label',null,'row');
+          const checked=document.createElement('input');
+          checked.type='checkbox';checked.checked=false;
+          checked.style.width='auto';checked.style.minWidth='20px';
+          acknowledgment.appendChild(checked);
+          append(acknowledgment,'span','I have reviewed the changes and understand what this save will replace.');
+          const submit=makeButton(panel,'Back up and submit reviewed changes',()=>safeAction(async()=>{
+            if(!checked.checked)throw Error('Confirm the reviewed changes first');
             const result=await ctl.commit();
             if(result.saved&&result.localSaved){
               status.textContent='Private cloud and this device saved at revision '+result.revision+'.';
@@ -180,6 +204,8 @@
               showPlan(result.review);
             }
           }),'primary');
+          submit.disabled=true;
+          checked.addEventListener('change',()=>{submit.disabled=!checked.checked});
         }
       }else{
         append(panel,'p','No cloud write is possible until every difference is resolved.','muted');
