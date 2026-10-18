@@ -101,6 +101,43 @@ const remote=state([task('one','Now'),task('two','Next'),task('three','Review')]
  assert.equal(stale.reason,'remote-changed');
  assert.equal(backupCount,previousBackups);
  assert.equal(server.data.tasks[0].state,'Next');
+
+ // A simultaneous write between latest GET and PUT must force a fresh review.
+ let concurrent={revision:0,data:state([],{shopping:[]})},raceSaved=0,raceBackup=0;
+ const raceFetch=async(url,init)=>{
+   if(init.method==='GET')return{ok:true,json:async()=>structuredClone(concurrent)};
+   concurrent={revision:1,data:state([task('server','Now')],{shopping:[]})};
+   return{ok:false,status:409,json:async()=>({currentRevision:1})};
+ };
+ const race=UI.createController({config,fetchImpl:raceFetch,
+   getLocal:()=>state([task('device','Now')],{shopping:[]}),
+   saveLocal:async()=>{raceSaved++;return true},
+   exportBackup:async()=>{raceBackup++}});
+ await race.connect(token);
+ const collisionResult=await race.commit();
+ assert.equal(collisionResult.saved,false);
+ assert.equal(collisionResult.reason,'concurrent-write');
+ assert.equal(raceSaved,0);
+ assert.equal(raceBackup,1);
+ assert.ok(collisionResult.review.candidate.tasks.some(t=>t.id==='server'));
+ assert.ok(collisionResult.review.candidate.tasks.some(t=>t.id==='device'));
+ // If the cloud write succeeds but local storage is full, report partial
+ // persistence and never pretend the device matches the server.
+ let partialServer={revision:0,data:state([],{shopping:[]})};
+ const partialFetch=async(url,init)=>{
+   if(init.method==='GET')return{ok:true,json:async()=>structuredClone(partialServer)};
+   partialServer={revision:partialServer.revision+1,data:JSON.parse(init.body).data};
+   return{ok:true,json:async()=>({revision:partialServer.revision,updated:true})};
+ };
+ const partial=UI.createController({config,fetchImpl:partialFetch,
+   getLocal:()=>state([task('device','Now')],{shopping:[]}),
+   saveLocal:async()=>false,exportBackup:async()=>true});
+ await partial.connect(token);
+ const partialResult=await partial.commit();
+ assert.equal(partialResult.saved,true);
+ assert.equal(partialResult.localSaved,false);
+ assert.equal(partialServer.data.tasks.length,1);
+
  ctl.signOut();
  assert.equal(ctl.connected,false);
  assert.equal(UI.createController({config:{enabled:false},getLocal:()=>local,saveLocal:async()=>true,
