@@ -153,7 +153,7 @@ h1,h2{line-height:1.18}
 <div class="row">
 <label>Child <select id="schoolMappingChild"><option>Harrison</option><option>Alexander</option><option>Imogen</option></select></label>
 <label>School <input type="text" id="schoolMappingSchool" value="PNPS" aria-label="Learner school" maxlength="85"></label>
-<label>Grade <select id="schoolMappingGrade" aria-label="Learner grade"><option>R</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option></select></label>
+<label>Grade <select id="schoolMappingGrade" aria-label="Learner grade"><option value="">School-wide (no specified grade)</option><option>R</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option></select></label>
 <label>Class (optional) <input type="text" id="schoolMappingClass" aria-label="Learner class" placeholder="e.g. 2M" maxlength="10"></label>
 </div>
 <div class="row">
@@ -379,11 +379,11 @@ function renderSchoolRegistry(){
  status.textContent=api.annualRequired(reg,year)?'Year '+year+' still needs your confirmation. Existing established assignments continue to work.':'Year '+year+' assignments confirmed.';
  const rows=reg.records.filter(r=>r.year===year);
  document.getElementById('schoolRegistryRows').innerHTML=rows.length?rows.map(r=>
-  '<div class="task"><strong>'+esc(r.child)+'</strong> · '+esc(r.school)+' · Grade '+esc(r.grade)+(r.classCode?' · '+esc(r.classCode):'')+'</div>').join(''):
+  '<div class="task"><strong>'+esc(r.child)+'</strong> · '+esc(r.school)+(r.grade?' · Grade '+esc(r.grade):' · School-wide affiliation')+(r.classCode?' · '+esc(r.classCode):'')+'</div>').join(''):
   '<div class="status warn">No mappings saved for '+year+'. Add learners before confirming.</div>';
  const dropdown=document.getElementById('schoolRegistryEdit'),selected=dropdown.value;
  dropdown.innerHTML='<option value="">New mapping</option>'+rows.map(r=>
-  '<option value="'+esc(r.id)+'">'+esc(r.child)+' — '+esc(r.school)+' '+esc(r.grade)+(r.classCode?' / '+esc(r.classCode):'')+'</option>').join('');
+  '<option value="'+esc(r.id)+'">'+esc(r.child)+' — '+esc(r.school)+' '+(r.grade?esc(r.grade):'All grades')+(r.classCode?' / '+esc(r.classCode):'')+'</option>').join('');
  dropdown.value=rows.some(r=>r.id===selected)?selected:'';
 }
 function loadSchoolMappingEditor(){
