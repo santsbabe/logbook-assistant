@@ -12,19 +12,21 @@ DTEND;VALUE=DATE:20261030
 SUMMARY:Harrison - Grade 2 English oral (27-29 Oct window\; individual day 
  TBC)
 LOCATION:Pinelands North Primary School\, Pinelands\, Cape Town
-DESCRIPTION:Official assessment programme confirms an English Speaking oral
-  about South African Animals during 27-29 October. Harrison's individual d
- ay\, presentation duration and required materials have NOT been published 
- in the checked class communications. This is one 3-day WINDOW event\, NOT 
- three separate presentations. Ask teacher to confirm expectations.\nSchool
-  source: https://drive.google.com/file/d/1DGJBiWVh4CCHsIVa_yEbmdCbG-ZtjW1z
- /view
+DESCRIPTION:CONFIRMED: English oral about South African Animals within the 
+ 27-29 October assessment window. Individual day not confirmed. Maximum 3 m
+ inutes. Use the SAME animal assigned for his Drama project. Prepare a coll
+ age or 3D model describing habitat\, diet\, interesting facts and key char
+ acteristics. Collage should have pictures and keywords. Bring the visual a
+ id for the oral. Practise clear/loud speaking and eye contact. Source: htt
+ ps://docs.google.com/document/d/19rBeBpnckWVrFdRfGUfu88uJLPDTcuh_FYNNQkslS
+ Sg/edit\; assessment dates: https://drive.google.com/file/d/1DGJBiWVh4CCHs
+ IVa_yEbmdCbG-ZtjW1z/view
 TRANSP:TRANSPARENT
 BEGIN:VALARM
 ACTION:DISPLAY
 TRIGGER;VALUE=DATE-TIME:20261026T160000Z
-DESCRIPTION:Prepare for Harrison's South African Animals oral\; check day a
- nd materials.
+DESCRIPTION:Prepare 3-minute animal oral and collage/3D model\; check assig
+ ned day.
 END:VALARM
 END:VEVENT
 END:VCALENDAR
