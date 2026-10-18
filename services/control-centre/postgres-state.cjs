@@ -2,7 +2,7 @@
 /*
  * Private, encrypted, revisioned state store.
  * db.query must connect to a durable transactional PostgreSQL database.
- * The single UPSERT predicate is the atomic compare-and-swap, not a JS lock.
+ * A single atomic CTE combines guarded UPDATE and first-time INSERT; no JS lock.
  */
 const {randomBytes,createCipheriv,createDecipheriv}=require('node:crypto');
 const {validState}=require('./conflict-merge.cjs');
