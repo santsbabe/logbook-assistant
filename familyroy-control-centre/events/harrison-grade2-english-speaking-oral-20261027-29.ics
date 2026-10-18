@@ -1,0 +1,30 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//FamilyRoy//School Assessment Calendar//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:harrison-grade2-english-speaking-south-african-animals-20261027-29@fami
+ lyroy.local
+DTSTAMP:20261018T191500Z
+DTSTART;VALUE=DATE:20261027
+DTEND;VALUE=DATE:20261030
+SUMMARY:Harrison - Grade 2 English oral (27-29 Oct window\; individual day 
+ TBC)
+LOCATION:Pinelands North Primary School\, Pinelands\, Cape Town
+DESCRIPTION:Official assessment programme confirms an English Speaking oral
+  about South African Animals during 27-29 October. Harrison's individual d
+ ay\, presentation duration and required materials have NOT been published 
+ in the checked class communications. This is one 3-day WINDOW event\, NOT 
+ three separate presentations. Ask teacher to confirm expectations.\nSchool
+  source: https://drive.google.com/file/d/1DGJBiWVh4CCHsIVa_yEbmdCbG-ZtjW1z
+ /view
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER;VALUE=DATE-TIME:20261026T160000Z
+DESCRIPTION:Prepare for Harrison's South African Animals oral\; check day a
+ nd materials.
+END:VALARM
+END:VEVENT
+END:VCALENDAR
