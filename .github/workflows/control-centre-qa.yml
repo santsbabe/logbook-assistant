@@ -93,3 +93,5 @@ jobs:
         run: npm install --no-save --no-package-lock --ignore-scripts --no-audit pg@8.13.1
       - name: Execute actual private API over loopback HTTP and PostgreSQL
         run: node tests/control-centre-http-postgres.cjs
+      - name: Validate forced RLS and Gmail offline OAuth over real local HTTP
+        run: node tests/control-centre-tenant-rls-oauth-http.cjs
