@@ -1,0 +1,26 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//FamilyRoy//PNPS Grade 2 Assessments//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:harrison-grade2-maths-measurement-20261026@familyroy.local
+DTSTAMP:20261018T191100Z
+DTSTART;VALUE=DATE:20261026
+DTEND;VALUE=DATE:20261027
+SUMMARY:Harrison - Grade 2 Maths Measurement assessment
+LOCATION:Pinelands North Primary School\, Pinelands\, Cape Town
+DESCRIPTION:Mathematics Measurement assessment on Monday 26 October. Topics
+ : measurement\, time\, calendar work and length. The official Grade 2 Term
+  4 programme does not specify the assessment time or prescribe home exerci
+ ses. Prepare Sunday 25 October at 18:00 SAST. Source: https://drive.google
+ .com/file/d/1DGJBiWVh4CCHsIVa_yEbmdCbG-ZtjW1z/view
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER;VALUE=DATE-TIME:20261025T160000Z
+DESCRIPTION:Prepare Harrison for Maths: measurement\, time\, calendar work 
+ and length
+END:VALARM
+END:VEVENT
+END:VCALENDAR
