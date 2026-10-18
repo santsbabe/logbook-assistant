@@ -1,0 +1,16 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//FamilyRoy//School Events//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:red-roots-birthday-20261123@familyroy.local
+DTSTAMP:20261018T150000Z
+DTSTART;VALUE=DATE:20261123
+DTEND;VALUE=DATE:20261124
+SUMMARY:Red Roots Birthday
+LOCATION:Red Roots Pre-Primary\, Pinelands\, Cape Town
+DESCRIPTION:School birthday. No time or parent requirements specified in the newsletters.
+TRANSP:TRANSPARENT
+END:VEVENT
+END:VCALENDAR
