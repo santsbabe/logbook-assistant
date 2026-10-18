@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS cc_gmail_inbox(
  message_key text NOT NULL,
  encrypted_envelope jsonb NOT NULL,
  enqueued_at timestamptz NOT NULL DEFAULT now(),
+ reviewed_at timestamptz,
  PRIMARY KEY(tenant_id,message_key)
 );
 CREATE TABLE IF NOT EXISTS cc_gmail_processed(
