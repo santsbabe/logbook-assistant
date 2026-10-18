@@ -1,0 +1,19 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//FamilyRoy//School Events//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:pnps-redafair-raffle-deadline-20261023@familyroy.local
+DTSTAMP:20261018T160000Z
+DTSTART;VALUE=DATE:20261023
+DTEND;VALUE=DATE:20261024
+SUMMARY:PNPS Red-a-Fair raffle forms due
+DESCRIPTION:Return all raffle forms even if incomplete to Tania Jansen van Rensburg or Cheryl Leo.
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Return PNPS Red-a-Fair raffle forms tomorrow
+TRIGGER:-P1D
+END:VALARM
+END:VEVENT
+END:VCALENDAR
