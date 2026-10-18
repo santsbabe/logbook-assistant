@@ -15,6 +15,7 @@ const remote=state([task('one','Now'),task('two','Next'),task('three','Review')]
  assert.equal(Sync.validData(base),true);
  assert.equal(Sync.validData(state([task('x','Next'),task('x','Done')])),false);
  assert.equal(Sync.validData(state([{}])),false);
+ assert.equal(Sync.validData(state([task("x\');alert(1);//","Next")])),false,'Unsafe task IDs are rejected before sync');
  const invalid=JSON.parse('{"tasks":[],"__proto__":{"polluted":true}}');
  assert.equal(Sync.validData(invalid),false);
  const sameDevice=Sync.planMerge(base,local,base);
