@@ -76,4 +76,37 @@ for(const fragment of ['onclick="exportLocalData()"','onclick="resetData()"',
     'Snags &amp; improvements','@media(prefers-reduced-motion:reduce)']){
   assert.ok(html.includes(fragment),'Missing UI / recovery check '+fragment);
 }
-console.log('PASS: no-loss migration, occurrence dedupe, Today, review fallback, meter and recovery gates');
+// Recurring Friday swimming follows Western Cape local dates and stops before learners' term end.
+const seedFuncs=codeBetween('function seedPnpsSwimming(','const purchaseSeed=');
+const seedsContext={normaliseAction:x=>x};
+const swimming=fromVm(seedFuncs,'seedPnpsSwimming',seedsContext);
+const termCalendar=fromVm(seedFuncs,'seedPnpsCalendarTask',seedsContext);
+const recurringDb={tasks:[]};
+swimming(recurringDb,new Date('2026-10-18T10:00:00Z'));
+assert.equal(recurringDb.tasks.length,1);
+assert.equal(recurringDb.tasks[0].due,'2026-10-23');
+swimming(recurringDb,new Date('2026-10-18T11:00:00Z'));
+assert.equal(recurringDb.tasks.length,1);
+swimming(recurringDb,new Date('2026-10-24T10:00:00Z'));
+assert.equal(recurringDb.tasks[1].due,'2026-10-30');
+swimming(recurringDb,new Date('2026-12-10T10:00:00Z'));
+assert.equal(recurringDb.tasks.length,2);
+termCalendar(recurringDb);
+termCalendar(recurringDb);
+assert.equal(recurringDb.tasks.filter(t=>t.recurrence==='annual-school-calendar').length,1);
+const annual=recurringDb.tasks.find(t=>t.recurrence==='annual-school-calendar');
+const done=fromVm(codeBetween('function done(','function addManual('),'done',
+  {db:recurringDb,save:()=>{},render:()=>{}});
+done(annual.id);
+assert.equal(annual.targetYear,2029);
+assert.equal(annual.lastCompletedYear,2028);
+assert.equal(annual.state,'Waiting');
+const friday=recurringDb.tasks.find(t=>t.due==='2026-10-23');
+done(friday.id);
+assert.equal(friday.state,'Done');
+swimming(recurringDb,new Date('2026-10-18T10:00:00Z'));
+assert.equal(recurringDb.tasks.filter(t=>t.id===friday.id).length,1);
+// Both sources remain private-action records and should never auto-send invitations.
+assert.ok(annual.calendarSpec.subjects.length===8);
+
+console.log('PASS: no-loss migration, occurrence dedupe, Today, review fallback, meter, recurrence and recovery gates');
