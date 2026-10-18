@@ -1,0 +1,49 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//FamilyRoy//Red Roots School Events//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:red-roots-bigschool-prep-20261118@familyroy.local
+DTSTAMP:20261018T150000Z
+DTSTART;TZID=Africa/Johannesburg:20261118T180000
+DTEND;TZID=Africa/Johannesburg:20261118T181000
+SUMMARY:Prepare for Red Roots Big School drop-off
+DESCRIPTION:Tomorrow and Friday use the small gate by the cricket nets on R
+ ichmond Avenue. Teachers will meet and escort the children past Grade 1 cl
+ assrooms to Red Roots. No special arrival time was specified.
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT0M
+DESCRIPTION:Prepare for Red Roots alternative gate tomorrow
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:red-roots-bigschool-20261119@familyroy.local
+DTSTAMP:20261018T150000Z
+DTSTART;VALUE=DATE:20261119
+DTEND;VALUE=DATE:20261120
+SUMMARY:Red Roots Big School drop-off practice (morning 1)
+LOCATION:Small gate by cricket nets\, Richmond Avenue\, Pinelands\, Cape To
+ wn
+DESCRIPTION:Morning drop-off via the small gate by the cricket nets on Rich
+ mond Avenue. Teachers meet children and take them past Grade 1 classrooms 
+ to Red Roots. The school did not specify an arrival time. This event is al
+ l-day only because exact timing is unknown.
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:red-roots-bigschool-20261120@familyroy.local
+DTSTAMP:20261018T150000Z
+DTSTART;VALUE=DATE:20261120
+DTEND;VALUE=DATE:20261121
+SUMMARY:Red Roots Big School drop-off practice (morning 2)
+LOCATION:Small gate by cricket nets\, Richmond Avenue\, Pinelands\, Cape To
+ wn
+DESCRIPTION:Morning drop-off via the small gate by the cricket nets on Rich
+ mond Avenue. Teachers meet children and take them past Grade 1 classrooms 
+ to Red Roots. The school did not specify an arrival time. This event is al
+ l-day only because exact timing is unknown.
+TRANSP:TRANSPARENT
+END:VEVENT
+END:VCALENDAR
