@@ -103,9 +103,9 @@ const unknown=ready(handoff('Grade 2: bring library bag',{school:'Unknown school
 assert.equal(unknown.length,1);
 assert.equal(unknown[0].state,'Review');
 assert.equal(unknown[0].owner,'Unassigned');
-assert.equal(unknown[0].child,undefined);
+assert.equal(unknown[0].child,'','Unknown child remains explicitly unassigned');
 assert.ok(unknown[0].reviewReason);
-assert.equal(unknown[0].due,undefined);
+assert.equal(unknown[0].due,'','Unknown due date must not be invented');
 assert.ok(html.includes('id="schoolYearRegistryCard"'));
 assert.ok(html.includes('id="schoolYearAlert"'));
 assert.ok(html.includes('Confirm this year&#39;s assignments')||html.includes("Confirm this year's assignments"));
