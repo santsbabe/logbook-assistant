@@ -1,0 +1,25 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//FamilyRoy//PNPS Grade 2 Assessments//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:harrison-grade2-maths-shape-space-20261023@familyroy.local
+DTSTAMP:20261018T190000Z
+DTSTART;VALUE=DATE:20261023
+DTEND;VALUE=DATE:20261024
+SUMMARY:Harrison - Grade 2 Maths Shape and Space assessment
+LOCATION:Pinelands North Primary School\, Pinelands\, Cape Town
+DESCRIPTION:PNPS Grade Two Programme of Assessment\, Term 4 2026. Mathemati
+ cs Shape & Space: comparing 2D shapes\, describing 3D objects and symmetry
+ . Assessment time not specified. Thursday 22 October 18:00 preparation ale
+ rt. Source: https://drive.google.com/file/d/1DGJBiWVh4CCHsIVa_yEbmdCbG-Ztj
+ W1z/view
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT6H
+DESCRIPTION:Prepare Harrison for 2D and 3D shapes and symmetry assessment
+END:VALARM
+END:VEVENT
+END:VCALENDAR
