@@ -629,9 +629,13 @@ function runPrivateCloud(mode){
             const selected=copies[0],content=await ControlCentreCloud.readCopy(fetch,token,selected);
             inspectedCloud={snapshot:content,file:selected};
             const preview=document.getElementById('cloudPreview');
+            const differences=ControlCentreCloud.compareTaskCopies(db,content.data);
+            inspectedCloud.differences=differences;
             preview.textContent='Latest of '+copies.length+' private copies: '+content.data.tasks.length+
               ' tasks, saved '+new Date(content.savedAt).toLocaleString('en-ZA')+
-              '. Local device: '+db.tasks.length+' tasks. These may contain different changes.';
+              '. Compared with this device: '+differences.remoteOnly+' cloud-only tasks would be added, '+
+              differences.changed+' matching IDs have different task details, and '+
+              differences.localOnly+' device-only tasks would be removed. Other shopping, history and settings data would also be replaced. No changes have been made.';
             document.getElementById('cloudRestoreBtn').hidden=false;
             cloudStatus('Cloud copy inspected. Nothing on this device has changed.');
           }
@@ -646,8 +650,9 @@ function restoreInspectedCloud(){
   if(!inspectedCloud){cloudStatus('Inspect a private copy first.',true);return}
   if(storageReadOnly){cloudStatus('Local storage needs recovery first. Export your damaged data before restoring.',true);return}
   const incoming=inspectedCloud.snapshot;
+  const differences=ControlCentreCloud.compareTaskCopies(db,incoming.data);
   if(!ControlCentreCloud.validData(incoming.data)){cloudStatus('Cloud snapshot failed validation.',true);return}
-  if(prompt('Restoring this copy replaces the CURRENT QA data on this device, including later edits. The existing local version is retained as a rollback snapshot. Type RESTORE to continue.')!=='RESTORE')return;
+  if(prompt('Restore will replace this device\'s QA data: '+differences.localOnly+' device-only tasks will be removed, '+differences.changed+' existing tasks differ, and shopping/history/settings may also change. A local backup will download and the previous version will remain recoverable. Type RESTORE to continue.')!=='RESTORE')return;
   try{
     // Create an explicit downloadable backup before any replacement; retain rollback in storage.
     exportLocalData();
