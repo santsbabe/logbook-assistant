@@ -1,0 +1,59 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+PRODID:-//FamilyRoy Control Centre//PNPS Grade 2//EN
+X-WR-CALNAME:Harrison Grade 2 Assessments November 2026
+BEGIN:VEVENT
+UID:harrison-grade2-afrikaans-listening-20261102-03@familyroy.local
+DTSTAMP:20261018T180000Z
+DTSTART;VALUE=DATE:20261102
+DTEND;VALUE=DATE:20261104
+SUMMARY:Harrison Grade 2 - Afrikaans Listening/Speaking (2 or 3 Nov)
+LOCATION:Pinelands North Primary School\, Pinelands\, Cape Town
+DESCRIPTION:The school specifies 2/3 November\, exact day not known. Luiste
+ r & Praat: Antwoord vrae oor diere (answer questions about animals). Sourc
+ e: https://drive.google.com/file/d/1DGJBiWVh4CCHsIVa_yEbmdCbG-ZtjW1z/view
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT6H
+DESCRIPTION:Prepare for Harrison Grade 2 - Afrikaans Listening/Speaking (2 
+ or 3 Nov)
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:harrison-grade2-drama-20261105@familyroy.local
+DTSTAMP:20261018T180000Z
+DTSTART;VALUE=DATE:20261105
+DTEND;VALUE=DATE:20261106
+SUMMARY:Harrison Grade 2 - Drama assessment
+LOCATION:Pinelands North Primary School\, Pinelands\, Cape Town
+DESCRIPTION:South African Animals skit. Specific costume\, props or lines n
+ ot stated. Source: https://drive.google.com/file/d/1DGJBiWVh4CCHsIVa_yEbmd
+ CbG-ZtjW1z/view
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT6H
+DESCRIPTION:Prepare for Harrison Grade 2 - Drama assessment
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:harrison-grade2-english-phonics-20261106@familyroy.local
+DTSTAMP:20261018T180000Z
+DTSTART;VALUE=DATE:20261106
+DTEND;VALUE=DATE:20261107
+SUMMARY:Harrison Grade 2 - English Phonics assessment
+LOCATION:Pinelands North Primary School\, Pinelands\, Cape Town
+DESCRIPTION:Soft c and g\, air\, ear\, are\, and -ing\, -ly and -ies word e
+ ndings. Source: https://drive.google.com/file/d/1DGJBiWVh4CCHsIVa_yEbmdCbG
+ -ZtjW1z/view
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT6H
+DESCRIPTION:Prepare for Harrison Grade 2 - English Phonics assessment
+END:VALARM
+END:VEVENT
+END:VCALENDAR
