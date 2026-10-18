@@ -80,6 +80,23 @@ function createGmailPostgres({db,dataKey}={}){
       const result=await db.query('SELECT tenant_id FROM cc_gmail_credentials WHERE gmail_enabled=true ORDER BY tenant_id');
       return(result.rows||[]).map(r=>({tenantId:r.tenant_id,gmailEnabled:true}));
     },
+    async pending(id,limit=30){
+      const tenant=requireTenant(id);
+      if(!Number.isInteger(limit)||limit<1||limit>30)throw Error('Unsafe Review batch limit');
+      const result=await db.query('SELECT message_key,encrypted_envelope FROM cc_gmail_inbox WHERE tenant_id=$1 AND reviewed_at IS NULL ORDER BY enqueued_at LIMIT $2',[tenant,limit]);
+      if(!Array.isArray(result?.rows))throw Error('Private inbox unavailable');
+      return result.rows.map(row=>{
+        if(typeof row.message_key!=='string'||!row.message_key.startsWith(tenant+':gmail:'))
+          throw Error('Invalid private inbox key');
+        return JSON.parse(open(row.encrypted_envelope,dataKey,tenant+':mail:'+row.message_key));
+      });
+    },
+    async acknowledge(id,messageKey){
+      const tenant=requireTenant(id);
+      if(typeof messageKey!=='string'||!messageKey.startsWith(tenant+':gmail:'))
+        throw Error('Invalid private inbox acknowledgement');
+      await db.query('UPDATE cc_gmail_inbox SET reviewed_at=now() WHERE tenant_id=$1 AND message_key=$2 AND reviewed_at IS NULL',[tenant,messageKey]);
+    },
     async readEncryptedEnvelope(id,key){
       const tenant=requireTenant(id);
       const r=await db.query('SELECT encrypted_envelope FROM cc_gmail_inbox WHERE tenant_id=$1 AND message_key=$2',[tenant,key]);
