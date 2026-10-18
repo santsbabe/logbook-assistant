@@ -2,7 +2,7 @@
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const {Pool}=require('pg');
-const {createServer}=require('node:http');
+const {createServer,request:requestHttp}=require('node:http');
 const {randomBytes,generateKeyPairSync,sign}=require('node:crypto');
 const {withTenantTransaction,createTenantScopedStateStore}=require('../services/control-centre/tenant-db.cjs');
 const {createGmailPostgres}=require('../services/control-centre/postgres-gmail.cjs');
@@ -36,13 +36,24 @@ const fetchImpl=async endpoint=>{
  throw Error('Unknown network endpoint in isolated test');
 };
 async function http(base,method,path,authorization,origin,host){
- const response=await fetch(base+path,{method,headers:{
-  ...(authorization?{Authorization:'Bearer '+authorization}:{}),
-  ...(origin?{Origin:origin}:{}),...(host?{Host:host}:{})}});
- let data=await response.text();
- try{data=JSON.parse(data)}catch{}
- return{status:response.status,body:data,headers:response.headers};
+ const dest=new URL(base+path);
+ const headers={...(authorization?{Authorization:'Bearer '+authorization}:{}),
+   ...(origin?{Origin:origin}:{}),
+   ...(host?{Host:host}:{})};
+ const result=await new Promise((resolve,reject)=>{
+  const req=requestHttp({hostname:dest.hostname,port:dest.port,path:dest.pathname+dest.search,
+    method,headers},res=>{
+      const chunks=[];
+      res.on('data',chunk=>chunks.push(chunk));
+      res.on('end',()=>resolve({status:res.statusCode,rawHeaders:res.headers,
+        text:Buffer.concat(chunks).toString('utf8')}));
+  });
+  req.on('error',reject);req.end();
+ });
+ let body=result.text;try{body=JSON.parse(body)}catch{}
+ return{status:result.status,body,headers:{get:key=>result.rawHeaders[key.toLowerCase()]}};
 }
+
 (async()=>{
  let server;
  try{
