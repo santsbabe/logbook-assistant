@@ -96,6 +96,10 @@ async function http(base,method,path,authorization,origin,host){
   server=createServer((req,res)=>route(req,res).catch(()=>{res.statusCode=500;res.end('internal failure')}));
   await new Promise(ok=>server.listen(0,'127.0.0.1',ok));
   const base='http://127.0.0.1:'+server.address().port;
+  const preflight=await http(base,'OPTIONS','/v1/gmail/start',null,frontendOrigin);
+  assert.equal(preflight.status,204);
+  assert.equal(preflight.headers.get('access-control-allow-origin'),frontendOrigin);
+  assert.equal((await http(base,'OPTIONS','/v1/gmail/start',null,'https://evil.example')).status,403);
   assert.equal((await http(base,'POST','/v1/gmail/start',null,frontendOrigin)).status,401);
   assert.equal((await http(base,'POST','/v1/gmail/start',token('account-A'),'https://evil.example')).status,403);
   const started=await http(base,'POST','/v1/gmail/start',token('account-A'),frontendOrigin);
