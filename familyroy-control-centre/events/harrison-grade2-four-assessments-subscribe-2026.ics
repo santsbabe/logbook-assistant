@@ -1,0 +1,78 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//FamilyRoy//Grade 2 School Assessments//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Harrison Grade 2 Pending Assessments
+BEGIN:VEVENT
+UID:harrison-grade2-english-writing-20261021@familyroy.local
+DTSTAMP:20261018T190000Z
+DTSTART;VALUE=DATE:20261021
+DTEND;VALUE=DATE:20261022
+SUMMARY:Harrison - Grade 2 English Writing assessment
+LOCATION:Pinelands North Primary School\, Pinelands\, Cape Town
+DESCRIPTION:South Africa and South African Animals. No precise assessment t
+ ime was provided. Prepare Tuesday 20 Oct at 18:00. Source: https://drive.g
+ oogle.com/file/d/1DGJBiWVh4CCHsIVa_yEbmdCbG-ZtjW1z/view
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT6H
+DESCRIPTION:Prepare Harrison's English writing about South Africa and anima
+ ls.
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:harrison-grade2-afrikaans-listening-20261102-03@familyroy.local
+DTSTAMP:20261018T190000Z
+DTSTART;VALUE=DATE:20261102
+DTEND;VALUE=DATE:20261104
+SUMMARY:Harrison - Afrikaans Listening and Speaking (2 OR 3 Nov)
+LOCATION:Pinelands North Primary School\, Pinelands\, Cape Town
+DESCRIPTION:School says 2/3 November\, not two separate assessments. Luiste
+ r & Praat: Answer questions about animals. Exact day and time not specifie
+ d. Source: https://drive.google.com/file/d/1DGJBiWVh4CCHsIVa_yEbmdCbG-ZtjW
+ 1z/view
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT6H
+DESCRIPTION:Prepare for Harrison - Afrikaans Listening and Speaking (2 OR 3
+  Nov)
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:harrison-grade2-drama-20261105@familyroy.local
+DTSTAMP:20261018T190000Z
+DTSTART;VALUE=DATE:20261105
+DTEND;VALUE=DATE:20261106
+SUMMARY:Harrison - Grade 2 Drama assessment
+LOCATION:Pinelands North Primary School\, Pinelands\, Cape Town
+DESCRIPTION:South African Animals skit. Exact assessment time\, costume and
+  props were not specified. Source: https://drive.google.com/file/d/1DGJBiW
+ Vh4CCHsIVa_yEbmdCbG-ZtjW1z/view
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT6H
+DESCRIPTION:Prepare for Harrison - Grade 2 Drama assessment
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:harrison-grade2-english-phonics-20261106@familyroy.local
+DTSTAMP:20261018T190000Z
+DTSTART;VALUE=DATE:20261106
+DTEND;VALUE=DATE:20261107
+SUMMARY:Harrison - Grade 2 English Phonics assessment
+LOCATION:Pinelands North Primary School\, Pinelands\, Cape Town
+DESCRIPTION:Soft c and g\, air\, ear\, are\; endings -ing\, -ly and -ies. S
+ ource: https://drive.google.com/file/d/1DGJBiWVh4CCHsIVa_yEbmdCbG-ZtjW1z/v
+ iew
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT6H
+DESCRIPTION:Prepare for Harrison - Grade 2 English Phonics assessment
+END:VALARM
+END:VEVENT
+END:VCALENDAR
