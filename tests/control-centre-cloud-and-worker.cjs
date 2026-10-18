@@ -8,6 +8,15 @@ const worker=require('../services/control-centre/gmail-worker.cjs');
   assert.equal(cloud.validData({tasks:[{}]}),false);
   const dataset={tasks:[{id:'school-one',state:'Review',title:'Pack for school'}],seen:[],shopping:[]};
   const snapshot={format:cloud.FORMAT,version:1,savedAt:'2026-10-18T15:00:00.000Z',data:dataset};
+  const localCopy={tasks:[{id:'same',title:'Pack lunch',state:'Now'},{id:'changed',title:'School notice',state:'Next'},{id:'local',title:'Only here',state:'Now'}]};
+  const remoteCopy={tasks:[{id:'same',title:'Pack lunch',state:'Now'},{id:'changed',title:'School notice',state:'Done'},{id:'remote',title:'Only there',state:'Next'}]};
+  const difference=cloud.compareTaskCopies(localCopy,remoteCopy);
+  assert.equal(difference.localOnly,1);
+  assert.equal(difference.remoteOnly,1);
+  assert.equal(difference.changed,1);
+  assert.equal(difference.unchanged,1);
+  assert.throws(()=>cloud.compareTaskCopies({tasks:[{id:'duplicate'},{id:'duplicate'}]},remoteCopy),/Duplicate task/);
+
   let calls=[];
   const ok=value=>({ok:true,json:async()=>value});
   const fakeDrive=async(url,init)=>{
