@@ -66,6 +66,9 @@ async function request(base,method,token,payload,origin=ORIGIN){
   assert.equal(initial.status,200);
   assert.deepEqual(initial.body,{revision:0,data:{tasks:[]}});
   assert.equal((await request(base,'GET',tokenB)).body.revision,0);
+  const ghost=await request(base,'PUT',tokenB,{expectedRevision:9,data:{tasks:[{id:'should-not-appear',state:'Now'}]}});
+  assert.equal(ghost.status,409,'A nonexistent account must not be created at a nonzero expected revision');
+  assert.equal((await request(base,'GET',tokenB)).body.revision,0);
   assert.equal((await request(base,'GET',null)).status,401);
   assert.equal((await request(base,'GET',tokenA,undefined,'https://attacker.example')).status,403);
   const tasks1={tasks:[{id:'PNPS-1',title:'Bring library bag',state:'Review'}]};
@@ -86,9 +89,18 @@ async function request(base,method,token,payload,origin=ORIGIN){
   assert.equal(update.body.revision,2);
   assert.equal((await request(base,'GET',tokenB)).body.data.tasks.length,0,'An authorised second identity must not see first tenant records');
   assert.equal((await request(base,'GET',tokenA)).body.data.tasks[0].state,'Review');
+  const maliciousTitle="'; DROP TABLE control_centre_state; --";
+  const injected=await request(base,'PUT',tokenA,{expectedRevision:2,
+    data:{tasks:[{id:'untrusted-text',state:'Review',title:maliciousTitle}]}});
+  assert.equal(injected.status,200,'Parameterized ciphertext state must accept ordinary quoted text safely');
+  assert.equal((await request(base,'GET',tokenA)).body.data.tasks[0].title,maliciousTitle);
+  assert.equal((await pool.query('SELECT count(*) AS n FROM control_centre_state')).rows.length,1);
+  const returned=await request(base,'PUT',tokenA,{expectedRevision:3,data:tasks1});
+  assert.equal(returned.status,200);
+
   const stale=await request(base,'PUT',tokenA,{expectedRevision:1,data:{tasks:[]}});
   assert.equal(stale.status,409);
-  assert.equal(stale.body.currentRevision,2);
+  assert.equal(stale.body.currentRevision,4);
   // A malformed encrypted record must fail shut rather than appear as an empty or reset account.
   const encrypted=await pool.query('SELECT encrypted_snapshot FROM control_centre_state WHERE tenant_id=$1',[userA]);
   const payload=structuredClone(encrypted.rows[0].encrypted_snapshot);
