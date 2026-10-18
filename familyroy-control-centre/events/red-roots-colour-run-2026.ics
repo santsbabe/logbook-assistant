@@ -1,0 +1,29 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//FamilyRoy//School Events//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:redroots-colour-run-20261208@familyroy.local
+DTSTAMP:20261018T155100Z
+DTSTART;VALUE=DATE:20261208
+DTEND;VALUE=DATE:20261209
+SUMMARY:Red Roots Annual Colour Run - wear white T-shirt
+LOCATION:Red Roots Pre-Primary\, Pinelands\, Cape Town
+DESCRIPTION:During school hours. Wear a white T-shirt to school.
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:redroots-colour-run-preparation-20261207@familyroy.local
+DTSTAMP:20261018T155100Z
+DTSTART:20261207T160000Z
+DTEND:20261207T161000Z
+SUMMARY:Prepare white T-shirt for Red Roots Colour Run
+DESCRIPTION:Lay out a white T-shirt for tomorrow.
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Prepare white T-shirt for tomorrow
+TRIGGER:PT0M
+END:VALARM
+END:VEVENT
+END:VCALENDAR
