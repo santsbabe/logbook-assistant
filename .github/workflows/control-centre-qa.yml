@@ -45,6 +45,15 @@ jobs:
           node --check familyroy-control-centre-qa/authenticated-sync.js
           node --check familyroy-control-centre-qa/backend-sync-ui.js
           node --check services/control-centre/gmail-review.cjs
+      - name: Verify privacy and release preflight is explicitly blocked
+        run: |
+          node --check services/control-centre/ops/preflight.cjs
+          node services/control-centre/ops/preflight.cjs --ci
+          node tests/control-centre-release-gates.cjs
+      - name: Exercise mobile conflict choices in actual Chromium
+        run: |
+          npm install --no-save --no-package-lock --ignore-scripts --no-audit puppeteer-core@24.24.1
+          node tests/control-centre-conflict-ui-browser.cjs
       - name: Render QA in Chrome at phone and desktop widths
         run: node tests/control-centre-browser-smoke.cjs
       - name: Check FamilyRoy browser credential boundary
