@@ -100,7 +100,7 @@ assert.equal(parsed2027[0].schoolYear,2027);
 async function familyroy(){
  const dir=path.resolve('familyroy-fixture/netlify/functions/core.mjs');
  if(!fs.existsSync(dir)){
-  console.log('FamilyRoy cross-repo checkout absent; registry and handoff regressions passed. CI's FamilyRoy checkout is mandatory.');
+  console.log('FamilyRoy cross-repo checkout absent; registry and handoff regressions passed. Pinned checkout required in CI.');
   return;
  }
  const {buildRecord,ROUTES}=await import(pathToFileURL(dir).href);
