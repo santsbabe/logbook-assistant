@@ -1,0 +1,33 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+PRODID:-//FamilyRoy Control Centre//PNPS School Payments//EN
+X-WR-CALNAME:School Payments
+BEGIN:VEVENT
+UID:pnps-alexander-grade1-stationery-2027-payment-20261031@familyroy-contro
+ l-centre
+DTSTAMP:20261019T095100Z
+DTSTART;VALUE=DATE:20261031
+DTEND;VALUE=DATE:20261101
+SUMMARY:PAY R1720 - Alexander PNPS Grade 1 2027 stationery
+DESCRIPTION:PNPS confirmed the 2027 Grade 1 school-managed stationery fee i
+ s R1720 due by the end of October 2026. Payment reference: A Roy stationer
+ y GR1. Verify official PNPS payment/banking details before paying. Payment
+  and proof of payment are NOT yet confirmed. Do not buy a Mason Grade 1 re
+ tail pack.
+LOCATION:Payment to Pinelands North Primary School
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER;VALUE=DATE-TIME:20261028T160000Z
+DESCRIPTION:Prepare Alexander PNPS Grade 1 stationery payment - R1720 due 3
+ 1 Oct
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER;VALUE=DATE-TIME:20261030T070000Z
+DESCRIPTION:Alexander PNPS stationery R1720 due by 31 October - pay and kee
+ p proof
+END:VALARM
+END:VEVENT
+END:VCALENDAR
