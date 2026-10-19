@@ -43,6 +43,7 @@ jobs:
         run: |
           node --check familyroy-control-centre-qa/school-year-registry.js
           node tests/control-centre-school-year-familyroy.cjs
+          node tests/control-centre-familyroy-replay-review.cjs
       - name: Syntax-check cloud and worker modules
         run: |
           node --check familyroy-control-centre-qa/cloud-sync.js
