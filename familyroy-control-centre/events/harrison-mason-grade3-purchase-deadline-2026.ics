@@ -1,0 +1,28 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//FamilyRoy//PNPS Stationery//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:harrison-mason-grade3-purchase-deadline-20261116@familyroy.local
+DTSTAMP:20261019T063400Z
+DTSTART;VALUE=DATE:20261116
+DTEND;VALUE=DATE:20261117
+SUMMARY:Deadline - Order Harrison 2027 Grade 3 Mason stationery
+DESCRIPTION:Harrison Grade 3 assessed Mason order deadline. Full R1243.75
+  list is NOT the basket. Review 2027 stationery assessment in Control Ce
+ ntre before purchasing. Order closes 16 Nov; payment due 23 Nov. Purchas
+ e and payment NOT completed.
+URL:https://mason-cos.co.za/schools/Pinelands_North_Primary_247
+BEGIN:VALARM
+TRIGGER:-P7D
+ACTION:DISPLAY
+DESCRIPTION:Review Harrison Grade 3 stationery basket this week
+END:VALARM
+BEGIN:VALARM
+TRIGGER:-P1D
+ACTION:DISPLAY
+DESCRIPTION:Harrison Mason Grade 3 order deadline tomorrow
+END:VALARM
+END:VEVENT
+END:VCALENDAR
