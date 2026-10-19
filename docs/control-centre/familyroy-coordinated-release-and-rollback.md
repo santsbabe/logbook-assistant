@@ -1,6 +1,6 @@
 # FamilyRoy ↔ Control Centre — coordinated integration, test and rollback plan
 
-**Status, 18 October 2026: HELD for deployment; offline code only. No Netlify deploy, no merge into either repository's main, no paid infrastructure or production changes.**
+**Status, 19 October 2026: HELD for deployment; offline code only. No Netlify deploy, no merges under this package, no paid infrastructure or production changes.**
 
 **Authoritative control:** https://github.com/santsbabe/logbook-assistant/issues/16 ; tracker CC-080 / CC-081.
 
@@ -8,7 +8,7 @@
 
 - FamilyRoy fix: `santsbabe/familyroy-intake`, branch `fix/ocr-school-and-domain-boundaries`, tested SHA `76b9a5f90a5dbef49d6adec9f5bffe73bf7f71b0`. Passing image/OCR regressions: https://github.com/santsbabe/familyroy-intake/actions/runs/39157957583 .
 - Existing FamilyRoy preview PR #1 is a separate, potentially stale branch; **do not advance it** as a side effect of this plan.
-- Control Centre integration staging branch `integration/control-centre-familyroy-year-registry-20261018`, based on held `integration/control-centre-rls-oauth-revocation-20261018`. Both remain unmerged into main.
+- Control Centre integration staging branch `integration/control-centre-familyroy-year-registry-20261018`, based on held `integration/control-centre-rls-oauth-revocation-20261018`. Control Centre draft PR #20 remains unmerged. Security PR #19 was already merged into main before this QA package; this work makes no further merge.
 - Current Control Centre published QA is a different (main-branch) version. Green integration-branch CI **does not mean these UI changes are visible on the published QA URL**.
 - Netlify existing Free team has seven sites; actual credit balance, new-build cost and production hosting cost are not verified. See `docs/control-centre/private-hosting-cost-comparison-20261018.md` and read-only usage screen https://app.netlify.com/teams/santsbabe .
 
@@ -54,3 +54,32 @@
 5. Re-run FamilyRoy OCR/photo, scoped handoff, year-routing, provenance/Review and no-duplicate smoke tests; do not reopen or deploy without user acceptance.
 
 **Do not infer a Netlify balance or claim phone acceptance from Github tests.** All costs, provider authorisation and go-live flags are gated separately.
+
+## 19 October offline reliability/recovery addendum
+
+### Held refs and explicit permissions
+
+- FamilyRoy OCR fix **source** pinned to SHA \`76b9a5f90a5dbef49d6adec9f5bffe73bf7f71b0\` on \`fix/ocr-school-and-domain-boundaries\`. This is **not** the same as its deployable preview branch. FamilyRoy preview PR [#1](https://github.com/santsbabe/familyroy-intake/pull/1) remains **open, draft and unmerged**, with recorded head \`eb552ad0ef19f947ab4b6b57f658869d8270a848\`. Confirm both branch tips again immediately before any future deployment.
+- Control Centre draft integration PR [#20](https://github.com/santsbabe/logbook-assistant/pull/20) remains **open, draft and unmerged**. Its base is \`integration/control-centre-rls-oauth-revocation-20261018\` (not \`main\`). Security PR #19 was merged historically, prior to this work; **no merges at all are authorised as part of this package.** The current published GitHub Pages QA is unchanged by updates to PR #20.
+- Netlify credits, private DB/worker budgets, scoped preview origin, live deployment identifiers and last-known-good Netlify deploy ID **are not verified**. No user consent for expenditure, Netlify previews, production merges or staging database provisioning has been given.
+- Control Centre \`familyroy-handoff-config.js\` now pins \`approvedOrigins: []\`: **deliberately fail closed** until the user approves a precise, independently checked FamilyRoy preview HTTPS origin. A fragment-supplied \`endpoint\` is never trusted as authorisation to send a scoped capability. Origin config can only be enabled through a separately reviewed and approved preview release.
+
+### Evidence proved offline (not live delivery)
+
+- QA tests \`control-centre-familyroy-replay-review.cjs\` cover original snapshot integrity after simulated quota-write failure, retry after recovery, stable task IDs, no duplicate task on re-share, lossless capture of second source's source ID/sender/original text/image hash when the action itself deduplicates, and rollback of unsaved in-memory changes.
+- Parent Review choices \`Add now\`, \`Add later\` and \`Dismiss\` are explicit, audited and persist in device-local snapshots. **Add now/Add later require choosing a learner** when the notice's identity is unresolved. A failed save rolls that decision back rather than presenting it as accepted. Original Review reason and source evidence remain visible; FamilyRoy source IDs never generate Gmail links.
+- Capability pipeline tests cover rejected unapproved/HTTP/userinfo/path origins, no capability sent to a foreign host, redemption source/route checks, idempotent retries after provider acknowledgement failure, POST only after local save, already-acknowledged GET without a false fresh import, strict redirect and cache policy, and rejected mismatched payload source IDs.
+- Chromium at iPhone-width verifies actual Review button behaviour and local persistence, original source image hashes, and no private backend traffic. This **does not substitute for a physical iPhone / iOS Share Sheet / real FamilyRoy preview test**.
+- Pinned FamilyRoy's original \`npm test\` and function compilation plus Control Centre registry/handoff tests, Chromium QA and disposable PostgreSQL/RLS/signed OAuth tests remain CI gates. A green result is evidence of **offline staging**, not production signoff.
+
+### Deterministic release order and rollback
+
+1. Before any release obtain an explicit permission decision identifying **which Netlify preview deploy**, the anticipated metered credit cost, today's actual credit balance and a hard monthly limit. Confirm exact preview deploy SHA/ID and branch tip in both repos; record already-published GitHub Pages SHA; verify private backup and its restoration without overwriting user records. If any fact is unavailable **block deployment**.
+2. After distinct approval, deploy **FamilyRoy preview only**, at the authorised fix SHA, while retaining previous deploy ID and evidence/outbox. Run synthetic PNPS 2026 Grade 2 and wrapped OCR/no Pets cases; capture destination live GET/redeem/POST ack, no duplicate on re-share, expired capability reissue and failure/retry. Do not use the master Intake bearer in any browser.
+3. After separate approval, stage **Control Centre QA** with the exact approved FamilyRoy preview origin. Confirm owner/year mapping, unknown learner Review choice, original image evidence **reference** (not raw image hosted in browser), retained source history and complete persistence. Backend stays disabled unless independently deployed/approved.
+4. If FamilyRoy preview fails: stop accepting new handoffs, roll its **preview deploy ID** back to the last independently confirmed preview; **do not** delete canonical source/outbox/evidence entries or automatically replay a consumed capability. If Control Centre QA fails: disable its handoff origin/feature flags and revert the **QA static version**, preserving each device's existing localStorage and private Google Drive backups. No main merge or destructive data migration.
+5. If a future backend worker/db is ever independently approved, isolate queues, preserve encryption keys, take encrypted backup, restore to a **separate staging instance**, reconcile accepted writes and pending acknowledgements, and seek approval before touching any live database. Verify school registry annual confirmations and Review decision audit survive the rollback.
+6. Leave G01, G02, G04, G06, G09, G10, G11 and G12 **open/in progress** until real phone, preview and cloud-device tests pass and the user explicitly signs off.
+
+A delivered handoff means at most **saved on the current device plus source acknowledgement**. An upstream \`alreadyAcknowledged\` response on a different device must never be called local or cross-device persistence.
+
