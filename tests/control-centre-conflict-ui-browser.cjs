@@ -111,7 +111,54 @@ const srv=createServer((req,res)=>{
   assert.equal(registry.saved,true,'Confirmation and edits must persist on this device');
   assert.equal(remoteRequests.length,0,'School-year editing never contacts disabled private backend');
 
-  console.log('PASS real Chromium mobile UI: conflict decisions, historical learner-year edits, annual confirmation, browser persistence and no private API traffic');
+  const familyReview=await page.evaluate(()=>{
+    const a='e'.repeat(64),b='f'.repeat(64);
+    const item=(id,text)=>({source_id:id,route:'control_centre.school_readiness',payload:{
+      source_id:id,source_type:'ios_share',school:'Unknown academy',source_chat:'Unattributed school',
+      sender:'Synthetic teacher',source_timestamp:'2026-10-18T08:00:00+02:00',
+      text,evidence:[{name:'notice.jpg',mime_type:'image/jpeg',sha256:'synthetic-'+id.slice(0,8)}]}});
+    const one=ingestFamilyRoyReadiness([item(a,'Grade 2: Bring library bag on Friday')]);
+    const original=db.tasks.find(t=>t.familyRoySourceId===a);
+    if(!original)throw Error('School Review was not persisted');
+    const evidence=taskHtml(original);
+    const button=[...document.querySelectorAll('#reviewList button')].find(b=>
+      b.textContent==='Add now'&&b.getAttribute('onclick')?.includes(original.id));
+    if(!button)throw Error('Review Add now button missing');
+    button.click();
+    const blocked=db.tasks.find(t=>t.id===original.id).state==='Review';
+    const status=document.getElementById('review-error-'+original.id)?.textContent||'';
+    const select=document.getElementById('review-child-'+original.id);
+    select.value='Harrison';button.click();
+    const decided=db.tasks.find(t=>t.id===original.id);
+    const persisted=readLocalSnapshot(localStorage,KEY).data.tasks.find(t=>t.id===original.id);
+    ingestFamilyRoyReadiness([item(b,'Grade 2: Return permission form on Friday')]);
+    const reject=db.tasks.find(t=>t.familyRoySourceId===b);
+    const dismiss=[...document.querySelectorAll('#reviewList button')].find(el=>
+      el.textContent==='Dismiss'&&el.getAttribute('onclick')?.includes(reject.id));
+    if(!dismiss)throw Error('Review Dismiss button missing');
+    dismiss.click();
+    const dismissed=db.tasks.find(t=>t.id===reject.id);
+    return{added:one.added,blocked,status,selectedChild:decided.child,state:decided.state,
+      decision:decided.reviewDecision?.decision,persisted:!!persisted,
+      evidence:evidence.includes('synthetic-eeeeeeee'),emailLink:evidence.includes('Open source email'),
+      dismissed:dismissed.reviewDecision?.decision,done:dismissed.state==='Done',
+      originalText:decided.evidenceText.includes('Bring library bag')};
+  });
+  assert.equal(familyReview.added,1);
+  assert.equal(familyReview.blocked,true,'Parent cannot add an unknown-child notice without a learner');
+  assert.match(familyReview.status,/Choose the applicable learner/);
+  assert.equal(familyReview.selectedChild,'Harrison');
+  assert.equal(familyReview.state,'Now');
+  assert.equal(familyReview.decision,'Add now');
+  assert.equal(familyReview.persisted,true);
+  assert.equal(familyReview.evidence,true);
+  assert.equal(familyReview.emailLink,false);
+  assert.equal(familyReview.dismissed,'Dismissed');
+  assert.equal(familyReview.done,true);
+  assert.equal(familyReview.originalText,true);
+  assert.equal(remoteRequests.length,0,'Review actions cannot call an unapproved private API');
+
+  console.log('PASS real Chromium mobile UI: conflict decisions, historical learner-year edits, annual confirmation, browser persistence and audited FamilyRoy Review and no private API traffic');
  }finally{
   await browser.close();
  }
