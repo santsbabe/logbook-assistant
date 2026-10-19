@@ -62,7 +62,7 @@ function codeBetween(start,end){
  assert.ok(i>=0&&j>i,'Parser anchors missing: '+start+' -> '+end);return html.slice(i,j);
 }
 const context={Date,ControlCentreSchoolRegistry:School,
- db:{schoolRegistry:School.defaults()},normText:s=>String(s||'').toLowerCase(),
+ db:{tasks:[],schoolRegistry:School.defaults()},normText:s=>String(s||'').toLowerCase(),
  actionDueRank:({due})=>due<'2026-10-18'?0:due==='2026-10-18'?1:due==='2026-10-19'?2:3};
 vm.createContext(context);
 vm.runInContext(codeBetween('function schoolNeed(','function ingestFamilyRoyReadiness('),context,{timeout:5000});
