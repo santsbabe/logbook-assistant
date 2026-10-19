@@ -4,6 +4,7 @@
 <script src="./google-connection.js"></script>
 <script src="./cloud-sync.js"></script>
 <script src="./school-year-registry.js"></script>
+<script src="./familyroy-handoff-config.js"></script>
 <script src="./backend-config.js"></script>
 <script src="./authenticated-sync.js"></script>
 <script src="./backend-sync-ui.js"></script>
@@ -366,16 +367,85 @@ branchSeed.forEach(b=>{if(!d.branches.some(x=>x.id===b.id))d.branches.push(b)});
 {id:'meter-2026-09-24-b',date:'2026-09-24',value:154.36,source:'Logged meter photo',order:2}
 ];electricitySeed.forEach(r=>{if(!d.electricity.some(x=>x.id===r.id))d.electricity.push(r)});purchaseSeed.forEach(p=>{if(!d.purchases.some(x=>x.id===p.id))d.purchases.push(p)});if(!d.shopping.some(x=>x.id==='pep-home-storage'))d.shopping.push({id:'pep-home-storage',title:'Kitchen / pantry storage organisers',retailer:'PEP Home',slug:'pep-home',mode:'anyBranch',branch:'',done:false,source:'Control Centre',created:'2026-09-20'});return d}let db=load();function save(){if(storageReadOnly){showStorageWarning();return false}try{writeLocalSnapshot(localStorage,KEY,db);return true}catch(e){storageReadOnly=true;storageWarning='Save failed: '+(e.message||String(e))+'. Your changes are only in this open page. Export before closing.';showStorageWarning();return false}}
 function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function familyRoyEvidenceHtml(t){
+ if(!t.familyRoySourceId)return'';
+ const source={sourceId:t.familyRoySourceId,chat:t.originalSourceChat||'',sender:t.originalSender||'',
+  timestamp:t.originalSourceTimestamp||'',originalText:t.evidenceText||'',
+  evidence:Array.isArray(t.familyRoyEvidence)?t.familyRoyEvidence:[]};
+ const list=[source,...(Array.isArray(t.corroboratingSources)?t.corroboratingSources:[])];
+ return '<details class="noticeEvidence"><summary>FamilyRoy source and evidence ('+list.length+')</summary>'+
+ list.map((r,i)=>'<div class="task"><strong>Evidence source '+(i+1)+'</strong>'+
+  '<div class="tiny">Source ID: '+esc(r.sourceId||'')+'</div>'+
+  (r.chat?'<div class="tiny">Chat: '+esc(r.chat)+'</div>':'')+
+  (r.sender?'<div class="tiny">Sender: '+esc(r.sender)+'</div>':'')+
+  (r.timestamp?'<div class="tiny">Original date: '+esc(r.timestamp)+'</div>':'')+
+  (r.originalText?'<p>'+esc(String(r.originalText).slice(0,4000))+'</p>':'')+
+  (r.evidence||[]).map(m=>'<div class="tiny">Attachment: '+esc(m.name||'Image/file')+
+   ' · SHA-256: '+esc(m.sha256||'not supplied')+'</div>').join('')+'</div>').join('')+
+ '<div class="muted">The original image remains with FamilyRoy; this record displays its evidence reference.</div></details>';
+}
 function taskHtml(t){
-  const due=t.due?`<span class="pill ${actionDueRank(t)<=1?'hot':''}">${actionDueRank(t)===0?'Overdue':actionDueRank(t)===1?'Today':actionDueRank(t)===2?'Tomorrow':esc(t.due)}</span>`:'';
-  const src=t.gmailId?`<div class="source"><a href="https://mail.google.com/mail/u/0/#all/${encodeURIComponent(t.gmailId)}" target="_blank" rel="noopener">Open source email ↗</a></div>`:(t.source?`<div class="source">Source: ${esc(t.source)}</div>`:'');
-  const evidence=t.evidenceText?`<details class="noticeEvidence"><summary>Original notice</summary><p>${esc(t.evidenceText.slice(0,4000))}</p></details>`:'';
-  const snoozed=t.snoozedUntil?`<span class="pill wait">Snoozed until ${esc(t.snoozedUntil)}</span>`:'';
-  const review=t.state==='Review';
-  const primary=review?`<button type="button" class="btn primary" onclick="move('${t.id}','Now')">Add now</button><button type="button" class="btn" onclick="move('${t.id}','Next')">Add later</button><button type="button" class="btn" onclick="done('${t.id}')">Dismiss</button>`:
-    `<button type="button" class="btn primary" onclick="done('${t.id}')">${t.recurrence==='annual-school-calendar'?'Year completed':'✓ Done'}</button><button type="button" class="btn" onclick="snooze('${t.id}')">Snooze</button>`;
-  const extra=review?'':`<details class="taskMore"><summary>More options</summary><div class="row"><button type="button" class="btn" onclick="move('${t.id}','Now')">Now</button><button type="button" class="btn" onclick="move('${t.id}','Next')">Later</button><button type="button" class="btn" onclick="move('${t.id}','Waiting')">Waiting</button></div></details>`;
-  return `<article class="task"><div class="taskHead"><strong>${esc(t.title)}</strong><div class="taskBadges"><span class="pill">${esc(t.cat||'General')}</span>${t.child?`<span class="pill">${esc(t.child)}</span>`:''}${t.morning?'<span class="pill hot">Before we leave</span>':''}${due}${snoozed}</div></div>${src}${evidence}<div class="taskActions">${primary}</div>${extra}</article>`;
+ const due=t.due?'<span class="pill '+(actionDueRank(t)<=1?'hot':'')+'">'+
+  (actionDueRank(t)===0?'Overdue':actionDueRank(t)===1?'Today':actionDueRank(t)===2?'Tomorrow':esc(t.due))+'</span>':'';
+ const genuineMail=t.gmailId&&!String(t.gmailId).startsWith('familyroy:');
+ const src=genuineMail?'<div class="source"><a href="https://mail.google.com/mail/u/0/#all/'+encodeURIComponent(t.gmailId)+
+  '" target="_blank" rel="noopener">Open source email ↗</a></div>':
+  (t.source?'<div class="source">Source: '+esc(t.source)+'</div>':'');
+ const evidence=t.familyRoySourceId?familyRoyEvidenceHtml(t):
+  (t.evidenceText?'<details class="noticeEvidence"><summary>Original notice</summary><p>'+esc(t.evidenceText.slice(0,4000))+'</p></details>':'');
+ const snoozed=t.snoozedUntil?'<span class="pill wait">Snoozed until '+esc(t.snoozedUntil)+'</span>':'';
+ const review=t.state==='Review',familyReview=review&&Boolean(t.familyRoySourceId);
+ const rid=String(t.id);
+ const needsChild=familyReview&&!t.child;
+ const chooser=needsChild?'<label for="review-child-'+esc(rid)+'">Select learner before adding</label>'+
+  '<select id="review-child-'+esc(rid)+'" aria-label="Learner for FamilyRoy Review"><option value="">Choose learner</option>'+
+  '<option>Harrison</option><option>Alexander</option><option>Imogen</option><option>Harrison + Alexander</option></select>'+
+  '<div id="review-error-'+esc(rid)+'" role="status" aria-live="polite"></div>':'';
+ const primary=familyReview?'<button type="button" class="btn primary" onclick="reviewFamilyRoyTask(\''+esc(rid)+'\',\'Now\')">Add now</button>'+
+  '<button type="button" class="btn" onclick="reviewFamilyRoyTask(\''+esc(rid)+'\',\'Next\')">Add later</button>'+
+  '<button type="button" class="btn" onclick="reviewFamilyRoyTask(\''+esc(rid)+'\',\'Dismiss\')">Dismiss</button>':
+  review?'<button type="button" class="btn primary" onclick="move(\''+esc(rid)+'\',\'Now\')">Add now</button>'+
+   '<button type="button" class="btn" onclick="move(\''+esc(rid)+'\',\'Next\')">Add later</button>'+
+   '<button type="button" class="btn" onclick="done(\''+esc(rid)+'\')">Dismiss</button>':
+  '<button type="button" class="btn primary" onclick="done(\''+esc(rid)+'\')">'+(t.recurrence==='annual-school-calendar'?'Year completed':'✓ Done')+
+   '</button><button type="button" class="btn" onclick="snooze(\''+esc(rid)+'\')">Snooze</button>';
+ const extra=review?'':'<details class="taskMore"><summary>More options</summary><div class="row">'+
+  '<button type="button" class="btn" onclick="move(\''+esc(rid)+'\',\'Now\')">Now</button>'+
+  '<button type="button" class="btn" onclick="move(\''+esc(rid)+'\',\'Next\')">Later</button>'+
+  '<button type="button" class="btn" onclick="move(\''+esc(rid)+'\',\'Waiting\')">Waiting</button></div></details>';
+ const reason=familyReview&&t.reviewReason?'<p class="status warn">Review needed: '+esc(t.reviewReason)+'</p>':'';
+ const audit=t.reviewDecision?'<div class="tiny">Review decision: '+esc(t.reviewDecision.decision)+
+  ' · '+esc(t.reviewDecision.decidedAt)+'</div>':'';
+ return '<article class="task"><div class="taskHead"><strong>'+esc(t.title)+
+  '</strong><div class="taskBadges"><span class="pill">'+esc(t.cat||'General')+'</span>'+
+  (t.child?'<span class="pill">'+esc(t.child)+'</span>':'')+
+  (t.morning?'<span class="pill hot">Before we leave</span>':'')+due+snoozed+
+  '</div></div>'+src+evidence+reason+audit+chooser+'<div class="taskActions">'+primary+'</div>'+extra+'</article>';
+}
+function reviewFamilyRoyTask(id,decision){
+ const idx=db.tasks.findIndex(t=>t.id===id);
+ if(idx<0||!['Now','Next','Dismiss'].includes(decision))return false;
+ const previous=db.tasks[idx];
+ if(previous.state!=='Review'||!previous.familyRoySourceId)return false;
+ let learner=previous.child||'';
+ if(decision!=='Dismiss'&&!learner){
+  const select=document.getElementById('review-child-'+id);
+  learner=select?.value||'';
+  if(!['Harrison','Alexander','Imogen','Harrison + Alexander'].includes(learner)){
+   const status=document.getElementById('review-error-'+id);
+   if(status)status.textContent='Choose the applicable learner before adding this notice.';
+   return false;
+  }
+ }
+ const timestamp=new Date().toISOString(),dismissed=decision==='Dismiss';
+ const updated={...previous,child:learner,state:dismissed?'Done':decision,updatedAt:timestamp,
+  reviewDecision:{decision:dismissed?'Dismissed':decision==='Now'?'Add now':'Add later',
+   chosenChild:learner,decidedAt:timestamp,reason:previous.reviewReason||'',
+   sourceId:previous.familyRoySourceId}};
+ if(dismissed){updated.resolution='Dismissed';updated.completedAt=timestamp}
+ db.tasks[idx]=updated;
+ if(!save()){db.tasks[idx]=previous;render();return false}
+ render();return true;
 }
 function renderCapabilities(){let el=document.getElementById('capabilityList');if(!el)return;el.innerHTML=CAPABILITIES.map(x=>`<div class="task"><strong>${esc(x.name)}</strong><span class="pill">${esc(x.kind)}</span><span class="pill ${x.status==='next'?'wait':''}">${esc(x.status)}</span><div class="tiny">${esc(x.note)}</div>${x.panel?`<button type="button" class="btn" style="margin-top:7px" onclick="openPanel('${x.panel}')">Open</button>`:x.url?`<a class="btn" style="display:inline-block;margin-top:7px;text-decoration:none" href="${esc(x.url)}" target="${x.url.startsWith('http')?'_blank':'_self'}">Open</a>`:''}</div>`).join('')}
 let todayFilter=null;function setTodayFilter(state){todayFilter=todayFilter===state?null:state;renderTodayFilter()}function renderTodayFilter(){document.querySelectorAll('.statusFilter').forEach(b=>b.classList.toggle('active',b.dataset.state===todayFilter));document.querySelectorAll('.todaySection').forEach(el=>{let section=el.dataset.todaySection;el.classList.toggle('filterHidden',!!todayFilter&&section!==todayFilter)});document.querySelectorAll('.todayAux').forEach(el=>el.classList.toggle('filterHidden',!!todayFilter))}
