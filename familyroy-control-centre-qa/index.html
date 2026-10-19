@@ -209,7 +209,37 @@ function actionDueRank(t){
 function actionSort(a,b){return actionDueRank(a)-actionDueRank(b)||(b.priority||0)-(a.priority||0)}
 function actionIsToday(t){if(['Done','Waiting','Review'].includes(t.state))return false;if(t.snoozedUntil){return t.snoozedUntil<=localISO(new Date())}return t.state==='Now'||(t.state==='Next'&&actionDueRank(t)<=1)}
 function schoolOccurrenceKey(x){return schoolActionKey(x.title)+'|'+(x.child||'Children')+'|'+(x.due||'unscheduled')+'|'+(x.schoolYear||'')+'|'+(x.schoolKind||'readiness')}
-function ingestActions(items=[]){let ids=new Set(db.tasks.map(x=>x.id)),schoolKeys=new Set(db.tasks.filter(x=>x.module==='School Readiness'&&(x.gmailId||x.familyRoySourceId)).map(schoolOccurrenceKey)),added=0;items.map(normaliseAction).forEach(x=>{let sk=x.module==='School Readiness'&&(x.gmailId||x.familyRoySourceId)?schoolOccurrenceKey(x):'';if(!ids.has(x.id)&&(!sk||!schoolKeys.has(sk))){db.tasks.push(x);ids.add(x.id);if(sk)schoolKeys.add(sk);added++}});save();return added}
+function familyRoySourceReference(task){
+ return{sourceId:task.familyRoySourceId,sourceType:task.originalSourceType||'',
+  chat:task.originalSourceChat||'',sender:task.originalSender||'',
+  timestamp:task.originalSourceTimestamp||'',
+  evidence:Array.isArray(task.familyRoyEvidence)?task.familyRoyEvidence:[],
+  originalText:task.evidenceText||''};
+}
+function ingestActions(items=[],{persist=true}={}){
+ const ids=new Set(db.tasks.map(x=>x.id));
+ const schoolMap=new Map(db.tasks.filter(x=>x.module==='School Readiness'&&
+  (x.gmailId||x.familyRoySourceId)).map(x=>[schoolOccurrenceKey(x),x]));
+ let added=0;
+ items.map(normaliseAction).forEach(x=>{
+  const sk=x.module==='School Readiness'&&(x.gmailId||x.familyRoySourceId)?schoolOccurrenceKey(x):'';
+  if(ids.has(x.id))return;
+  if(sk&&schoolMap.has(sk)){
+   const existing=schoolMap.get(sk);
+   if(x.familyRoySourceId&&existing.familyRoySourceId!==x.familyRoySourceId){
+    const refs=Array.isArray(existing.corroboratingSources)?existing.corroboratingSources:[];
+    if(!refs.some(r=>r.sourceId===x.familyRoySourceId))
+     existing.corroboratingSources=[...refs,familyRoySourceReference(x)];
+   }
+   return;
+  }
+  db.tasks.push(x);ids.add(x.id);
+  if(sk)schoolMap.set(sk,x);
+  added++;
+ });
+ if(persist)save();
+ return added;
+}
 // Keep each Friday distinct; a completed week remains in Done history and never reappears.
 function seedPnpsSwimming(d,now=new Date()){
   let parts=new Intl.DateTimeFormat('en-GB',{timeZone:'Africa/Johannesburg',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(now);
@@ -560,8 +590,68 @@ function familyRoyReadinessItems(outboxItem){
   module:'School Readiness'
  }];
 }
-function ingestFamilyRoyReadiness(items=[]){if(typeof storageReadOnly!=='undefined'&&storageReadOnly)throw new Error('Cannot acknowledge FamilyRoy while Control Centre local storage needs recovery');let added=0,accepted=[],ignored=0;for(let item of items){let actions=familyRoyReadinessItems(item);if(!actions.length)ignored++;added+=ingestActions(actions);accepted.push(item?.source_id||null)}if(save()===false)throw new Error('FamilyRoy handoff NOT acknowledged because Control Centre could not persist the local data');render();return{received:items.length,added,ignored,accepted:accepted.filter(Boolean),persistence:'local-device-only'}}
-async function consumeFamilyRoyReadinessHandoff({endpoint,capability,fetchImpl=fetch}={}){if(!endpoint||!capability)throw new Error('FamilyRoy handoff is incomplete.');let base=String(endpoint).replace(/\/$/,''),url=base+'/handoff',auth={Authorization:'Handoff '+capability},res=await fetchImpl(url,{headers:auth});if(!res.ok)throw new Error('FamilyRoy handoff '+res.status);let data=await res.json();if(data.route!=='control_centre.school_readiness'||!/^[a-f0-9]{64}$/i.test(data.source_id||''))throw new Error('FamilyRoy handoff route mismatch.');let result=ingestFamilyRoyReadiness([{source_id:data.source_id,route:data.route,payload:data.payload}]);let ack=await fetchImpl(url,{method:'POST',headers:{...auth,'Content-Type':'application/json'},body:JSON.stringify({acknowledge:true,consumer:'control_centre.school_readiness',source_id:data.source_id})});if(!ack.ok)throw new Error('FamilyRoy handoff acknowledgement '+ack.status);return{...result,acknowledged:true}}
+function ingestFamilyRoyReadiness(items=[]){
+ if(storageReadOnly)throw Error('Cannot acknowledge FamilyRoy while local data requires recovery');
+ const original=db.tasks;
+ // Detached shallow records and provenance arrays guarantee that failed saves
+ // cannot leave imported/duplicate evidence visible as if it was committed.
+ db.tasks=original.map(t=>({...t,corroboratingSources:Array.isArray(t.corroboratingSources)?
+  t.corroboratingSources.slice():t.corroboratingSources}));
+ try{
+  let added=0,accepted=[],ignored=0;
+  for(const item of items){
+   if(!/^[a-f0-9]{64}$/i.test(item?.source_id||'')||
+      item?.route!=='control_centre.school_readiness'||!item.payload||
+      typeof item.payload!=='object'||typeof item.payload.text!=='string')
+    throw Error('FamilyRoy handoff evidence is incomplete or invalid');
+   const actions=familyRoyReadinessItems(item);
+   if(!actions.length)ignored++;
+   added+=ingestActions(actions,{persist:false});
+   accepted.push(item.source_id);
+  }
+  if(save()!==true)throw Error('FamilyRoy handoff NOT acknowledged because Control Centre could not persist the local data');
+  render();
+  return{received:items.length,added,ignored,accepted,persistence:'local-device-only'};
+ }catch(e){db.tasks=original;throw e}
+}
+async function consumeFamilyRoyReadinessHandoff({endpoint,capability,fetchImpl=fetch,
+ approvedOrigins=window.ControlCentreFamilyRoyHandoffConfig?.approvedOrigins||[]}={}){
+ if(!endpoint||!capability||!/^[A-Za-z0-9_-]{43}$/.test(String(capability)))
+  throw Error('FamilyRoy handoff is incomplete or invalid');
+ let origin;
+ try{
+  const candidate=new URL(String(endpoint));
+  if(candidate.protocol!=='https:'||candidate.username||candidate.password||
+   candidate.search||candidate.hash||candidate.pathname!=='/'&&candidate.pathname!=='')
+   throw Error('Invalid FamilyRoy origin');
+  origin=candidate.origin;
+ }catch{throw Error('FamilyRoy handoff URL was rejected')}
+ if(!Array.isArray(approvedOrigins)||!approvedOrigins.includes(origin))
+  throw Error('FamilyRoy intake origin has not yet been authorised for this QA build');
+ const url=origin+'/handoff',auth={Authorization:'Handoff '+capability};
+ const res=await fetchImpl(url,{method:'GET',headers:auth,redirect:'error',cache:'no-store'});
+ if(!res.ok)throw Error('FamilyRoy handoff '+res.status);
+ const data=await res.json();
+ if(data?.route!=='control_centre.school_readiness'||
+  !/^[a-f0-9]{64}$/i.test(data.source_id||''))
+  throw Error('FamilyRoy handoff route mismatch');
+ if(data.status==='acknowledged')
+  return{received:0,added:0,acknowledged:true,alreadyAcknowledged:true,
+   persistence:'upstream-already-acknowledged',
+   warning:'Previously delivered; this device has not imported it again.'};
+ if(data.status!=='redeemed'||!data.payload||typeof data.payload.text!=='string'||
+    data.payload.source_id!==data.source_id)
+  throw Error('FamilyRoy handoff payload failed validation');
+ const result=ingestFamilyRoyReadiness([{source_id:data.source_id,route:data.route,payload:data.payload}]);
+ let ack;
+ try{
+  ack=await fetchImpl(url,{method:'POST',headers:{...auth,'Content-Type':'application/json'},
+   body:JSON.stringify({acknowledge:true,consumer:'control_centre.school_readiness',source_id:data.source_id}),
+   redirect:'error',cache:'no-store'});
+ }catch{throw Error('FamilyRoy saved on this device, but upstream acknowledgement failed. Re-share to retry without duplicates.')}
+ if(!ack.ok)throw Error('FamilyRoy saved locally, but upstream acknowledgement returned '+ack.status+'. Re-share to retry.');
+ return{...result,acknowledged:true};
+}
 function parsePasted(){let text=document.getElementById('noticeText').value.trim(),src=document.getElementById('noticeSource').value,preview=document.getElementById('pastePreview');if(!text){preview.innerHTML='<div class="status warn" style="margin-top:9px">Paste a notice first.</div>';return}let items=parseNotice(text,src),unclassified=items.length===0;if(unclassified){let fingerprint=2166136261;for(let c of src+'|'+text){fingerprint=Math.imul(fingerprint^c.charCodeAt(0),16777619)}items=[{id:'manual-notice-review-'+(fingerprint>>>0).toString(16),title:'Review imported notice — no clear action extracted',state:'Review',owner:'Unassigned',cat:'School',module:'School Readiness',priority:45,source:src,evidenceText:text,created:new Date().toISOString()}]}let added=ingestActions(items);render();openPanel('school');preview.innerHTML=items.length?`<div class="status" style="margin-top:9px"><b>${added} action${added===1?'':'s'} added.</b> They are now in School Readiness/Today where applicable.</div>`+items.map(x=>`<div class="task"><strong>${esc(x.title)}</strong><span class="pill">${esc(x.state)}</span></div>`).join(''):'<div class="status warn" style="margin-top:9px">No actionable item was found in that notice.</div>';if(unclassified)preview.innerHTML='<div class="status warn" style="margin-top:9px">Saved the original notice in Review for your decision. No task or date was invented. '+(added?'1 item added.':'This notice was already recorded.')+'</div>';preview.scrollIntoView({behavior:'smooth',block:'nearest'})}
 function loadOAuth(file){if(!file)return;let r=new FileReader();r.onload=()=>{try{let j=JSON.parse(r.result),id=j.web?.client_id||j.installed?.client_id;if(!id)throw 0;FamilyRoyGoogle.setClientId(id);document.getElementById('oauthStatus').className='status';document.getElementById('oauthStatus').textContent='Google client ID loaded.';initToken()}catch{document.getElementById('oauthStatus').className='status bad';document.getElementById('oauthStatus').textContent='That JSON did not contain a Google OAuth client ID.'}};r.readAsText(file)}
 function updateOAuth(){let id=FamilyRoyGoogle.clientId();document.getElementById('oauthStatus').textContent=id?'Google client configured · ready to sign in.':'No Google client ID configured.';document.getElementById('oauthStatus').className=id?'status':'status warn';if(id)initToken()}
