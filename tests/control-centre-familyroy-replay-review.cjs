@@ -9,6 +9,32 @@ function between(start,end){
  assert.ok(a>=0&&b>a,'Missing source boundary '+start);
  return html.slice(a,b);
 }
+
+const snapshotCtx={document:{getElementById:()=>null}};
+vm.createContext(snapshotCtx);
+vm.runInContext(between('function validateLocalSnapshot(','function load(){'),snapshotCtx);
+const durable=new Map();
+let rejectPrimary=false;
+const storage={
+ getItem:key=>durable.has(key)?durable.get(key):null,
+ setItem:(key,value)=>{
+   if(rejectPrimary&&key==='familyroy_local_ci')throw Error('QuotaExceededError');
+   durable.set(key,String(value));
+ }
+};
+snapshotCtx.writeLocalSnapshot(storage,'familyroy_local_ci',{tasks:[{id:'previous',state:'Now'}]});
+rejectPrimary=true;
+assert.throws(()=>snapshotCtx.writeLocalSnapshot(storage,'familyroy_local_ci',{
+ tasks:[{id:'previous',state:'Now'},{id:'candidate',state:'Review'}]}),/QuotaExceededError/);
+assert.equal(snapshotCtx.readLocalSnapshot(storage,'familyroy_local_ci').status,'ok');
+assert.deepEqual(JSON.parse(storage.getItem('familyroy_local_ci')).tasks.map(t=>t.id),['previous'],
+ 'A failed primary localStorage write must not masquerade as a committed candidate');
+rejectPrimary=false;
+snapshotCtx.writeLocalSnapshot(storage,'familyroy_local_ci',{
+ tasks:[{id:'previous',state:'Now'},{id:'candidate',state:'Review'}]});
+assert.deepEqual(JSON.parse(storage.getItem('familyroy_local_ci')).tasks.map(t=>t.id),
+ ['previous','candidate'],'Retry after storage recovery must save the candidate');
+
 const originalDb={tasks:[],schoolRegistry:School.defaults()};
 let writes=0,shouldFail=false,rendered=0,storageReadOnly=false;
 const ctx={
