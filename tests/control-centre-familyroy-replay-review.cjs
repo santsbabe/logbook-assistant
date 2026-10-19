@@ -179,6 +179,15 @@ async function testHandoff(){
    capability:cap,fetchImpl,approvedOrigins:[endpoint]}));
  }
 
+
+ requests=[];shouldFail=true;
+ await assert.rejects(()=>ctx.consumeFamilyRoyReadinessHandoff({
+  endpoint,capability:cap,fetchImpl,approvedOrigins:[endpoint]
+ }),/NOT acknowledged/,'A failing local snapshot must prevent the upstream POST');
+ assert.deepEqual(requests.map(r=>r.method),['GET'],
+  'An interrupted local commit must not even attempt FamilyRoy acknowledgement');
+ shouldFail=false;
+
  // The previously accepted source remains idempotent across ordinary handoff retries.
  requests=[];failAck=true;
  await assert.rejects(()=>ctx.consumeFamilyRoyReadinessHandoff({endpoint,capability:cap,fetchImpl,
