@@ -152,8 +152,7 @@ async function testHandoff(){
   await assert.rejects(()=>ctx.consumeFamilyRoyReadinessHandoff({endpoint:unsafe,
    capability:cap,fetchImpl,approvedOrigins:[endpoint]}));
  }
- await assert.rejects(()=>ctx.consumeFamilyRoyReadinessHandoff({endpoint,capability:cap,
-  fetchImpl,approvedOrigins:[endpoint],extra:'unexpected'}).then(()=>{}),/^(?!.)/).catch(()=>{});
+
  // The previously accepted source remains idempotent across ordinary handoff retries.
  requests=[];failAck=true;
  await assert.rejects(()=>ctx.consumeFamilyRoyReadinessHandoff({endpoint,capability:cap,fetchImpl,
