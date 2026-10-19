@@ -12,7 +12,7 @@ function between(start,end){
 const originalDb={tasks:[],schoolRegistry:School.defaults()};
 let writes=0,shouldFail=false,rendered=0,storageReadOnly=false;
 const ctx={
- Date,ControlCentreSchoolRegistry:School,db:originalDb,
+ Date,URL,ControlCentreSchoolRegistry:School,db:originalDb,
  normText:x=>String(x||'').toLowerCase(),
  ACTION_SCHEMA:1,actionDueRank:({due})=>due==='2026-10-23'?3:99,
  save:()=>{writes++;return !shouldFail},
