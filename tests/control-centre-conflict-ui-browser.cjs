@@ -74,7 +74,91 @@ const srv=createServer((req,res)=>{
   const finalRecords=await page.evaluate(()=>Object.keys(localStorage).map(k=>[k,localStorage.getItem(k)]));
   assert.deepEqual(finalRecords,initial.records,'Conflict preview cannot mutate saved tasks');
   assert.equal(remoteRequests.length,0,'Disabled private backend must make no private API calls');
-  console.log('PASS real Chromium mobile UI: feature flag off, explicit conflict selection, focus restoration, no writes or remote traffic');
+
+  // The parent is prompted at the start of each calendar year, but established
+  // 2026/2027 child inference works even before annual confirmation.
+  const registry=await page.evaluate(()=>{
+    const annual=document.querySelector('#schoolYearAlert');
+    const prompted=!annual.hidden&&annual.textContent.includes('School year confirmation');
+    const year=document.getElementById('schoolRegistryYear');
+    year.value='2027';renderSchoolRegistry();
+    const rows=db.schoolRegistry.records;
+    const row=rows.find(x=>x.year===2027&&x.school==='PNPS'&&x.child==='Harrison'&&x.grade==='3');
+    const edit=document.getElementById('schoolRegistryEdit');
+    edit.value=row.id;loadSchoolMappingEditor();
+    document.getElementById('schoolMappingClass').value='3A';
+    saveSchoolMapping();
+    const audit=db.schoolRegistry.history.filter(x=>x.change==='amend');
+    const amended=db.schoolRegistry.records.find(x=>x.id===row.id);
+    const preserved=db.schoolRegistry.records.some(x=>x.year===2026&&x.child==='Harrison'&&x.grade==='2');
+    window.confirm=()=>true;
+    confirmSchoolRegistryYear();
+    return {prompted,preserved,amendedClass:amended.classCode,
+      audited:audit.length,confirmed2027:!ControlCentreSchoolRegistry.annualRequired(db.schoolRegistry,2027),
+      stillNeeds2026:ControlCentreSchoolRegistry.annualRequired(db.schoolRegistry,2026),
+      history:db.schoolRegistry.history.length,
+      route2026:ControlCentreSchoolRegistry.resolve({text:'Grade 2 homework',source:'PNPS',
+        sourceDate:new Date('2026-04-05'),registry:db.schoolRegistry}).children.join(','),
+      saved:!!localStorage.getItem(KEY)};
+  });
+  assert.equal(registry.prompted,true,'Show annual school-year confirmation reminder when not yet confirmed');
+  assert.equal(registry.amendedClass,'3A');
+  assert.ok(registry.audited>0,'Edited class retained in audit history');
+  assert.equal(registry.confirmed2027,true);
+  assert.equal(registry.stillNeeds2026,true);
+  assert.equal(registry.preserved,true);
+  assert.equal(registry.route2026,'Harrison','Historical 2026 Grade 2 child inference persists after changing 2027');
+  assert.equal(registry.saved,true,'Confirmation and edits must persist on this device');
+  assert.equal(remoteRequests.length,0,'School-year editing never contacts disabled private backend');
+
+  const familyReview=await page.evaluate(()=>{
+    const a='e'.repeat(64),b='f'.repeat(64);
+    const item=(id,text)=>({source_id:id,route:'control_centre.school_readiness',payload:{
+      source_id:id,source_type:'ios_share',school:'Unknown academy',source_chat:'Unattributed school',
+      sender:'Synthetic teacher',source_timestamp:'2026-10-18T08:00:00+02:00',
+      text,evidence:[{name:'notice.jpg',mime_type:'image/jpeg',sha256:'synthetic-'+id.slice(0,8)}]}});
+    const one=ingestFamilyRoyReadiness([item(a,'Grade 2: Bring library bag on Friday')]);
+    const original=db.tasks.find(t=>t.familyRoySourceId===a);
+    if(!original)throw Error('School Review was not persisted');
+    const evidence=taskHtml(original);
+    const button=[...document.querySelectorAll('#reviewList button')].find(b=>
+      b.textContent==='Add now'&&b.getAttribute('onclick')?.includes(original.id));
+    if(!button)throw Error('Review Add now button missing');
+    button.click();
+    const blocked=db.tasks.find(t=>t.id===original.id).state==='Review';
+    const status=document.getElementById('review-error-'+original.id)?.textContent||'';
+    const select=document.getElementById('review-child-'+original.id);
+    select.value='Harrison';button.click();
+    const decided=db.tasks.find(t=>t.id===original.id);
+    const persisted=readLocalSnapshot(localStorage,KEY).data.tasks.find(t=>t.id===original.id);
+    ingestFamilyRoyReadiness([item(b,'Grade 2: Return permission form on Friday')]);
+    const reject=db.tasks.find(t=>t.familyRoySourceId===b);
+    const dismiss=[...document.querySelectorAll('#reviewList button')].find(el=>
+      el.textContent==='Dismiss'&&el.getAttribute('onclick')?.includes(reject.id));
+    if(!dismiss)throw Error('Review Dismiss button missing');
+    dismiss.click();
+    const dismissed=db.tasks.find(t=>t.id===reject.id);
+    return{added:one.added,blocked,status,selectedChild:decided.child,state:decided.state,
+      decision:decided.reviewDecision?.decision,persisted:!!persisted,
+      evidence:evidence.includes('synthetic-eeeeeeee'),emailLink:evidence.includes('Open source email'),
+      dismissed:dismissed.reviewDecision?.decision,done:dismissed.state==='Done',
+      originalText:decided.evidenceText.includes('Bring library bag')};
+  });
+  assert.equal(familyReview.added,1);
+  assert.equal(familyReview.blocked,true,'Parent cannot add an unknown-child notice without a learner');
+  assert.match(familyReview.status,/Choose the applicable learner/);
+  assert.equal(familyReview.selectedChild,'Harrison');
+  assert.equal(familyReview.state,'Now');
+  assert.equal(familyReview.decision,'Add now');
+  assert.equal(familyReview.persisted,true);
+  assert.equal(familyReview.evidence,true);
+  assert.equal(familyReview.emailLink,false);
+  assert.equal(familyReview.dismissed,'Dismissed');
+  assert.equal(familyReview.done,true);
+  assert.equal(familyReview.originalText,true);
+  assert.equal(remoteRequests.length,0,'Review actions cannot call an unapproved private API');
+
+  console.log('PASS real Chromium mobile UI: conflict decisions, historical learner-year edits, annual confirmation, browser persistence and audited FamilyRoy Review and no private API traffic');
  }finally{
   await browser.close();
  }
