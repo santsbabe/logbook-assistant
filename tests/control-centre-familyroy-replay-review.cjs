@@ -26,7 +26,7 @@ for(const segment of [
  between('function normaliseAction(','function actionDueRank('),
  between('function schoolOccurrenceKey(','// Keep each Friday distinct;'),
  between('function schoolNeed(','function parsePasted('),
- between('function taskHtml(','function renderCapabilities(')
+ between('function familyRoyEvidenceHtml(','function renderCapabilities(')
 ])vm.runInContext(segment,ctx,{timeout:5000});
 const makeItem=(sourceId,text='PNPS Grade 2: Bring library bag on Friday.',who='Class office')=>
  ({source_id:sourceId,route:'control_centre.school_readiness',payload:{
