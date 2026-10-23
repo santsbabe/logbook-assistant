@@ -1,0 +1,100 @@
+{
+  "policy_id": "familyroy-control-centre-cloud-authority-v1",
+  "version": 1,
+  "created": "2026-10-23",
+  "status": "specification_only_not_live",
+  "canonical": {
+    "provider": "private_authenticated_backend",
+    "engine_preference": "PostgreSQL",
+    "account_scope": "server_verified_identity",
+    "operational_entities": [
+      "tasks",
+      "waiting_followups",
+      "preferences",
+      "audit_events",
+      "provenance"
+    ],
+    "record_revision": true,
+    "atomic_compare_and_swap": true,
+    "idempotency_keys": true
+  },
+  "google_drive": {
+    "role": "encrypted_user_owned_versioned_backup_and_evidence_archive",
+    "private_folder": "Control Centre/Backups",
+    "visibility": "private",
+    "appData_is_not_sole_backup": true,
+    "backup_on_important_commit": true,
+    "daily_checkpoint": true,
+    "server_side_jobs": true,
+    "checksum_and_restore_testing": true,
+    "no_purge_without_approval": true,
+    "not_used_as_live_query_engine": true
+  },
+  "client": {
+    "authoritative_reads": "authenticated_server",
+    "authoritative_writes": "committed_server_ack_only",
+    "cache": "display_only_mark_stale_until_server_verified",
+    "offline": "read_only_or_explicit_unsynced_queue",
+    "source_device_copy_never_wins_silently": true,
+    "refresh": [
+      "app_open",
+      "app_resume",
+      "remote_change"
+    ],
+    "conflicts": "manual_resolution_on_revision_mismatch"
+  },
+  "source_integrations": {
+    "Gmail": "source_messages_only",
+    "Google_Calendar": "source_events_only",
+    "Google_Drive": "evidence_and_versioned_backup",
+    "household_cashflow_workbook": "financial_source_facts"
+  },
+  "provenance": {
+    "required": [
+      "account_id",
+      "record_id",
+      "source_system",
+      "source_id",
+      "source_url",
+      "updated_at",
+      "revision",
+      "audit_events"
+    ],
+    "dedupe": "account_id + source_system + source_id"
+  },
+  "migration": {
+    "legacy_key": "familyroy_cc_live_v1",
+    "export_every_device_before_cloud_switch": true,
+    "immutable_rollback": true,
+    "merge_with_conflict_review": true,
+    "import_private_drive_action_records_once": true,
+    "do_not_delete_old_copies_until_approved": true
+  },
+  "validations": [
+    "iPhone_vs_desktop_read_after_write",
+    "concurrent_revision_conflict",
+    "offline_reconnect",
+    "cross_account_isolation",
+    "backup_from_server_when_browser_closed",
+    "drive_snapshot_checksum",
+    "clean_environment_restore",
+    "audit_and_due_date_preservation",
+    "mobile_performance_and_cost_review"
+  ],
+  "implementation": {
+    "live_uses_browser_storage": true,
+    "qa_manual_drive_snapshot": true,
+    "qa_backend_disabled": true,
+    "auto_sync_operational": false,
+    "auto_backup_operational": false,
+    "real_device_verification": false
+  },
+  "release": {
+    "deploy_without_approval": false,
+    "netlify_build_without_approval": false,
+    "enable_backend_without_verified_approved_api": false,
+    "move_sensitive_data_to_public_repo": false,
+    "require_rollback_and_real_devices": true
+  },
+  "privacy": "No personal patient numbers, medical data, credentials or backup payloads in public GitHub."
+}
