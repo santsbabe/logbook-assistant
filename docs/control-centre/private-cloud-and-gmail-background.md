@@ -1,5 +1,7 @@
 # Control Centre — private cross-device copies and Gmail background worker
 
+> **23 October 2026 — cloud-first persistence requirement (DESIGN ONLY, NOT DEPLOYED).** The target end-state is ONE authenticated server-authoritative Control Centre task/action/history and preferences record across all devices, with automatic encrypted, versioned, independently restorable Google Drive backups. Device localStorage is only a visibly marked cache, offline pending queue and legacy rollback. The existing manual appData snapshots and disabled backend QA client do **not** satisfy this requirement. See `docs/control-centre/cloud-persistence-policy.json` for implementation and release gates. No runtime flags, OAuth scopes, deployment or private household data are changed in this branch.
+
 Status: QA code + automated tests. Neither full bidirectional sync nor an unattended Gmail service is live.
 
 ## Private Google Drive copies
