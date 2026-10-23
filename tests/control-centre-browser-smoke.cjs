@@ -40,7 +40,8 @@ const server=createServer((req,res)=>{
     // These are runtime DOM fragments, not present in initial HTML markup.
     assert.match(stdout,/id="kpis">\s*<button[^>]*statusFilter/);
     assert.match(stdout,/id="capabilityList">\s*<div class="task"/);
-    assert.match(stdout,/id="meterHistory">\s*<div class="task"/);
+    // New browser must not expose the former household meter history from public source.
+    assert.match(stdout,/id="meterHistory">/);
     assert.match(stdout,/id="privateCloudBackup"/);
     assert.match(stdout,/id="cloudRestoreBtn"/);
     assert.match(stdout,/cloud-sync\.js/);
@@ -52,7 +53,7 @@ const server=createServer((req,res)=>{
     assert.match(stdout,/id="nowList">/);
     const bytes=statSync(file).size;
     assert.ok(bytes>10000,'Rendered screenshot was unexpectedly empty');
-    console.log('PASS '+spec.name+': task metrics, capabilities and electricity rendered; PNG '+bytes+' bytes');
+    console.log('PASS '+spec.name+': task metrics, capabilities and privacy-safe empty meter history rendered; PNG '+bytes+' bytes');
   }
   const designUrl='http://127.0.0.1:'+port+'/familyroy-control-centre-qa/design-preview.html';
   const previewFile='/tmp/cc-browser-qa/whimsical-design-preview.png';
