@@ -12,6 +12,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Verify public entry point has no embedded family ledgers and never overwrites local records
+        run: node tests/control-centre-production-privacy.cjs
       - name: Syntax-check inline Control Centre JavaScript
         run: |
           python - <<'PY'
