@@ -305,6 +305,7 @@ function load(){
   }
   if(!d.docs||typeof d.docs!=='object'||Array.isArray(d.docs))
     d.docs={birth:false,npr:false,cert:false,sa:false,uk:false};
+  if((d.schoolParserVersion||0)<13){d.schoolParserVersion=13;}
   d.tasks=d.tasks.map(normaliseAction);
   if((d.schoolParserVersion||0)<14){
     correctLegacyCombinedSchoolTasks(d);
