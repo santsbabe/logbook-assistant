@@ -27,7 +27,7 @@ test('invalid dates and clock times cannot be saved',()=>{
 });
 test('expiry boundary is inclusive until end of expiry minute',()=>{
  const at=Date.parse(first.expiryAt);
- assert.equal(rr.status(first,at),'urgent');assert.equal(rr.status(first,at+1),'expired');
+ assert.equal(rr.status(first,at),'urgent');assert.equal(rr.status(first,at+59999),'urgent');assert.equal(rr.status(first,at+60000),'expired');
 });
 test('three-day and seven-day urgency thresholds',()=>{
  const at=Date.parse(first.expiryAt);
