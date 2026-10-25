@@ -32,8 +32,8 @@
   function status(reward,now=Date.now()) {
     if (reward.redeemed) return 'redeemed';
     const end=Date.parse(reward.expiryAt);
-    if (!Number.isFinite(end) || now>end) return 'expired';
-    const remaining=end-now;
+    if (!Number.isFinite(end) || now>=end+60000) return 'expired';
+    const remaining=end+60000-now;
     return remaining<=3*86400000?'urgent':remaining<=7*86400000?'soon':'active';
   }
   function matches(reward,shop='',branch='') {
@@ -99,7 +99,7 @@
 
   const elem=id=>document.getElementById(id);
   const escapeHtml=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c]));
-  const msg=s=>{const e=elem('rewardMessage');if(e)e.textContent=s;};
+  const msg=s=>{for(const id of ['rewardMessage','rewardToast']){const e=elem(id);if(e)e.textContent=s;}};
   const offerDate=iso=>new Intl.DateTimeFormat('en-ZA',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit',hour12:false,timeZone:'Africa/Johannesburg'}).format(new Date(iso));
   function render() {
     const host=elem('rewardsRadarRoot'); if (!host) return;
@@ -108,12 +108,12 @@
       const results=visible(items,search),quick=new URLSearchParams(search).has('shop');
       const badge={urgent:'Use soon',soon:'This week',active:'Available',expired:'Expired',redeemed:'Redeemed'};
       const count=results.filter(x=>!['redeemed','expired'].includes(status(x))).length;
-      host.innerHTML='<div class="shopHead"><div><h2>🎟️ Rewards Radar</h2><div class="muted">Expiry-aware rewards for this visit</div></div><div class="shopCount">'+count+' active</div></div>'
+      host.innerHTML='<div id="rewardToast" class="muted" role="status" aria-live="polite"></div><div class="shopHead"><div><h2>🎟️ Rewards Radar</h2><div class="muted">Expiry-aware rewards for this visit</div></div><div class="shopCount">'+count+' active</div></div>'
         +'<div class="rewardCards">'+(results.map(x=>{
           const s=status(x),where=x.mode==='specific'?'Only at '+x.branch:'Participating '+x.retailer+' branches';
           const eligibleNote=quick && !new URLSearchParams(search).get('shop') && x.mode==='specific'?
             '<div class="tiny">Check the eligible branch before travelling.</div>':'';
-          const safeId=escapeHtml(x.id);
+          const safeId=/^[a-z0-9-]+$/i.test(x.id)?x.id:'';
           const href=x.sourceUrl && /^https:\/\//i.test(x.sourceUrl)?'<a class="btn" href="'+escapeHtml(x.sourceUrl)+'" target="_blank" rel="noopener noreferrer">Offer source</a>':'';
           return '<div class="task rewardItem"><div class="rewardTop"><span class="pill reward-'+s+'">'+badge[s]+'</span><span class="tiny">'+escapeHtml(x.retailer)+'</span></div>'
             +'<strong>'+escapeHtml(x.title)+'</strong><div class="rewardExpiry">Expires '+escapeHtml(offerDate(x.expiryAt))+' SAST</div>'
@@ -143,7 +143,7 @@
   };
   root.removeReward=function(id){
     if (!confirm('Remove this reward from this browser?')) return;
-    try {remove(localStorage,id);render();msg('Reward removed.');}
+    try {remove(localStorage,id);openMedia().then(db=>{const tx=db.transaction('photos','readwrite');tx.objectStore('photos').delete(id);tx.oncomplete=()=>db.close();}).catch(()=>{});render();msg('Reward removed.');}
     catch(err){msg(err.message);}
   };
   let pendingImageId='',currentPreview='';
