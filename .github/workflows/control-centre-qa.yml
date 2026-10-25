@@ -60,6 +60,8 @@ jobs:
         run: node tests/control-centre-browser-smoke.cjs
       - name: Smoke-test Rewards Radar in Chromium without deploying
         run: node tests/rewards-radar-browser.cjs
+      - name: Exercise Rewards Radar actual mobile user journey without deploying
+        run: node tests/rewards-radar-journey.cjs
       - name: Check FamilyRoy browser credential boundary
         run: |
           ! grep -q "FAMILYROY_INTAKE_TOKEN" familyroy-control-centre-qa/index.html
