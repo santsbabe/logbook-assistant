@@ -1,0 +1,46 @@
+name: Build signed Shopping Radar shortcut
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'radar-shortcut/**'
+      - '.github/workflows/build-radar-shortcut.yml'
+permissions:
+  contents: read
+jobs:
+  build-and-sign:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create unsigned shortcut
+        run: python3 radar-shortcut/build_radar.py
+      - name: Verify input and URL wiring
+        run: |
+          python3 - <<'PY'
+          import plistlib
+          p=plistlib.load(open('radar-shortcut/Shopping Radar - PEP Home.unsigned.shortcut','rb'))
+          a=p['WFWorkflowActions']
+          assert len(a)==5
+          assert a[2]['WFWorkflowActionParameters']['WFInput']['Value']['OutputUUID']==a[1]['WFWorkflowActionParameters']['UUID']
+          assert a[4]['WFWorkflowActionParameters']['WFInput']['Value']['OutputUUID']==a[3]['WFWorkflowActionParameters']['UUID']
+          assert 'shop=pep-home' in a[3]['WFWorkflowActionParameters']['WFURLActionURL']
+          print('Native Shortcut structure and wiring verified')
+          PY
+      - name: Sign with Shortcuty API
+        run: |
+          curl --fail-with-body --show-error --silent --max-time 60 \
+            -F 'file=@radar-shortcut/Shopping Radar - PEP Home.unsigned.shortcut' \
+            'https://sign.shortcuty.app/api/v1/sign' \
+            -o 'Shopping Radar - PEP Home.shortcut'
+          python3 - <<'PY'
+          from pathlib import Path
+          b=Path('Shopping Radar - PEP Home.shortcut').read_bytes()
+          assert b[:4]==b'AEA1' and len(b)>1000, f'Invalid signed file: {b[:80]!r}'
+          print('Verified signed archive:',len(b),'bytes')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: shopping-radar-pep-home-signed
+          path: Shopping Radar - PEP Home.shortcut
+          retention-days: 14
