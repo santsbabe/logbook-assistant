@@ -9,32 +9,34 @@ permissions:
   contents: read
 jobs:
   build-and-sign:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
-      - name: Create unsigned shortcut
+      - name: Create source
         run: python3 radar-shortcut/build_radar.py
-      - name: Verify input and URL wiring
+      - name: Validate and sign through RoutineHub HubSign
         run: |
           python3 - <<'PY'
-          import plistlib
-          p=plistlib.load(open('radar-shortcut/Shopping Radar - PEP Home.unsigned.shortcut','rb'))
-          a=p['WFWorkflowActions']
+          import json,plistlib,urllib.request,pathlib
+          root=pathlib.Path("radar-shortcut")
+          data=(root/"Shopping Radar - PEP Home.unsigned.shortcut").read_bytes()
+          p=plistlib.loads(data)
+          a=p["WFWorkflowActions"]
           assert len(a)==5
-          assert a[2]['WFWorkflowActionParameters']['WFInput']['Value']['OutputUUID']==a[1]['WFWorkflowActionParameters']['UUID']
-          assert a[4]['WFWorkflowActionParameters']['WFInput']['Value']['OutputUUID']==a[3]['WFWorkflowActionParameters']['UUID']
-          assert 'shop=pep-home' in a[3]['WFWorkflowActionParameters']['WFURLActionURL']
-          print('Native Shortcut structure and wiring verified')
-          PY
-      - name: Sign using Apple's macOS shortcuts command
-        run: |
-          shortcuts sign --mode anyone --input 'radar-shortcut/Shopping Radar - PEP Home.unsigned.shortcut' --output 'Shopping Radar - PEP Home.shortcut'
-          python3 - <<'PY'
-          from pathlib import Path
-          b=Path('Shopping Radar - PEP Home.shortcut').read_bytes()
-          assert b[:4]==b'AEA1' and len(b)>1000, f'Invalid signed file: {b[:80]!r}'
-          print('Verified signed archive:',len(b),'bytes')
+          assert "shop=pep-home" in a[3]["WFWorkflowActionParameters"]["WFURLActionURL"]
+          assert a[2]["WFWorkflowActionParameters"]["WFInput"]["Value"]["OutputUUID"]==a[1]["WFWorkflowActionParameters"]["UUID"]
+          assert a[4]["WFWorkflowActionParameters"]["WFInput"]["Value"]["OutputUUID"]==a[3]["WFWorkflowActionParameters"]["UUID"]
+          source=plistlib.dumps(p,fmt=plistlib.FMT_XML).decode()
+          payload=json.dumps({"shortcutName":"Shopping Radar - PEP Home","shortcut":source}).encode()
+          request=urllib.request.Request("https://hubsign.routinehub.services/sign",data=payload,
+            headers={"Content-Type":"application/json","Origin":"https://routinehub.co","Referer":"https://routinehub.co/"},method="POST")
+          with urllib.request.urlopen(request, timeout=70) as response:
+            signed=response.read()
+            print("Signing status",response.status,"response size",len(signed))
+          assert signed[:4]==b'AEA1' and len(signed)>1000,f"Not a signed shortcut: {signed[:90]!r}"
+          pathlib.Path("Shopping Radar - PEP Home.shortcut").write_bytes(signed)
+          print("Signed AEA1 file verified")
           PY
       - uses: actions/upload-artifact@v4
         with:
