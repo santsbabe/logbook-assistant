@@ -9,7 +9,7 @@ permissions:
   contents: read
 jobs:
   build-and-sign:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
@@ -27,12 +27,9 @@ jobs:
           assert 'shop=pep-home' in a[3]['WFWorkflowActionParameters']['WFURLActionURL']
           print('Native Shortcut structure and wiring verified')
           PY
-      - name: Sign with Shortcuty API
+      - name: Sign using Apple's macOS shortcuts command
         run: |
-          curl --fail-with-body --show-error --silent --max-time 60 \
-            -F 'file=@radar-shortcut/Shopping Radar - PEP Home.unsigned.shortcut' \
-            'https://sign.shortcuty.app/api/v1/sign' \
-            -o 'Shopping Radar - PEP Home.shortcut'
+          shortcuts sign --mode anyone --input 'radar-shortcut/Shopping Radar - PEP Home.unsigned.shortcut' --output 'Shopping Radar - PEP Home.shortcut'
           python3 - <<'PY'
           from pathlib import Path
           b=Path('Shopping Radar - PEP Home.shortcut').read_bytes()
