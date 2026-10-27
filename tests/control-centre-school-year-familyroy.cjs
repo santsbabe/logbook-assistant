@@ -56,6 +56,22 @@ const removed=School.remove(amended,previous.id);
 assert.ok(removed.history.some(x=>x.change==='remove'&&x.previous.id===previous.id));
 assert.deepEqual(School.resolve({text:'Grade 2 homework',source:'PNPS',sourceDate:new Date('2026-05-01'),registry:removed}).children,['Harrison']);
 
+const moveSeed=School.defaults();
+const approved2026=School.confirm(moveSeed,2026,new Date('2026-01-02'));
+const approvedBoth=School.confirm(approved2026,2027,new Date('2027-01-02'));
+const oldYearRecord=approvedBoth.records.find(x=>x.year===2026&&x.school==='PNPS'&&x.grade==='R');
+const moved=School.change(approvedBoth,{
+  originalId:oldYearRecord.id,year:2027,school:'PNPS',grade:'R',
+  classCode:'',child:'Alexander'
+},new Date('2027-01-05'));
+assert.equal(School.annualRequired(moved,2026),true,
+ 'Moving an existing school mapping must invalidate the previous calendar year confirmation');
+assert.equal(School.annualRequired(moved,2027),true,
+ 'Moving an existing mapping must invalidate the new calendar year confirmation');
+assert.ok(moved.history.some(x=>x.change==='amend'&&x.previous.year===2026),
+ 'Preserve the historical original year when moving learner records');
+
+
 const html=fs.readFileSync('familyroy-control-centre-qa/index.html','utf8');
 function codeBetween(start,end){
  const i=html.indexOf(start),j=html.indexOf(end,i+start.length);
