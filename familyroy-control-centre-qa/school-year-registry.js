@@ -73,7 +73,8 @@
     d.history.length+'-'+String(when.getTime()))};
   if(originalId)d.records=d.records.map(r=>r.id===originalId?record:r);
   else d.records.push(record);
-  d.confirmations=d.confirmations.filter(x=>Number(x.year)!==value.year);
+  const affectedYears=new Set([value.year,...(old?[old.year]:[])]);
+  d.confirmations=d.confirmations.filter(x=>!affectedYears.has(Number(x.year)));
   d.history.push({change:'set',value:{...record},at:when.toISOString()});
   return d;
  }
