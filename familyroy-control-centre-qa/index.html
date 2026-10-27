@@ -209,7 +209,7 @@ function actionDueRank(t){
 }
 function actionSort(a,b){return actionDueRank(a)-actionDueRank(b)||(b.priority||0)-(a.priority||0)}
 function actionIsToday(t){if(['Done','Waiting','Review'].includes(t.state))return false;if(t.snoozedUntil){return t.snoozedUntil<=localISO(new Date())}return t.state==='Now'||(t.state==='Next'&&actionDueRank(t)<=1)}
-function schoolOccurrenceKey(x){return schoolActionKey(x.title)+'|'+(x.child||'Children')+'|'+(x.due||'unscheduled')+'|'+(x.schoolYear||'')+'|'+(x.schoolKind||'readiness')}
+function schoolOccurrenceKey(x){return schoolActionKey(x.title)+'|'+(x.child||'Children')+'|'+(x.due||'unscheduled')+'|'+(x.schoolYear||'')+'|'+(x.schoolKind||'readiness')+'|'+String(x.school||'').trim().toLowerCase()}
 function familyRoySourceReference(task){
  return{sourceId:task.familyRoySourceId,sourceType:task.originalSourceType||'',
   chat:task.originalSourceChat||'',sender:task.originalSender||'',
