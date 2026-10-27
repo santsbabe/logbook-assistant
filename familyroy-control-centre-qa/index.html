@@ -3,6 +3,8 @@
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <script src="./google-connection.js"></script>
 <script src="./cloud-sync.js"></script>
+<script src="./school-year-registry.js"></script>
+<script src="./familyroy-handoff-config.js"></script>
 <script src="./backend-config.js"></script>
 <script src="./authenticated-sync.js"></script>
 <script src="./backend-sync-ui.js"></script>
@@ -95,7 +97,7 @@ h1,h2{line-height:1.18}
 }
  .storageAlert{position:sticky;top:52px;z-index:7;padding:13px 15px;margin:9px 0;border:2px solid #d75c4e;font-size:13px;line-height:1.45}.storageAlert[hidden]{display:none!important}
 </style></head><body><div class="app">
-<div class="muted">FAMILYROY</div><h1>Control Centre</h1><div class="muted" id="today"></div><div id="storageWarning" role="alert" class="status bad storageAlert" hidden></div>
+<div class="muted">FAMILYROY</div><h1>Control Centre</h1><div class="muted" id="today"></div><div id="schoolYearAlert" class="status warn" role="status" hidden></div><div id="storageWarning" role="alert" class="status bad storageAlert" hidden></div>
 <div class="tabs"><button type="button" class="tab active" data-p="actions">Today</button><button type="button" class="tab" data-p="attention">Inbox</button><button type="button" class="tab" data-p="school">School</button><button type="button" class="tab" data-p="shopping">Shopping</button><button type="button" class="tab" data-p="electricity">Electricity</button><button type="button" class="tab" data-p="admin">Admin</button><button type="button" class="tab" data-p="settings">More</button></div>
 <section id="actions" class="panel active"><div class="card todayHero"><div class="muted">TODAY</div><h2 id="todayFocus">What needs you</h2><div class="muted">Only the things that can change your day belong here.</div></div><div class="statusStrip" id="kpis"></div><a class="btn captureShortcut" href="#quick-capture" onclick="document.getElementById('quick-capture').scrollIntoView({behavior:'smooth',block:'start'})">＋ Quick capture</a><div class="card before todaySection" data-today-section="before"><h2>Before we leave</h2><div class="muted">Anything that must physically leave home with a child.</div><div id="beforeList"></div></div><div class="card todaySection" data-today-section="Now"><h2>Needs you now</h2><div id="nowList"></div></div><div class="card todaySection" data-today-section="Waiting"><h2>Waiting on someone else</h2><div id="waitingList"></div></div><div class="card todaySection" data-today-section="Review"><h2>Review when you have space</h2><div id="reviewList"></div></div><div class="card todaySection" data-today-section="Next"><h2>Coming up next</h2><div id="nextList"></div></div><div class="card todayAux secondaryTools"><h2>Connected tools</h2><div class="toolGrid"><a class="toolLink" href="../" target="_self"><b>Logbook</b><span>Odometer & trip capture</span></a><a class="toolLink" href="../project-board/" target="_self"><b>Build Garden</b><span>Projects, blockers & next actions</span></a><a class="toolLink" href="https://harrison-homework-quest.santsbabe.chatgpt.site" target="_blank" rel="noopener"><b>Homework Quest</b><span>School work & learning</span></a></div></div><div class="card todayAux" id="quick-capture"><h2>Quick capture</h2><div class="form"><input id="newTitle" placeholder="What needs doing?"><div class="two"><select id="newState"><option>Now</option><option>Next</option><option>Waiting</option><option>Review</option></select><select id="newOwner"><option>Santie</option><option>Matthew</option><option>Family</option></select></div><button type="button" class="btn primary" onclick="addManual()">Add action</button></div></div></section>
 <section id="attention" class="panel"><div class="card"><h2>Email Attention Watch</h2><div class="muted">Turns genuine email obligations into FamilyRoy actions. Informational mail stays out of Today.</div><div id="attentionStatus" class="status warn">Uses the same Gmail connection as School.</div><div class="row" style="margin-top:10px"><button type="button" class="btn primary" onclick="syncAttentionMail()">Check attention mail</button></div><div id="attentionResult" class="muted" style="margin-top:9px"></div></div><div class="card"><h2>Attention queue</h2><div id="attentionQueue"></div></div></section>
@@ -142,7 +144,26 @@ h1,h2{line-height:1.18}
   </div>
 </div>
 <div class="card"><h2>Harrison birth-record correction</h2><p class="muted">Later stages stay blocked until earlier gates are complete.</p><div id="docStages"></div></div></section>
-<section id="settings" class="panel"><div class="card"><h2>Connected capabilities</h2><div class="muted">One registry for what FamilyRoy owns, links to, or receives in the background.</div><div id="capabilityList"></div></div><div class="card" id="googleConnection"><h2>Google connection</h2><p class="muted">FamilyRoy has a Google OAuth client configured. Sign-in is still explicit and the browser only receives the Gmail read-only access you approve.</p><input type="file" id="oauthFile" accept="application/json,.json" onchange="loadOAuth(this.files[0])" style="display:none"><div id="oauthStatus" class="status" style="margin-top:9px">Google client configured · not signed in.</div><p class="muted">For Google sign-in to work, add <b>https://santsbabe.github.io</b> to that OAuth client's Authorised JavaScript origins.</p></div><div class="card" id="authenticatedBackendSync" aria-label="Private synchronisation and conflict decisions"></div><div class="card" id="privateCloudBackup">
+<section id="settings" class="panel"><div class="card"><h2>Connected capabilities</h2><div class="muted">One registry for what FamilyRoy owns, links to, or receives in the background.</div><div id="capabilityList"></div></div><div class="card" id="schoolYearRegistryCard">
+<h2>School year &amp; learner mappings 🎒</h2>
+<p class="muted">Established 2026–27 assignments remain available until updated. Review the learner, school, grade and class records at the beginning of each calendar year. Edits preserve an audit history.</p>
+<div class="row"><label>Year <select id="schoolRegistryYear" aria-label="Registry year" onchange="renderSchoolRegistry()"></select></label></div>
+<div id="schoolRegistryStatus" role="status" aria-live="polite" class="status"></div>
+<div id="schoolRegistryRows" class="muted"></div>
+<div class="row"><label>Mapping <select id="schoolRegistryEdit" aria-label="Existing school mapping" onchange="loadSchoolMappingEditor()"><option value="">New mapping</option></select></label></div>
+<div class="row">
+<label>Child <select id="schoolMappingChild"><option>Harrison</option><option>Alexander</option><option>Imogen</option></select></label>
+<label>School <input type="text" id="schoolMappingSchool" value="PNPS" aria-label="Learner school" maxlength="85"></label>
+<label>Grade <select id="schoolMappingGrade" aria-label="Learner grade"><option value="">School-wide (no specified grade)</option><option>R</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option></select></label>
+<label>Class (optional) <input type="text" id="schoolMappingClass" aria-label="Learner class" placeholder="e.g. 2M" maxlength="10"></label>
+</div>
+<div class="row">
+<button type="button" class="btn" onclick="saveSchoolMapping()">Save mapping</button>
+<button type="button" class="btn" onclick="removeSchoolMapping()">Remove selected mapping</button>
+<button type="button" class="btn primary" onclick="confirmSchoolRegistryYear()">Confirm this year's assignments</button>
+</div>
+<p class="muted">PNPS 2E is ignored by default. Whole-school PNPS notices are shared by Harrison and Alexander. Genuinely unknown or conflicting mappings go to Review.</p>
+</div><div class="card" id="googleConnection"><h2>Google connection</h2><p class="muted">FamilyRoy has a Google OAuth client configured. Sign-in is still explicit and the browser only receives the Gmail read-only access you approve.</p><input type="file" id="oauthFile" accept="application/json,.json" onchange="loadOAuth(this.files[0])" style="display:none"><div id="oauthStatus" class="status" style="margin-top:9px">Google client configured · not signed in.</div><p class="muted">For Google sign-in to work, add <b>https://santsbabe.github.io</b> to that OAuth client's Authorised JavaScript origins.</p></div><div class="card" id="authenticatedBackendSync" aria-label="Private synchronisation and conflict decisions"></div><div class="card" id="privateCloudBackup">
 <h2>Private Google Drive copies ☁️</h2>
 <p class="muted">Move a QA snapshot between your devices using Google's hidden app-data folder. Only the Google account you authorise can access the app's copy. This is an explicit backup/restore workflow, <b>not continuous automatic sync</b>; tasks are never silently merged or replaced.</p>
 <p class="muted">Each copy contains household tasks, shopping and other Control Centre QA data. Copies are stored under the authorised Google account, not in this public GitHub repository. Google Drive API access must be enabled for the configured OAuth client.</p>
@@ -188,8 +209,38 @@ function actionDueRank(t){
 }
 function actionSort(a,b){return actionDueRank(a)-actionDueRank(b)||(b.priority||0)-(a.priority||0)}
 function actionIsToday(t){if(['Done','Waiting','Review'].includes(t.state))return false;if(t.snoozedUntil){return t.snoozedUntil<=localISO(new Date())}return t.state==='Now'||(t.state==='Next'&&actionDueRank(t)<=1)}
-function schoolOccurrenceKey(x){return schoolActionKey(x.title)+'|'+(x.child||'Children')+'|'+(x.due||'unscheduled')}
-function ingestActions(items=[]){let ids=new Set(db.tasks.map(x=>x.id)),schoolKeys=new Set(db.tasks.filter(x=>x.module==='School Readiness'&&(x.gmailId||x.familyRoySourceId)).map(schoolOccurrenceKey)),added=0;items.map(normaliseAction).forEach(x=>{let sk=x.module==='School Readiness'&&(x.gmailId||x.familyRoySourceId)?schoolOccurrenceKey(x):'';if(!ids.has(x.id)&&(!sk||!schoolKeys.has(sk))){db.tasks.push(x);ids.add(x.id);if(sk)schoolKeys.add(sk);added++}});save();return added}
+function schoolOccurrenceKey(x){return schoolActionKey(x.title)+'|'+(x.child||'Children')+'|'+(x.due||'unscheduled')+'|'+(x.schoolYear||'')+'|'+(x.schoolKind||'readiness')+'|'+String(x.school||'').trim().toLowerCase()}
+function familyRoySourceReference(task){
+ return{sourceId:task.familyRoySourceId,sourceType:task.originalSourceType||'',
+  chat:task.originalSourceChat||'',sender:task.originalSender||'',
+  timestamp:task.originalSourceTimestamp||'',
+  evidence:Array.isArray(task.familyRoyEvidence)?task.familyRoyEvidence:[],
+  originalText:task.evidenceText||''};
+}
+function ingestActions(items=[],{persist=true}={}){
+ const ids=new Set(db.tasks.map(x=>x.id));
+ const schoolMap=new Map(db.tasks.filter(x=>x.module==='School Readiness'&&
+  (x.gmailId||x.familyRoySourceId)).map(x=>[schoolOccurrenceKey(x),x]));
+ let added=0;
+ items.map(normaliseAction).forEach(x=>{
+  const sk=x.module==='School Readiness'&&(x.gmailId||x.familyRoySourceId)?schoolOccurrenceKey(x):'';
+  if(ids.has(x.id))return;
+  if(sk&&schoolMap.has(sk)){
+   const existing=schoolMap.get(sk);
+   if(x.familyRoySourceId&&existing.familyRoySourceId!==x.familyRoySourceId){
+    const refs=Array.isArray(existing.corroboratingSources)?existing.corroboratingSources:[];
+    if(!refs.some(r=>r.sourceId===x.familyRoySourceId))
+     existing.corroboratingSources=[...refs,familyRoySourceReference(x)];
+   }
+   return;
+  }
+  db.tasks.push(x);ids.add(x.id);
+  if(sk)schoolMap.set(sk,x);
+  added++;
+ });
+ if(persist)save();
+ return added;
+}
 // Keep each Friday distinct; a completed week remains in Done history and never reappears.
 function seedPnpsSwimming(d,now=new Date()){
   let parts=new Intl.DateTimeFormat('en-GB',{timeZone:'Africa/Johannesburg',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(now);
@@ -299,7 +350,7 @@ function recoverLocalSnapshot(){
     storageReadOnly=false;storageWarning='';db=load();render();
   }catch(e){storageWarning='Recovery failed: '+(e.message||String(e));showStorageWarning()}
 }
-function load(){let snapshot=readLocalSnapshot(localStorage,KEY),d=snapshot.data;storageReadOnly=snapshot.status==='recovery'||snapshot.status==='unrecoverable';storageWarning=snapshot.status==='recovery'?'Local data is damaged. The previous intact snapshot is displayed read-only. Download and restore it from More.':snapshot.status==='unrecoverable'?'Local data cannot be read and no valid earlier snapshot exists. Editing is locked to prevent data loss. Download the damaged file from More.':'';if(!d)d={tasks:seed,seen:[],docs:{birth:false,npr:false,cert:false,sa:false,uk:false},shopping:[]};if(!Array.isArray(d.tasks))d.tasks=[];if(!Array.isArray(d.seen))d.seen=[];if((d.schoolParserVersion||0)<13){d.schoolParserVersion=13;}if(!Array.isArray(d.recruitmentQueue))d.recruitmentQueue=[];const recruitmentSeed=[{id:'jd-ross-project-procurement-manager-4471302099',role:'Project Procurement Manager',company:'JD Ross Energy',location:'United Kingdom',workMode:'Remote',source:'LinkedIn job alert',sourceJobId:'4471302099',status:'REVIEW',note:'Actively recruiting; Easy Apply. UK opportunities are in scope.'}];recruitmentSeed.forEach(r=>{if(!d.recruitmentQueue.some(x=>x.id===r.id))d.recruitmentQueue.push(r)});d.tasks=d.tasks.map(normaliseAction);if((d.schoolParserVersion||0)<14){correctLegacyCombinedSchoolTasks(d);d.schoolParserVersion=14;try{if(!storageReadOnly)writeLocalSnapshot(localStorage,KEY,d)}catch(e){storageWarning='School task repair could not be saved: '+(e.message||String(e));storageReadOnly=true}}seedPnpsSwimming(d);seedPnpsCalendarTask(d);if(!Array.isArray(d.shopping))d.shopping=[];if(!Array.isArray(d.purchases))d.purchases=[];if(!Array.isArray(d.branches))d.branches=[];if(!Array.isArray(d.productConcepts))d.productConcepts=[];if(!Array.isArray(d.retailerListings))d.retailerListings=[];if(!Array.isArray(d.priceObservations))d.priceObservations=[];if(!Array.isArray(d.productFeedback))d.productFeedback=[];if(!Array.isArray(d.priceRefreshJobs))d.priceRefreshJobs=[];if(!Array.isArray(d.priceRefreshRuns))d.priceRefreshRuns=[];
+function load(){let snapshot=readLocalSnapshot(localStorage,KEY),d=snapshot.data;storageReadOnly=snapshot.status==='recovery'||snapshot.status==='unrecoverable';storageWarning=snapshot.status==='recovery'?'Local data is damaged. The previous intact snapshot is displayed read-only. Download and restore it from More.':snapshot.status==='unrecoverable'?'Local data cannot be read and no valid earlier snapshot exists. Editing is locked to prevent data loss. Download the damaged file from More.':'';if(!d)d={tasks:seed,seen:[],docs:{birth:false,npr:false,cert:false,sa:false,uk:false},shopping:[]};if(!Array.isArray(d.tasks))d.tasks=[];d.schoolRegistry=ControlCentreSchoolRegistry.ensure(d.schoolRegistry);if(!Array.isArray(d.seen))d.seen=[];if((d.schoolParserVersion||0)<13){d.schoolParserVersion=13;}if(!Array.isArray(d.recruitmentQueue))d.recruitmentQueue=[];const recruitmentSeed=[{id:'jd-ross-project-procurement-manager-4471302099',role:'Project Procurement Manager',company:'JD Ross Energy',location:'United Kingdom',workMode:'Remote',source:'LinkedIn job alert',sourceJobId:'4471302099',status:'REVIEW',note:'Actively recruiting; Easy Apply. UK opportunities are in scope.'}];recruitmentSeed.forEach(r=>{if(!d.recruitmentQueue.some(x=>x.id===r.id))d.recruitmentQueue.push(r)});d.tasks=d.tasks.map(normaliseAction);if((d.schoolParserVersion||0)<14){correctLegacyCombinedSchoolTasks(d);d.schoolParserVersion=14;try{if(!storageReadOnly)writeLocalSnapshot(localStorage,KEY,d)}catch(e){storageWarning='School task repair could not be saved: '+(e.message||String(e));storageReadOnly=true}}seedPnpsSwimming(d);seedPnpsCalendarTask(d);if(!Array.isArray(d.shopping))d.shopping=[];if(!Array.isArray(d.purchases))d.purchases=[];if(!Array.isArray(d.branches))d.branches=[];if(!Array.isArray(d.productConcepts))d.productConcepts=[];if(!Array.isArray(d.retailerListings))d.retailerListings=[];if(!Array.isArray(d.priceObservations))d.priceObservations=[];if(!Array.isArray(d.productFeedback))d.productFeedback=[];if(!Array.isArray(d.priceRefreshJobs))d.priceRefreshJobs=[];if(!Array.isArray(d.priceRefreshRuns))d.priceRefreshRuns=[];
 const branchSeed=[
 {id:'pep-home-vangate',retailer:'PEP Home',name:'Vangate Mall',address:'Shop 66, Jakes Gerwel Dr, Bridgetown, Cape Town'},
 {id:'pep-home-kenilworth',retailer:'PEP Home',name:'Kenilworth Centre',address:'Shop 105, Kenilworth Centre, Doncaster Rd, Claremont'},
@@ -316,23 +367,172 @@ branchSeed.forEach(b=>{if(!d.branches.some(x=>x.id===b.id))d.branches.push(b)});
 {id:'meter-2026-09-24-b',date:'2026-09-24',value:154.36,source:'Logged meter photo',order:2}
 ];electricitySeed.forEach(r=>{if(!d.electricity.some(x=>x.id===r.id))d.electricity.push(r)});purchaseSeed.forEach(p=>{if(!d.purchases.some(x=>x.id===p.id))d.purchases.push(p)});if(!d.shopping.some(x=>x.id==='pep-home-storage'))d.shopping.push({id:'pep-home-storage',title:'Kitchen / pantry storage organisers',retailer:'PEP Home',slug:'pep-home',mode:'anyBranch',branch:'',done:false,source:'Control Centre',created:'2026-09-20'});return d}let db=load();function save(){if(storageReadOnly){showStorageWarning();return false}try{writeLocalSnapshot(localStorage,KEY,db);return true}catch(e){storageReadOnly=true;storageWarning='Save failed: '+(e.message||String(e))+'. Your changes are only in this open page. Export before closing.';showStorageWarning();return false}}
 function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function familyRoyEvidenceHtml(t){
+ if(!t.familyRoySourceId)return'';
+ const source={sourceId:t.familyRoySourceId,chat:t.originalSourceChat||'',sender:t.originalSender||'',
+  timestamp:t.originalSourceTimestamp||'',originalText:t.evidenceText||'',
+  evidence:Array.isArray(t.familyRoyEvidence)?t.familyRoyEvidence:[]};
+ const list=[source,...(Array.isArray(t.corroboratingSources)?t.corroboratingSources:[])];
+ return '<details class="noticeEvidence"><summary>FamilyRoy source and evidence ('+list.length+')</summary>'+
+ list.map((r,i)=>'<div class="task"><strong>Evidence source '+(i+1)+'</strong>'+
+  '<div class="tiny">Source ID: '+esc(r.sourceId||'')+'</div>'+
+  (r.chat?'<div class="tiny">Chat: '+esc(r.chat)+'</div>':'')+
+  (r.sender?'<div class="tiny">Sender: '+esc(r.sender)+'</div>':'')+
+  (r.timestamp?'<div class="tiny">Original date: '+esc(r.timestamp)+'</div>':'')+
+  (r.originalText?'<p>'+esc(String(r.originalText).slice(0,4000))+'</p>':'')+
+  (r.evidence||[]).map(m=>'<div class="tiny">Attachment: '+esc(m.name||'Image/file')+
+   ' · SHA-256: '+esc(m.sha256||'not supplied')+'</div>').join('')+'</div>').join('')+
+ '<div class="muted">The original image remains with FamilyRoy; this record displays its evidence reference.</div></details>';
+}
 function taskHtml(t){
-  const due=t.due?`<span class="pill ${actionDueRank(t)<=1?'hot':''}">${actionDueRank(t)===0?'Overdue':actionDueRank(t)===1?'Today':actionDueRank(t)===2?'Tomorrow':esc(t.due)}</span>`:'';
-  const src=t.gmailId?`<div class="source"><a href="https://mail.google.com/mail/u/0/#all/${encodeURIComponent(t.gmailId)}" target="_blank" rel="noopener">Open source email ↗</a></div>`:(t.source?`<div class="source">Source: ${esc(t.source)}</div>`:'');
-  const evidence=t.evidenceText?`<details class="noticeEvidence"><summary>Original notice</summary><p>${esc(t.evidenceText.slice(0,4000))}</p></details>`:'';
-  const snoozed=t.snoozedUntil?`<span class="pill wait">Snoozed until ${esc(t.snoozedUntil)}</span>`:'';
-  const review=t.state==='Review';
-  const primary=review?`<button type="button" class="btn primary" onclick="move('${t.id}','Now')">Add now</button><button type="button" class="btn" onclick="move('${t.id}','Next')">Add later</button><button type="button" class="btn" onclick="done('${t.id}')">Dismiss</button>`:
-    `<button type="button" class="btn primary" onclick="done('${t.id}')">${t.recurrence==='annual-school-calendar'?'Year completed':'✓ Done'}</button><button type="button" class="btn" onclick="snooze('${t.id}')">Snooze</button>`;
-  const extra=review?'':`<details class="taskMore"><summary>More options</summary><div class="row"><button type="button" class="btn" onclick="move('${t.id}','Now')">Now</button><button type="button" class="btn" onclick="move('${t.id}','Next')">Later</button><button type="button" class="btn" onclick="move('${t.id}','Waiting')">Waiting</button></div></details>`;
-  return `<article class="task"><div class="taskHead"><strong>${esc(t.title)}</strong><div class="taskBadges"><span class="pill">${esc(t.cat||'General')}</span>${t.child?`<span class="pill">${esc(t.child)}</span>`:''}${t.morning?'<span class="pill hot">Before we leave</span>':''}${due}${snoozed}</div></div>${src}${evidence}<div class="taskActions">${primary}</div>${extra}</article>`;
+ const due=t.due?'<span class="pill '+(actionDueRank(t)<=1?'hot':'')+'">'+
+  (actionDueRank(t)===0?'Overdue':actionDueRank(t)===1?'Today':actionDueRank(t)===2?'Tomorrow':esc(t.due))+'</span>':'';
+ const genuineMail=t.gmailId&&!String(t.gmailId).startsWith('familyroy:');
+ const src=genuineMail?'<div class="source"><a href="https://mail.google.com/mail/u/0/#all/'+encodeURIComponent(t.gmailId)+
+  '" target="_blank" rel="noopener">Open source email ↗</a></div>':
+  (t.source?'<div class="source">Source: '+esc(t.source)+'</div>':'');
+ const evidence=t.familyRoySourceId?familyRoyEvidenceHtml(t):
+  (t.evidenceText?'<details class="noticeEvidence"><summary>Original notice</summary><p>'+esc(t.evidenceText.slice(0,4000))+'</p></details>':'');
+ const snoozed=t.snoozedUntil?'<span class="pill wait">Snoozed until '+esc(t.snoozedUntil)+'</span>':'';
+ const review=t.state==='Review',familyReview=review&&Boolean(t.familyRoySourceId);
+ const rid=String(t.id);
+ const needsChild=familyReview&&!t.child;
+ const chooser=needsChild?'<label for="review-child-'+esc(rid)+'">Select learner before adding</label>'+
+  '<select id="review-child-'+esc(rid)+'" aria-label="Learner for FamilyRoy Review"><option value="">Choose learner</option>'+
+  '<option>Harrison</option><option>Alexander</option><option>Imogen</option><option>Harrison + Alexander</option></select>'+
+  '<div id="review-error-'+esc(rid)+'" role="status" aria-live="polite"></div>':'';
+ const primary=familyReview?'<button type="button" class="btn primary" onclick="reviewFamilyRoyTask(\''+esc(rid)+'\',\'Now\')">Add now</button>'+
+  '<button type="button" class="btn" onclick="reviewFamilyRoyTask(\''+esc(rid)+'\',\'Next\')">Add later</button>'+
+  '<button type="button" class="btn" onclick="reviewFamilyRoyTask(\''+esc(rid)+'\',\'Dismiss\')">Dismiss</button>':
+  review?'<button type="button" class="btn primary" onclick="move(\''+esc(rid)+'\',\'Now\')">Add now</button>'+
+   '<button type="button" class="btn" onclick="move(\''+esc(rid)+'\',\'Next\')">Add later</button>'+
+   '<button type="button" class="btn" onclick="done(\''+esc(rid)+'\')">Dismiss</button>':
+  '<button type="button" class="btn primary" onclick="done(\''+esc(rid)+'\')">'+(t.recurrence==='annual-school-calendar'?'Year completed':'✓ Done')+
+   '</button><button type="button" class="btn" onclick="snooze(\''+esc(rid)+'\')">Snooze</button>';
+ const extra=review?'':'<details class="taskMore"><summary>More options</summary><div class="row">'+
+  '<button type="button" class="btn" onclick="move(\''+esc(rid)+'\',\'Now\')">Now</button>'+
+  '<button type="button" class="btn" onclick="move(\''+esc(rid)+'\',\'Next\')">Later</button>'+
+  '<button type="button" class="btn" onclick="move(\''+esc(rid)+'\',\'Waiting\')">Waiting</button></div></details>';
+ const reason=familyReview&&t.reviewReason?'<p class="status warn">Review needed: '+esc(t.reviewReason)+'</p>':'';
+ const audit=t.reviewDecision?'<div class="tiny">Review decision: '+esc(t.reviewDecision.decision)+
+  ' · '+esc(t.reviewDecision.decidedAt)+'</div>':'';
+ return '<article class="task"><div class="taskHead"><strong>'+esc(t.title)+
+  '</strong><div class="taskBadges"><span class="pill">'+esc(t.cat||'General')+'</span>'+
+  (t.child?'<span class="pill">'+esc(t.child)+'</span>':'')+
+  (t.morning?'<span class="pill hot">Before we leave</span>':'')+due+snoozed+
+  '</div></div>'+src+evidence+reason+audit+chooser+'<div class="taskActions">'+primary+'</div>'+extra+'</article>';
+}
+function reviewFamilyRoyTask(id,decision){
+ const idx=db.tasks.findIndex(t=>t.id===id);
+ if(idx<0||!['Now','Next','Dismiss'].includes(decision))return false;
+ const previous=db.tasks[idx];
+ if(previous.state!=='Review'||!previous.familyRoySourceId)return false;
+ let learner=previous.child||'';
+ if(decision!=='Dismiss'&&!learner){
+  const select=document.getElementById('review-child-'+id);
+  learner=select?.value||'';
+  if(!['Harrison','Alexander','Imogen','Harrison + Alexander'].includes(learner)){
+   const status=document.getElementById('review-error-'+id);
+   if(status)status.textContent='Choose the applicable learner before adding this notice.';
+   return false;
+  }
+ }
+ const timestamp=new Date().toISOString(),dismissed=decision==='Dismiss';
+ const updated={...previous,child:learner,state:dismissed?'Done':decision,updatedAt:timestamp,
+  reviewDecision:{decision:dismissed?'Dismissed':decision==='Now'?'Add now':'Add later',
+   chosenChild:learner,decidedAt:timestamp,reason:previous.reviewReason||'',
+   sourceId:previous.familyRoySourceId}};
+ if(dismissed){updated.resolution='Dismissed';updated.completedAt=timestamp}
+ db.tasks[idx]=updated;
+ if(!save()){db.tasks[idx]=previous;render();return false}
+ render();return true;
 }
 function renderCapabilities(){let el=document.getElementById('capabilityList');if(!el)return;el.innerHTML=CAPABILITIES.map(x=>`<div class="task"><strong>${esc(x.name)}</strong><span class="pill">${esc(x.kind)}</span><span class="pill ${x.status==='next'?'wait':''}">${esc(x.status)}</span><div class="tiny">${esc(x.note)}</div>${x.panel?`<button type="button" class="btn" style="margin-top:7px" onclick="openPanel('${x.panel}')">Open</button>`:x.url?`<a class="btn" style="display:inline-block;margin-top:7px;text-decoration:none" href="${esc(x.url)}" target="${x.url.startsWith('http')?'_blank':'_self'}">Open</a>`:''}</div>`).join('')}
 let todayFilter=null;function setTodayFilter(state){todayFilter=todayFilter===state?null:state;renderTodayFilter()}function renderTodayFilter(){document.querySelectorAll('.statusFilter').forEach(b=>b.classList.toggle('active',b.dataset.state===todayFilter));document.querySelectorAll('.todaySection').forEach(el=>{let section=el.dataset.todaySection;el.classList.toggle('filterHidden',!!todayFilter&&section!==todayFilter)});document.querySelectorAll('.todayAux').forEach(el=>el.classList.toggle('filterHidden',!!todayFilter))}
-function render(){showStorageWarning();renderCapabilities();renderElectricity();renderAttention();renderSchoolReadiness();document.getElementById('kpis').innerHTML=[['Now','Now'],['Waiting','Waiting'],['Review','Review'],['Next','Next']].map(([s,label])=>`<button type="button" class="statusFilter ${todayFilter===s?'active':''}" data-state="${s}" onclick="setTodayFilter('${s}')"><b>${db.tasks.filter(t=>t.state===s).length}</b><span>${label}</span></button>`).join('');let focus=document.getElementById('todayFocus');if(focus){let n=db.tasks.filter(t=>actionIsToday(t)&&(!(t.module==='School Readiness'&&t.gmailId)||t.morning)).length;focus.textContent=n?n+' thing'+(n===1?'':'s')+' need'+(n===1?'s':'')+' you':'Nothing urgent right now';}let visibleTasks=db.tasks.filter(t=>!(t.module==='School Readiness'&&t.gmailId)||t.morning),before=visibleTasks.filter(t=>t.morning&&actionIsToday(t)).sort(actionSort).slice(0,5);document.getElementById('beforeList').innerHTML=before.map(taskHtml).join('')||'<div class="muted">Nothing special to carry out right now.</div>';let now=visibleTasks.filter(t=>actionIsToday(t)&&!t.morning).sort(actionSort).slice(0,Math.max(0,5-before.length));document.getElementById('nowList').innerHTML=now.map(taskHtml).join('')||'<div class="muted">Nothing screaming right now 🎉</div>';document.getElementById('waitingList').innerHTML=db.tasks.filter(t=>t.state==='Waiting').map(taskHtml).join('')||'<div class="muted">Nothing waiting.</div>';document.getElementById('reviewList').innerHTML=db.tasks.filter(t=>t.state==='Review').map(taskHtml).join('')||'<div class="muted">Review queue clear.</div>';document.getElementById('nextList').innerHTML=db.tasks.filter(t=>t.state==='Next').sort(actionSort).map(taskHtml).join('')||'<div class="muted">Nothing queued next.</div>';renderTodayFilter();renderShopping();renderPrices();renderDocs();updateOAuth()}
+function render(){showStorageWarning();renderSchoolRegistry();renderCapabilities();renderElectricity();renderAttention();renderSchoolReadiness();document.getElementById('kpis').innerHTML=[['Now','Now'],['Waiting','Waiting'],['Review','Review'],['Next','Next']].map(([s,label])=>`<button type="button" class="statusFilter ${todayFilter===s?'active':''}" data-state="${s}" onclick="setTodayFilter('${s}')"><b>${db.tasks.filter(t=>t.state===s).length}</b><span>${label}</span></button>`).join('');let focus=document.getElementById('todayFocus');if(focus){let n=db.tasks.filter(t=>actionIsToday(t)&&(!(t.module==='School Readiness'&&t.gmailId)||t.morning)).length;focus.textContent=n?n+' thing'+(n===1?'':'s')+' need'+(n===1?'s':'')+' you':'Nothing urgent right now';}let visibleTasks=db.tasks.filter(t=>!(t.module==='School Readiness'&&t.gmailId)||t.morning),before=visibleTasks.filter(t=>t.morning&&actionIsToday(t)).sort(actionSort).slice(0,5);document.getElementById('beforeList').innerHTML=before.map(taskHtml).join('')||'<div class="muted">Nothing special to carry out right now.</div>';let now=visibleTasks.filter(t=>actionIsToday(t)&&!t.morning).sort(actionSort).slice(0,Math.max(0,5-before.length));document.getElementById('nowList').innerHTML=now.map(taskHtml).join('')||'<div class="muted">Nothing screaming right now 🎉</div>';document.getElementById('waitingList').innerHTML=db.tasks.filter(t=>t.state==='Waiting').map(taskHtml).join('')||'<div class="muted">Nothing waiting.</div>';document.getElementById('reviewList').innerHTML=db.tasks.filter(t=>t.state==='Review').map(taskHtml).join('')||'<div class="muted">Review queue clear.</div>';document.getElementById('nextList').innerHTML=db.tasks.filter(t=>t.state==='Next').sort(actionSort).map(taskHtml).join('')||'<div class="muted">Nothing queued next.</div>';renderTodayFilter();renderShopping();renderPrices();renderDocs();updateOAuth()}
 function move(id,state){let t=db.tasks.find(x=>x.id===id);if(t){t.state=state;delete t.snoozedUntil;t.updatedAt=new Date().toISOString()}save();render()}
 function snooze(id){let t=db.tasks.find(x=>x.id===id);if(!t)return;let date=prompt('Snooze until (YYYY-MM-DD):',localISO(new Date(Date.now()+86400000)));if(date===null)return;date=date.trim();if(!/^\d{4}-\d{2}-\d{2}$/.test(date)||Number.isNaN(Date.parse(date+'T12:00:00'))||new Date(date+'T12:00:00').toISOString().slice(0,10)!==date||date<=localISO(new Date())){alert('Choose a real future date in YYYY-MM-DD format.');return}t.state='Next';t.snoozedUntil=date;t.updatedAt=new Date().toISOString();save();render()}function done(id){let t=db.tasks.find(x=>x.id===id);if(t&&t.recurrence==='annual-school-calendar'){t.lastCompletedYear=t.targetYear;t.targetYear=Number(t.targetYear)+1;t.title='Prepare '+t.targetYear+' PNPS school term invitations ZIP';t.state='Waiting';t.updatedAt=new Date().toISOString();t.lastYearCompletedAt=t.updatedAt}else if(t){if(t.state==='Review')t.resolution='Dismissed';t.state='Done';t.completedAt=new Date().toISOString();t.updatedAt=t.completedAt}save();render()}function addManual(){let title=document.getElementById('newTitle').value.trim();if(!title)return;ingestActions([{id:'m'+Date.now(),title,state:document.getElementById('newState').value,owner:document.getElementById('newOwner').value,cat:'Manual',module:'Capture',priority:50,source:'Quick capture'}]);document.getElementById('newTitle').value='';save();render()}
-function detectChild(text,source='',baseDate=new Date()){let low=(text+' '+source).toLowerCase();if(/alexander|\balex\b|aloe class/.test(low))return'Alexander';if(/imogen|100acrewood|100 acre wood|hundred acre wood|tigger|pooh/.test(low))return'Imogen';if(/harrison|grade\s*2|grade two|classroom.*grade 2|kwakwadimaditsi/.test(low))return'Harrison';if(/red roots/.test(low)){let y=new Date(baseDate).getFullYear();return y<=2024?'Harrison':'Alexander'}return'Children'}
+function detectChild(text,source='',baseDate=new Date()){
+ const route=ControlCentreSchoolRegistry.resolve({text,source,sourceDate:baseDate,registry:db?.schoolRegistry});
+ if(route.status==='matched')return route.children.join(' + ');
+ const low=String(text||'')+' '+String(source||'');
+ if(/\b(?:alexander|alex)\b/i.test(low))return 'Alexander';
+ if(/\bimogen\b/i.test(low))return 'Imogen';
+ if(/\bharrison\b/i.test(low))return 'Harrison';
+ return 'Children';
+}
+function renderSchoolRegistry(){
+ const api=ControlCentreSchoolRegistry,select=document.getElementById('schoolRegistryYear');
+ if(!select)return;
+ const currentYear=new Date().getFullYear(),old=Number(select.value)||currentYear;
+ const years=[...new Set([...api.YEARS,currentYear,currentYear+1,...db.schoolRegistry.records.map(r=>r.year)])].sort((a,b)=>a-b);
+ select.innerHTML=years.map(y=>'<option value="'+y+'">'+y+'</option>').join('');
+ select.value=String(years.includes(old)?old:currentYear);
+ const year=Number(select.value),reg=db.schoolRegistry;
+ const reminder=document.getElementById('schoolYearAlert');
+ if(reminder){
+  const due=api.annualRequired(reg,currentYear);
+  reminder.hidden=!due;
+  if(due)reminder.innerHTML='<strong>School year confirmation needed:</strong> Check the '+currentYear+' children, schools, grades and classes. <button type="button" class="btn" onclick="openPanel(\'settings\');document.getElementById(\'schoolYearRegistryCard\').scrollIntoView({behavior:\'smooth\'})">Review mappings</button>';
+ }
+ const status=document.getElementById('schoolRegistryStatus');
+ status.textContent=api.annualRequired(reg,year)?'Year '+year+' still needs your confirmation. Existing established assignments continue to work.':'Year '+year+' assignments confirmed.';
+ const rows=reg.records.filter(r=>r.year===year);
+ document.getElementById('schoolRegistryRows').innerHTML=rows.length?rows.map(r=>
+  '<div class="task"><strong>'+esc(r.child)+'</strong> · '+esc(r.school)+(r.grade?' · Grade '+esc(r.grade):' · School-wide affiliation')+(r.classCode?' · '+esc(r.classCode):'')+'</div>').join(''):
+  '<div class="status warn">No mappings saved for '+year+'. Add learners before confirming.</div>';
+ const dropdown=document.getElementById('schoolRegistryEdit'),selected=dropdown.value;
+ dropdown.innerHTML='<option value="">New mapping</option>'+rows.map(r=>
+  '<option value="'+esc(r.id)+'">'+esc(r.child)+' — '+esc(r.school)+' '+(r.grade?esc(r.grade):'All grades')+(r.classCode?' / '+esc(r.classCode):'')+'</option>').join('');
+ dropdown.value=rows.some(r=>r.id===selected)?selected:'';
+}
+function loadSchoolMappingEditor(){
+ const id=document.getElementById('schoolRegistryEdit').value;
+ const row=db.schoolRegistry.records.find(r=>r.id===id);
+ document.getElementById('schoolMappingChild').value=row?.child||'Harrison';
+ document.getElementById('schoolMappingSchool').value=row?.school||'PNPS';
+ document.getElementById('schoolMappingGrade').value=row?.grade||'R';
+ document.getElementById('schoolMappingClass').value=row?.classCode||'';
+}
+function schoolRegistryError(err){document.getElementById('schoolRegistryStatus').textContent=err.message||String(err)}
+function saveSchoolMapping(){
+ try{
+  if(storageReadOnly)throw Error('Repair local storage before editing school records.');
+  const select=document.getElementById('schoolRegistryEdit');
+  const next=ControlCentreSchoolRegistry.change(db.schoolRegistry,{
+   originalId:select.value,year:Number(document.getElementById('schoolRegistryYear').value),
+   child:document.getElementById('schoolMappingChild').value,
+   school:document.getElementById('schoolMappingSchool').value,
+   grade:document.getElementById('schoolMappingGrade').value,
+   classCode:document.getElementById('schoolMappingClass').value
+  });
+  db.schoolRegistry=next;
+  if(!save())throw Error('Could not persist learner mapping');
+  renderSchoolRegistry();
+  document.getElementById('schoolRegistryStatus').textContent='Mapping saved with history. Reconfirm the school year.';
+ }catch(e){schoolRegistryError(e)}
+}
+function removeSchoolMapping(){
+ const id=document.getElementById('schoolRegistryEdit').value;
+ if(!id){schoolRegistryError(Error('Choose an existing mapping first.'));return}
+ if(!confirm('Remove the selected year-specific mapping? Its prior value remains in the audit history.'))return;
+ try{
+  if(storageReadOnly)throw Error('Repair local storage before editing school records.');
+  db.schoolRegistry=ControlCentreSchoolRegistry.remove(db.schoolRegistry,id);
+  if(!save())throw Error('Could not persist school mapping removal');
+  renderSchoolRegistry();
+ }catch(e){schoolRegistryError(e)}
+}
+function confirmSchoolRegistryYear(){
+ try{
+  if(storageReadOnly)throw Error('Repair local storage before confirming school year.');
+  const year=Number(document.getElementById('schoolRegistryYear').value);
+  if(!confirm('Have you checked every child, school, grade and class for '+year+'?'))return;
+  db.schoolRegistry=ControlCentreSchoolRegistry.confirm(db.schoolRegistry,year);
+  if(!save())throw Error('Could not persist school-year confirmation');
+  renderSchoolRegistry();
+ }catch(e){schoolRegistryError(e)}
+}
 function emailHeader(full,name){return (full.payload?.headers||[]).find(h=>h.name.toLowerCase()===name.toLowerCase())?.value||''}
 function classifyAttention(text,subject='',sender='',gmailId=''){
  let raw=(subject+'\n'+text).trim(),low=raw.toLowerCase();
@@ -357,15 +557,171 @@ function schoolDateFromText(value,base=new Date()){let v=String(value||'');let d
 function localISO(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function currentSchoolMessage(text){let s=String(text||'').replace(/^>.*$/gm,'');let cuts=[/^On .{0,180}wrote:\s*$/im,/^[- ]*Original message[- ]*$/im,/^From:\s.+\nDate:\s/im];let at=cuts.map(r=>s.search(r)).filter(x=>x>0);if(at.length)s=s.slice(0,Math.min(...at));return s}
 function schoolOptional(text){return /completely voluntary|entirely voluntary|completely optional|optional resource|if you would like|if your child has achieved|should .* choose to participate|you are welcome to|for those parents who would like|may wear|no cost to you|will only (be required|start)/i.test(text)}
-function schoolMessageGate(text,source=''){let low=(source+'\n'+text).toLowerCase();if(/school fees?|fee structure|account\s*\d+|bursar@|uniform shop|missing .*uniform|occupational therapy|\bot\b assessment|github\.com|netlify|admission applications?/.test(low))return false;if(/sent to (this group|you).*in error|only meant for .* class parents/.test(low))return false;if(/invitation:\s*meeting|request for quick discussion|communication portals|feedback process|formal proposals|my schedule is open|available to meet|calendar invite/.test(low))return false;let child=/harrison|alexander|imogen|roy alexander|\b(?:gr|grade)\s*[0-9r]|aloe class|kwakwadi/.test(low);let parentNotice=/parents? and guardians?|class parents?|dear parents?|good (morning|afternoon) parents?/.test(low);let schoolDuty=/homework|poem|assignment|school|aftercare|holiday care|holiday programme|library|uniform|hair|assessment (?:file|folder)|red book|civv|costume|sport|swim|permission|reply slip|sna|red-a-fair|raffle|kaskar|excursion|outing|project|book day|photo day|pyjama|pajama/.test(low);let concrete=/\b(bring|wear|pack|return|sign(?: up)?|complete|fill|submit|send|pay|practise|practice|learn|revise|read|prepare|contribute|donate|attend|collect|drop off|hand(?:ed)? in|due|required|ensure)\b|make sure|please could i ask|please can i ask/.test(low);let linkedNotice=/weekly notices?|notices and reminders|newsletter/.test(low)&&/https?:\/\//.test(text);let policyOnly=/toys at aftercare|lost property|sharing of food|positive friendships|fresh friend fridays/.test(low)&&!/\b(bring|wear|pack|return|sign|complete|fill|submit|send|pay)\b/.test(low);if(policyOnly)return false;return linkedNotice||((child||parentNotice)&&schoolDuty&&concrete)}
+function schoolMessageGate(text,source=''){let low=(source+'\n'+text).toLowerCase();if(/school fees?|fee structure|account\s*\d+|bursar@|uniform shop|missing .*uniform|occupational therapy|\bot\b assessment|github\.com|netlify|admission applications?/.test(low))return false;if(/sent to (this group|you).*in error|only meant for .* class parents/.test(low))return false;if(/invitation:\s*meeting|request for quick discussion|communication portals|feedback process|formal proposals|my schedule is open|available to meet|calendar invite/.test(low))return false;let child=/harrison|alexander|imogen|roy alexander|\b(?:gr|grade)\s*[0-9r]|aloe class|kwakwadi/.test(low);let parentNotice=/parents? and guardians?|class parents?|dear parents?|good (morning|afternoon) parents?/.test(low);let schoolKnown=/\bpnps\b|pinelands\s+north\s+primary|red\s+roots|100\s*acre\s*wood/.test(low);let wholeSchoolNotice=/whole[\s-]*school|school[\s-]*wide|all\s+(?:learners|students|grades|pnps)|entire\s+school/.test(low);let schoolDuty=/homework|poem|assignment|school|aftercare|holiday care|holiday programme|library|uniform|hair|assessment (?:file|folder)|red book|civv|costume|sport|swim|permission|reply slip|sna|red-a-fair|raffle|kaskar|excursion|outing|project|book day|photo day|pyjama|pajama|\bhats?\b|\bbags?\b|\bbooks?\b/.test(low);let concrete=/\b(bring|wear|pack|return|sign(?: up)?|complete|fill|submit|send|pay|practise|practice|learn|revise|read|prepare|contribute|donate|attend|collect|drop off|hand(?:ed)? in|due|required|ensure)\b|make sure|please could i ask|please can i ask/.test(low);let linkedNotice=/weekly notices?|notices and reminders|newsletter/.test(low)&&/https?:\/\//.test(text);let policyOnly=/toys at aftercare|lost property|sharing of food|positive friendships|fresh friend fridays/.test(low)&&!/\b(bring|wear|pack|return|sign|complete|fill|submit|send|pay)\b/.test(low);if(policyOnly)return false;return linkedNotice||((child||parentNotice||(schoolKnown&&wholeSchoolNotice))&&schoolDuty&&concrete)}
 function schoolActionLine(line,whole=''){let l=line.toLowerCase(),w=whole.toLowerCase();if(/^how does|^each raffle form|^the raffle draw|^rider bands|^winners who|^important:/i.test(line))return false;if(/raffle form includes a ride band|ride band.*covers the rides|may not be able to make use of all th/i.test(l))return false;if(/^due date\s*:|overdue by \d+ days?|^title\s*:|^author\s*:|^barcode\s*:/i.test(line.trim()))return false;if(/^(subject|from|sent|to|cc):/i.test(line))return false;if(schoolOptional(line))return false;if(/for yourself|parents? (?:may|can|are welcome)|families are warmly welcome|help us by|able to donate|how many .* donate|purchase .* tickets?|buy .* tickets?/.test(l))return false;if(/formal proposals|feedback process|available to meet|calendar invite|my schedule|please let me know what time|communication portals|families will simply need to|plan accordingly|diarise|keep an eye on|friendly reminder|slots? (?:have been|left open)|responsible for manning|allocate a slot|responsibility is shared/.test(l))return false;let concrete=/\b(bring|wear|pack|return|sign(?: up)?|complete|fill|submit|send|pay|practise|practice|learn|revise|read|prepare|contribute|donate|collect|drop off|hand(?:ed)? in|due|required|ensure)\b|make sure|please could i ask|please can i ask/.test(l);if(!concrete)return false;let localSchool=/homework|poem|assignment|aftercare|holiday care|holiday programme|library|uniform|hair|assessment|red book|civv|costume|sport|swim|permission|reply slip|form\b|sna|red-a-fair|raffle|kaskar|excursion|outing|project|school|class|\bgr(?:ade)?\s*[0-9r]|book|cake|money|donation|hat|shoes|shirt|kit|pyjama|pajama/.test(l);let messageSchool=/harrison|alexander|imogen|roy alexander|parents? and guardians?|class parents?|\bgrade\s*[0-9r]|aloe class|homework|school|aftercare|sna|red-a-fair/.test(w);return localSchool||messageSchool}
 function schoolCanonicalAction(line,whole=''){let l=line.toLowerCase(),w=whole.toLowerCase();let homework=line.match(/^(?:(?:harrison|alexander|imogen)\s*:\s*)?(?:pnps\s*:\s*)?(?:(?:harrison|alexander|imogen)\s+)?homework\s+(?:is|:)\s+(.+)$/i);if(homework)return homework[1].trim();if(/foundation phase gala/.test(w)&&/already changed|black costume|red swimming cap|towel/.test(l))return 'Wear swimming costume and cap; pack towel for gala';if(/kaskar/.test(w)&&/forms? and money|bring the kaskar/.test(l))return 'Return Kaskar form and money';if(/holiday care reminder/.test(w)&&/pack a snack and a lunchbox/.test(l))return 'Pack snack and lunchbox for Holiday Care';if(/holiday care reminder/.test(w)&&/bring along a white top/.test(l))return 'Bring white top for Holiday Care';if(/assessment (?:file|folder)|red book/.test(w)&&/return|not been returned|ensure.*done/.test(l))return 'Return signed assessment folder / red book';if(/update on alexander'?s hair|green hair/.test(w)&&/cut|redye|sort this out|natural hair colours/.test(l))return "Fix Alexander's hair colour for school";if(/red-a-fair donations/.test(w)&&/donations?.*(?:due|required)|due this coming/.test(l))return 'Bring Red-a-Fair donations';if(/aftercare.*red a fair set up/.test(w)&&/collected straight after school|fetch.*early/.test(l))return 'Collect children early from Aftercare';if(/outstanding book/.test(w)&&/outstanding library book/.test(w)){let m=whole.match(/outstanding library book:\s*\n?([^\n]+)/i);return 'Return outstanding library book'+(m?' — '+m[1].trim():'')};if(/raffle forms?/.test(w)&&(/closing date for raffle money and forms|incomplete forms.*returned|forms?.*handed in/.test(l)))return 'Return Red-a-Fair raffle form and money';if(/sna parent signature|sna document/.test(w)&&/pack/.test(l))return 'Pack signed SNA form';if(/sna parent signature|sna document/.test(w)&&/drop it by|return/.test(l))return 'Return SNA form to Kwakwadi';if(/english poem/.test(w)&&/goes over it|ready for monday|practi[cs]e/.test(l))return 'Practise English poem';if(/red-a-fair form/.test(w)&&/fill it in|complete.*form/.test(l))return 'Complete Red-a-Fair contribution form';if(/aftercare.*2027/.test(w)&&/fill in|complete.*form/.test(l))return 'Complete 2027 Aftercare intentions form';if(/read-a-fair|red-a-fair/.test(w)&&/sign up/.test(l))return 'Sign up for a Read-a-Fair volunteer slot';if(/overdue notice|overdue book|return this item to the library/.test(w)&&(/overdue notice|overdue book|return this item to the library/.test(l)||/^fw:\s*overdue notice/i.test(line))){let m=whole.match(/Title:\s*([^\n]+)/i)||whole.match(/overdue notice:\s*([^\n]+?)\s+due\s+\d/i);return 'Return overdue library book'+(m?' — '+m[1].trim():'')}if(/raffle/.test(w)&&(/forms?.*(?:return|hand(?:ed)? in)|(?:return|hand(?:ed)? in).*forms?|incomplete forms.*returned/.test(l))){return 'Return Red-a-Fair raffle form'}if(/raffle/.test(w)&&/(raffle )?money|payment/.test(l)&&/hand(?:ed)? in|pay/.test(l)){return 'Return Red-a-Fair raffle form and payment'}let practical=line.match(/(?:^|[.!?]\s+)((?:please\s+)?(?:bring|pack|wear|return|take|send|hand|drop off|collect)\b[^.!?]*)/i);if(practical)return practical[1].trim();return line}
 function schoolActionKey(x){let k=normText(String(x||'').replace(/^(harrison|alexander|imogen|children):\s*/i,'')).replace(/\bplease\b/g,'').replace(/[^a-z0-9 ]/g,'').trim();let m=k.match(/return (?:overdue )?library book\s+(.+)/);if(m)return'library-return:'+m[1];return k}
 function splitSchoolInstructions(line){return String(line).split(/[.!?]\s+(?=(?:please\s+)?(?:bring|pack|wear|return|take|send|hand|drop\s+off|collect|revise|practi[cs]e|read|complete|submit|sign)\b)/i).map(x=>x.trim()).filter(Boolean)}
-function parseNotice(text,source='Manual notice',gmailId='',baseDate=new Date()){text=currentSchoolMessage(text);if(!schoolMessageGate(text,source))return[];let child=detectChild(text,source,baseDate);let url=(text.match(/https?:\/\/[^\s)\]]+/)||[])[0]||'';let cleaned=text.split(/["“]All views or opinions expressed/i)[0];let linkedNotice=/weekly notices?|notices and reminders|newsletter/i.test(source+' '+text)&&/https?:\/\//.test(text);if(/holiday care sign ups? open/i.test(cleaned)&&!/please|must|required|need to|complete|fill/i.test(cleaned))return[];let bits=cleaned.split(/\n|[•▪◦]/).flatMap(splitSchoolInstructions).map(x=>x.trim()).filter(x=>x.length>7);let actions=bits.filter(x=>schoolActionLine(x,cleaned)).map(x=>schoolCanonicalAction(x,cleaned));if(/red-a-fair raffle forms?/i.test(source+' '+cleaned)){let rr=actions.find(x=>/return red-a-fair raffle form and money/i.test(x));actions=rr?[rr]:[]}actions=[...new Map(actions.map(x=>[schoolActionKey(x),x])).values()].slice(0,8);if(!actions.length&&linkedNotice){let age=(Date.now()-new Date(baseDate).getTime())/86400000;if(age<=14)actions=[`Review linked school notice: ${source.split(' · ')[0]}`]};return actions.map((a,i)=>{let clean=a.replace(/https?:\/\/\S+/g,'').trim().replace(/^[-–—]\s*/,'').slice(0,160);let review=/^review /i.test(clean);if(/^(fw:|re:)?\s*(overdue notice|due date\s*:|title\s*:)/i.test(clean))return null;let morning=/\b(bring(?:ing)?|wear(?:ing)?|civv(?:ies)?|library|costume|kit|hat|shoes?|shirts?|cake|money|project|permission slip|reply slip|sports?|return(?:ed|ing)?|drop off|hand(?:ed)? in|donation|raffle|pack(?:s|ed|ing)?|hair|collect children|collect .* early)\b/i.test(clean);let priority=/today|tomorrow|by friday|due|must|please could i ask|please can i ask|remember/i.test(clean)?92:(morning?86:review?50:72);let due=(/return red-a-fair raffle form and money/i.test(a)?'2026-10-23':'')||schoolDateFromText(a,baseDate),rank=due?actionDueRank({due}):99,urgent=/today|tomorrow|must|remember|due\b|please could i ask|please can i ask/i.test(clean);let stale=Boolean(due&&rank===0&&!/overdue|outstanding|still|not received|missing/i.test(clean));let state=stale||review?'Review':(due?(rank<=2?'Now':'Next'):(urgent?'Now':'Next'));return{id:(gmailId||'p'+Date.now())+'_'+i,title:`${child}: ${clean}`,state,owner:'Santie',cat:'School',priority,source,gmailId,sourceUrl:url,child,morning,due:stale?'':due,originalDue:stale?due:'',reviewReason:stale?'Historical date requires confirmation':'',module:'School Readiness'}}).filter(Boolean)}
-function familyRoyReadinessItems(outboxItem){let p=outboxItem?.payload||{},sourceId=outboxItem?.source_id||'';if(!/^[a-f0-9]{64}$/i.test(sourceId)||outboxItem?.route!=='control_centre.school_readiness')return[];let base=p.source_timestamp?new Date(p.source_timestamp):new Date(outboxItem?.created_at||Date.now()),source='FamilyRoy Intake'+(p.source_chat?' · '+p.source_chat:''),route='control_centre.school_readiness',parsed=parseNotice(p.text||'',source,'familyroy:'+sourceId,base).map(x=>({...x,familyRoySourceId:sourceId,familyRoyRoute:route}));if(parsed.length)return parsed;let excerpt=String(p.text||'').replace(/\s+/g,' ').trim().slice(0,140);return[{id:'familyroy-review:'+sourceId,title:'Review shared school notice'+(excerpt?': '+excerpt:''),state:'Review',owner:'Santie',cat:'School',priority:65,source,familyRoySourceId:sourceId,familyRoyRoute:route,module:'School Readiness'}]}
-function ingestFamilyRoyReadiness(items=[]){let added=0,accepted=[];for(let item of items){let actions=familyRoyReadinessItems(item);added+=ingestActions(actions);accepted.push(item?.source_id||null)}save();render();return{received:items.length,added,accepted:accepted.filter(Boolean)}}
-async function consumeFamilyRoyReadinessHandoff({endpoint,capability,fetchImpl=fetch}={}){if(!endpoint||!capability)throw new Error('FamilyRoy handoff is incomplete.');let base=String(endpoint).replace(/\/$/,''),url=base+'/handoff',auth={Authorization:'Handoff '+capability},res=await fetchImpl(url,{headers:auth});if(!res.ok)throw new Error('FamilyRoy handoff '+res.status);let data=await res.json();if(data.route!=='control_centre.school_readiness'||!/^[a-f0-9]{64}$/i.test(data.source_id||''))throw new Error('FamilyRoy handoff route mismatch.');let result=ingestFamilyRoyReadiness([{source_id:data.source_id,route:data.route,payload:data.payload}]);let ack=await fetchImpl(url,{method:'POST',headers:{...auth,'Content-Type':'application/json'},body:JSON.stringify({acknowledge:true,consumer:'control_centre.school_readiness',source_id:data.source_id})});if(!ack.ok)throw new Error('FamilyRoy handoff acknowledgement '+ack.status);return{...result,acknowledged:true}}
+function schoolActionKind(action){
+ const v=String(action||'').toLowerCase();
+ if(/\b(?:bring|pack|wear|return|take|send|hand\s+in|drop\s+off|collect|sign|submit|fill|pay)\b/.test(v))return'readiness';
+ if(/\b(homework|huiswerk|revise|hersien|klanke|practis[ec]|learn|spelling|worksheet|read page|reading|phonics|sight words|poem)\b/.test(v))return'homework';
+ if(/\b(rsvp|save the date|attend|event|gala|sports day)\b/.test(v))return'calendar-candidate';
+ return'readiness';
+}
+function schoolRouting(text,source,baseDate,context={}){
+ if(typeof ControlCentreSchoolRegistry!=='undefined'){
+  return ControlCentreSchoolRegistry.resolve({text,source,school:context.school||'',
+   sourceChildren:context.children||[],sourceDate:baseDate,
+   registry:typeof db!=='undefined'?db.schoolRegistry:null});
+ }
+ return{status:'matched',children:[detectChild(text,source,baseDate)],school:null,
+   year:new Date(baseDate).getFullYear(),reason:'Legacy testing fallback'};
+}
+function parseNotice(text,source='Manual notice',gmailId='',baseDate=new Date(),context={}){
+ text=currentSchoolMessage(text);
+ if(!schoolMessageGate(text,source))return[];
+ const route=schoolRouting(text,source,baseDate,context);
+ if(route.status==='ignore')return[];
+ const url=(text.match(/https?:\/\/[^\s)\]]+/)||[])[0]||'';
+ const cleaned=text.split(/["“]All views or opinions expressed/i)[0];
+ const linkedNotice=/weekly notices?|notices and reminders|newsletter/i.test(source+' '+text)&&/https?:\/\//.test(text);
+ if(/holiday care sign ups? open/i.test(cleaned)&&!/please|must|required|need to|complete|fill/i.test(cleaned))return[];
+ const bits=cleaned.split(/\n|[•▪◦]/).flatMap(splitSchoolInstructions).map(x=>x.trim()).filter(x=>x.length>7);
+ let actions=bits.filter(x=>schoolActionLine(x,cleaned)).map(x=>schoolCanonicalAction(x,cleaned));
+ if(/red-a-fair raffle forms?/i.test(source+' '+cleaned)){
+  const raffle=actions.find(x=>/return red-a-fair raffle form and money/i.test(x));
+  actions=raffle?[raffle]:[];
+ }
+ actions=[...new Map(actions.map(x=>[schoolActionKey(x),x])).values()].slice(0,8);
+ if(!actions.length&&linkedNotice){
+  const age=(Date.now()-new Date(baseDate).getTime())/86400000;
+  if(age<=14)actions=['Review linked school notice: '+source.split(' · ')[0]];
+ }
+ const children=route.status==='matched'?route.children:['Children'];
+ return actions.flatMap((action,i)=>{
+  const clean=action.replace(/https?:\/\/\S+/g,'').trim().replace(/^[-–—]\s*/,'').slice(0,160);
+  if(/^(fw:|re:)?\s*(overdue notice|due date\s*:|title\s*:)/i.test(clean))return[];
+  const schoolKind=schoolActionKind(clean);
+  const morning=schoolKind==='readiness'&&/\b(bring(?:ing)?|wear(?:ing)?|civv(?:ies)?|library|costume|kit|hat|shoes?|shirts?|cake|money|project|permission slip|reply slip|sports?|return(?:ed|ing)?|drop off|hand(?:ed)? in|donation|raffle|pack(?:s|ed|ing)?|hair|collect children|collect .* early)\b/i.test(clean);
+  const priority=/today|tomorrow|by friday|due|must|please could i ask|please can i ask|remember/i.test(clean)?92:(morning?86:72);
+  const due=(/return red-a-fair raffle form and money/i.test(action)?'2026-10-23':'')||schoolDateFromText(action,baseDate);
+  const rank=due?actionDueRank({due}):99;
+  const urgent=/today|tomorrow|must|remember|due\b|please could i ask|please can i ask/i.test(clean);
+  const stale=Boolean(due&&rank===0&&!/overdue|outstanding|still|not received|missing/i.test(clean));
+  const needReview=stale||/^review /i.test(clean)||route.status!=='matched'||schoolKind==='calendar-candidate';
+  const state=needReview?'Review':(due?(rank<=2?'Now':'Next'):(urgent?'Now':'Next'));
+  const reason=route.status!=='matched'?route.reason:stale?'Historical date requires confirmation':schoolKind==='calendar-candidate'?'Calendar candidate requires date/venue confirmation':'';
+  return children.map((child,j)=>({
+   id:(gmailId||'p'+Date.now())+'_'+i+'_'+j,
+   title:child+': '+clean,
+   state,owner:needReview?'Unassigned':'Santie',cat:'School',priority,
+   source,gmailId,sourceUrl:url,child:needReview&&route.status!=='matched'?'':child,
+   morning,due:needReview&&route.status!=='matched'||stale?'':due,
+   originalDue:stale?due:'',
+   reviewReason:reason,
+   school:route.school||'',schoolYear:route.year,schoolKind,
+   schoolRegistryStatus:route.status,schoolRoutingReason:route.reason,
+   evidenceText:String(text).slice(0,12000),sourceTimestamp:new Date(baseDate).toISOString(),
+   module:schoolKind==='homework'?'School Homework':schoolKind==='calendar-candidate'?'School Calendar Candidate':'School Readiness'
+  }));
+ });
+}
+function familyRoyReadinessItems(outboxItem){
+ const p=outboxItem?.payload||{},sourceId=outboxItem?.source_id||'';
+ if(!/^[a-f0-9]{64}$/i.test(sourceId)||outboxItem?.route!=='control_centre.school_readiness')return[];
+ const base=p.source_timestamp?new Date(p.source_timestamp):new Date(outboxItem?.created_at||Date.now());
+ if(!Number.isFinite(base.getTime()))return[];
+ const source='FamilyRoy Intake'+(p.school?' · '+p.school:'')+(p.source_chat?' · '+p.source_chat:'');
+ const route='control_centre.school_readiness';
+ const routed=schoolRouting(p.text||'',source,base,{school:p.school,children:p.children||[]});
+ if(routed.status==='ignore')return[];
+ const parsed=parseNotice(p.text||'',source,'familyroy:'+sourceId,base,
+  {school:p.school,children:p.children||[]}).filter(x=>x.schoolKind==='readiness').map(x=>({
+   ...x,familyRoySourceId:sourceId,familyRoyRoute:route,
+   familyRoyEvidence:Array.isArray(p.evidence)?p.evidence:[],
+   originalSourceType:p.source_type||'',originalSourceChat:p.source_chat||'',
+   originalSender:p.sender||'',originalSourceTimestamp:p.source_timestamp||''
+  }));
+ if(parsed.length)return parsed;
+ const excerpt=String(p.text||'').replace(/\s+/g,' ').trim().slice(0,140);
+ return[{
+  id:'familyroy-review:'+sourceId,
+  title:'Review shared school notice'+(excerpt?': '+excerpt:''),
+  state:'Review',owner:'Unassigned',cat:'School',priority:65,
+  source,school:routed.school||'',schoolYear:routed.year||null,
+  reviewReason:routed.status==='review'?routed.reason:'Readiness route needs manual verification',
+  familyRoySourceId:sourceId,familyRoyRoute:route,
+  evidenceText:String(p.text||'').slice(0,12000),
+  familyRoyEvidence:Array.isArray(p.evidence)?p.evidence:[],
+  originalSourceType:p.source_type||'',originalSourceChat:p.source_chat||'',
+  originalSender:p.sender||'',originalSourceTimestamp:p.source_timestamp||'',
+  sourceTimestamp:base.toISOString(),
+  module:'School Readiness'
+ }];
+}
+function ingestFamilyRoyReadiness(items=[]){
+ if(storageReadOnly)throw Error('Cannot acknowledge FamilyRoy while local data requires recovery');
+ const original=db.tasks;
+ // Detached shallow records and provenance arrays guarantee that failed saves
+ // cannot leave imported/duplicate evidence visible as if it was committed.
+ db.tasks=original.map(t=>({...t,corroboratingSources:Array.isArray(t.corroboratingSources)?
+  t.corroboratingSources.slice():t.corroboratingSources}));
+ try{
+  let added=0,accepted=[],ignored=0;
+  for(const item of items){
+   if(!/^[a-f0-9]{64}$/i.test(item?.source_id||'')||
+      item?.route!=='control_centre.school_readiness'||!item.payload||
+      typeof item.payload!=='object'||typeof item.payload.text!=='string')
+    throw Error('FamilyRoy handoff evidence is incomplete or invalid');
+   const actions=familyRoyReadinessItems(item);
+   if(!actions.length)ignored++;
+   added+=ingestActions(actions,{persist:false});
+   accepted.push(item.source_id);
+  }
+  if(save()!==true)throw Error('FamilyRoy handoff NOT acknowledged because Control Centre could not persist the local data');
+  render();
+  return{received:items.length,added,ignored,accepted,persistence:'local-device-only'};
+ }catch(e){db.tasks=original;throw e}
+}
+async function consumeFamilyRoyReadinessHandoff({endpoint,capability,fetchImpl=fetch,
+ approvedOrigins=window.ControlCentreFamilyRoyHandoffConfig?.approvedOrigins||[]}={}){
+ if(!endpoint||!capability||!/^[A-Za-z0-9_-]{43}$/.test(String(capability)))
+  throw Error('FamilyRoy handoff is incomplete or invalid');
+ let origin;
+ try{
+  const candidate=new URL(String(endpoint));
+  if(candidate.protocol!=='https:'||candidate.username||candidate.password||
+   candidate.search||candidate.hash||candidate.pathname!=='/'&&candidate.pathname!=='')
+   throw Error('Invalid FamilyRoy origin');
+  origin=candidate.origin;
+ }catch{throw Error('FamilyRoy handoff URL was rejected')}
+ if(!Array.isArray(approvedOrigins)||!approvedOrigins.includes(origin))
+  throw Error('FamilyRoy intake origin has not yet been authorised for this QA build');
+ const url=origin+'/handoff',auth={Authorization:'Handoff '+capability};
+ const res=await fetchImpl(url,{method:'GET',headers:auth,redirect:'error',cache:'no-store'});
+ if(!res.ok)throw Error('FamilyRoy handoff '+res.status);
+ const data=await res.json();
+ if(data?.route!=='control_centre.school_readiness'||
+  !/^[a-f0-9]{64}$/i.test(data.source_id||''))
+  throw Error('FamilyRoy handoff route mismatch');
+ if(data.status==='acknowledged')
+  return{received:0,added:0,acknowledged:true,alreadyAcknowledged:true,
+   persistence:'upstream-already-acknowledged',
+   warning:'Previously delivered; this device has not imported it again.'};
+ if(data.status!=='redeemed'||!data.payload||typeof data.payload.text!=='string'||
+    data.payload.source_id!==data.source_id)
+  throw Error('FamilyRoy handoff payload failed validation');
+ const result=ingestFamilyRoyReadiness([{source_id:data.source_id,route:data.route,payload:data.payload}]);
+ let ack;
+ try{
+  ack=await fetchImpl(url,{method:'POST',headers:{...auth,'Content-Type':'application/json'},
+   body:JSON.stringify({acknowledge:true,consumer:'control_centre.school_readiness',source_id:data.source_id}),
+   redirect:'error',cache:'no-store'});
+ }catch{throw Error('FamilyRoy saved on this device, but upstream acknowledgement failed. Re-share to retry without duplicates.')}
+ if(!ack.ok)throw Error('FamilyRoy saved locally, but upstream acknowledgement returned '+ack.status+'. Re-share to retry.');
+ return{...result,acknowledged:true};
+}
 function parsePasted(){let text=document.getElementById('noticeText').value.trim(),src=document.getElementById('noticeSource').value,preview=document.getElementById('pastePreview');if(!text){preview.innerHTML='<div class="status warn" style="margin-top:9px">Paste a notice first.</div>';return}let items=parseNotice(text,src),unclassified=items.length===0;if(unclassified){let fingerprint=2166136261;for(let c of src+'|'+text){fingerprint=Math.imul(fingerprint^c.charCodeAt(0),16777619)}items=[{id:'manual-notice-review-'+(fingerprint>>>0).toString(16),title:'Review imported notice — no clear action extracted',state:'Review',owner:'Unassigned',cat:'School',module:'School Readiness',priority:45,source:src,evidenceText:text,created:new Date().toISOString()}]}let added=ingestActions(items);render();openPanel('school');preview.innerHTML=items.length?`<div class="status" style="margin-top:9px"><b>${added} action${added===1?'':'s'} added.</b> They are now in School Readiness/Today where applicable.</div>`+items.map(x=>`<div class="task"><strong>${esc(x.title)}</strong><span class="pill">${esc(x.state)}</span></div>`).join(''):'<div class="status warn" style="margin-top:9px">No actionable item was found in that notice.</div>';if(unclassified)preview.innerHTML='<div class="status warn" style="margin-top:9px">Saved the original notice in Review for your decision. No task or date was invented. '+(added?'1 item added.':'This notice was already recorded.')+'</div>';preview.scrollIntoView({behavior:'smooth',block:'nearest'})}
 function loadOAuth(file){if(!file)return;let r=new FileReader();r.onload=()=>{try{let j=JSON.parse(r.result),id=j.web?.client_id||j.installed?.client_id;if(!id)throw 0;FamilyRoyGoogle.setClientId(id);document.getElementById('oauthStatus').className='status';document.getElementById('oauthStatus').textContent='Google client ID loaded.';initToken()}catch{document.getElementById('oauthStatus').className='status bad';document.getElementById('oauthStatus').textContent='That JSON did not contain a Google OAuth client ID.'}};r.readAsText(file)}
 function updateOAuth(){let id=FamilyRoyGoogle.clientId();document.getElementById('oauthStatus').textContent=id?'Google client configured · ready to sign in.':'No Google client ID configured.';document.getElementById('oauthStatus').className=id?'status':'status warn';if(id)initToken()}
@@ -670,7 +1026,8 @@ function restoreInspectedCloud(){
 function exportLocalData(){let backup={format:'familyroy-control-centre-backup',savedAt:new Date().toISOString(),data:db},blob=new Blob([JSON.stringify(backup,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download='control-centre-backup-'+new Date().toISOString().slice(0,10)+'.json';document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),5000)}
 function restoreLocalData(file){if(!file)return;let reader=new FileReader();reader.onload=()=>{try{let backup=JSON.parse(reader.result);if(backup?.format!=='familyroy-control-centre-backup'||!Array.isArray(backup.data?.tasks))throw new Error('This is not a valid Control Centre backup.');if(!confirm('Restore this backup on this device? Existing local Control Centre data will be replaced. Export the current data first if needed.'))return;if(storageReadOnly){downloadDamagedLocalData();let damaged=localStorage.getItem(KEY);if(damaged!==null)localStorage.setItem(KEY+'_damaged',damaged);localStorage.setItem(KEY,JSON.stringify(backup.data))}else writeLocalSnapshot(localStorage,KEY,backup.data);storageReadOnly=false;storageWarning='';db=load();render();alert('Local Control Centre backup restored.')}catch(e){alert('Restore failed: '+(e.message||String(e)))}};reader.onerror=()=>alert('Could not read that backup file.');reader.readAsText(file)}
 function resetData(){if(prompt('Export a backup before deleting local data. Type DELETE to permanently reset this device.')==='DELETE'){localStorage.removeItem(KEY);localStorage.removeItem(KEY+'_previous');storageReadOnly=false;storageWarning='';db=load();render()}}
-function openPanel(id){document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.id===id));document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.p===id));window.scrollTo(0,0)}document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>openPanel(t.dataset.p));document.getElementById('today').textContent=new Intl.DateTimeFormat('en-ZA',{weekday:'long',day:'numeric',month:'long',year:'numeric'}).format(new Date());window.addEventListener('load',()=>{syncPublishedPriceFeed().then(()=>renderShopping());
+function openPanel(id){document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.id===id));document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.p===id));window.scrollTo(0,0)}document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>openPanel(t.dataset.p));document.getElementById('today').textContent=new Intl.DateTimeFormat('en-ZA',{weekday:'long',day:'numeric',month:'long',year:'numeric'}).format(new Date());window.addEventListener('hashchange',()=>{void handleFamilyRoyDeepLink()});
+window.addEventListener('load',()=>{syncPublishedPriceFeed().then(()=>renderShopping());
 render();handleDeepLink();handleFamilyRoyDeepLink();setTimeout(initToken,700);
 try{window.ControlCentreBackendUI.mount({
   config:window.ControlCentreBackendConfig,fetchImpl:window.fetch.bind(window),google:window.google,
