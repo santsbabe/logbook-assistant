@@ -118,9 +118,10 @@ assert.doesNotMatch(taskHtml,/Open source email/,'FamilyRoy IDs must never becom
 const xss=ctx.taskHtml({...ctx.db.tasks[0],evidenceText:'<img src=x onerror=alert(1)>',originalSender:'<script>alert(1)</script>'});
 assert.doesNotMatch(xss,/<script>|<img/,'Source text is HTML-escaped');
 assert.match(xss,/&lt;script&gt;/);
+const countBeforeRejected=ctx.db.tasks.length;
 assert.throws(()=>ctx.ingestFamilyRoyReadiness([{...first,route:'homework_quest'}]),/invalid/);
 assert.throws(()=>ctx.ingestFamilyRoyReadiness([{...first,payload:null}]),/invalid/);
-assert.equal(ctx.db.tasks.length,1,'Rejected handoffs never create tasks');
+assert.equal(ctx.db.tasks.length,countBeforeRejected,'Rejected handoffs never create tasks');
 
 // Unassigned learner must be actively chosen for Add now/Add later;
 // dismissal is permitted without inventing an assignment.
