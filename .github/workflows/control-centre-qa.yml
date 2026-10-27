@@ -24,7 +24,11 @@ jobs:
           node --check /tmp/control-centre-inline.js
       - name: Control Centre functional regression tests
         run: node tests/control-centre-regressions.cjs
-      - name: Verify LESS read-only action projection and preservation\n        run: |\n          node --check familyroy-control-centre-qa/less-readonly-projection.js\n          node tests/less-readonly-projection.cjs\n      - name: Test private Drive transfer and background Gmail worker contracts
+      - name: Verify LESS read-only action projection and preservation
+        run: |
+          node --check familyroy-control-centre-qa/less-readonly-projection.js
+          node tests/less-readonly-projection.cjs
+      - name: Test private Drive transfer and background Gmail worker contracts
         run: node tests/control-centre-cloud-and-worker.cjs
       - name: Syntax-check cloud and worker modules
         run: |
