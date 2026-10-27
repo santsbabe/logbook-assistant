@@ -195,6 +195,28 @@ const srv=createServer((req,res)=>{
     'An unapproved preview origin must stay disconnected after browser restart');
   assert.equal(remoteRequests.length,0,'Browser reopening must not contact an unapproved private endpoint');
 
+  const attemptedForeign=[];
+  page.on('request',request=>{
+    if(request.url().includes('evil.example'))attemptedForeign.push(request.url());
+  });
+  const cap='X'.repeat(43);
+  await page.goto(startUrl+'#familyroy='+cap+'&endpoint=https%3A%2F%2Fevil.example',
+    {waitUntil:'load',timeout:25000});
+  await page.waitForFunction(()=>location.hash==='',{timeout:10000});
+  assert.deepEqual(attemptedForeign,[],
+    'Unapproved handoff deep link may not transmit any capability or make a network request');
+  assert.equal(remoteRequests.length,0,
+    'A hostile deep link must not enable private API or external sync');
+  const afterHostile=await page.evaluate(()=>({
+    first:db.tasks.find(t=>t.familyRoySourceId==='e'.repeat(64))?.reviewDecision?.decision,
+    second:db.tasks.find(t=>t.familyRoySourceId==='f'.repeat(64))?.reviewDecision?.decision,
+    backend:window.ControlCentreBackendConfig.enabled
+  }));
+  assert.equal(afterHostile.first,'Add now');
+  assert.equal(afterHostile.second,'Dismissed');
+  assert.equal(afterHostile.backend,false);
+
+
 
   console.log('PASS real Chromium mobile UI: conflict decisions, historical learner-year edits, annual confirmation, browser persistence and audited FamilyRoy Review and no private API traffic; reload preserves Review, evidence and registry');
  }finally{
