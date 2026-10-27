@@ -83,3 +83,22 @@
 
 A delivered handoff means at most **saved on the current device plus source acknowledgement**. An upstream \`alreadyAcknowledged\` response on a different device must never be called local or cross-device persistence.
 
+## 27 October 2026 — no-deploy resilience package
+
+**Evidence:** [passing QA and disposable PostgreSQL run 40540859060](https://github.com/santsbabe/logbook-assistant/actions/runs/40540859060). The work is on **held Control Centre integration draft PR #20**; **FamilyRoy preview PR #1** remains held. This is not a published web-app update.
+
+- **School-qualified deduplication:** \`schoolOccurrenceKey\` now includes the school's canonical identifier as well as action, learner, due date, effective year and kind. Offline regression creates two indistinguishable-looking readiness actions for different schools and asserts that both persist, while repeat IDs remain idempotent. Previously those could be collapsed and evidence misattributed.
+- **Historical registry confirmation:** moving a learner mapping across calendar years invalidates the parent confirmation for *both* the old and new year. The original record stays in the audit log; unrelated years and existing automatic Grade 2 → Harrison inference are unchanged.
+- **Real browser restart test:** headless mobile-width Chromium closes/reopens the Control Centre document and checks local parent Review state, Add now and Dismiss audit, original evidence references, the 2027 class amendment and annual confirmation, historical 2026 routing, and disabled cloud/API settings survive reloading.
+- **Same-tab handoff:** browser \`hashchange\` is now handled as well as initial page load, so reusing an already-open browser tab does not silently ignore a newly delivered FamilyRoy URL fragment. This behaviour was required by the adversarial browser test.
+- **Credential protection:** a synthetic forged fragment pointing at \`https://evil.example\` must be removed without any external request, credential transmission, task mutation or private API access. The approved source-origin list still defaults to **empty**, and a separately consented deployment-origin check remains mandatory.
+
+### Coordinated release manifest and rollback reconciliation
+
+1. Confirm the **exact** FamilyRoy OCR fix SHA, the eventual authorised preview PR head, Control Centre PR #20 head, actual published QA SHA, allowed FamilyRoy HTTPS origin, and whether each is still held. Do not assume that FamilyRoy source fix branch equals its older preview PR #1 tip.
+2. Keep \`approvedOrigins: []\` and private backend disabled on all offline builds. Setting an approved origin or publishing a QA integration change is a separate user-authorised release action. **Do not merge PR #20 or FamilyRoy PR #1 without explicit approval.**
+3. Reconcile source/outbox queue and last acknowledged source ID before any rollback; never delete pending or acknowledged image/evidence references. Store historical learner registry records and parent Review decisions in the encrypted backup or local export before any approved release.
+4. For a future preview rollback: restore each project's separately recorded last-known-good **preview** deploy ID and commit. Roll back static QA separately from FamilyRoy, keeping local snapshots and pending handoffs; test malicious-fragment denial and retry-after-failure again before re-enabling.
+5. Physical iPhone / default-browser Share Sheet and actual photographic OCR acceptance, private cross-device persistence, live OAuth, backup restoration, available Netlify credits, current hosting quotes, exact preview URLs and deployment authorisation are **still open go-live gates**.
+
+**No Netlify build, infrastructure provision, main-branch merge or production promotion is authorised by this report.**
