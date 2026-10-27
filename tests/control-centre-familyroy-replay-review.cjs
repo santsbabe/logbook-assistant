@@ -94,6 +94,21 @@ assert.equal(ctx.db.tasks[0].corroboratingSources[0].sender,'Second teacher');
 assert.equal(ctx.db.tasks[0].corroboratingSources[0].evidence[0].sha256,'photo-bbbbbbbb');
 ctx.ingestFamilyRoyReadiness([sameOther]);
 assert.equal(ctx.db.tasks[0].corroboratingSources.length,1,'Replay cannot duplicate provenance');
+
+const differentSchools=[
+ {id:'school-red-roots-test',title:'Alexander: Bring library bag',school:'Red Roots',
+  schoolYear:2026,schoolKind:'readiness',child:'Alexander',due:'2026-10-23',
+  familyRoySourceId:'d'.repeat(64),state:'Next',module:'School Readiness'},
+ {id:'school-pnps-test',title:'Alexander: Bring library bag',school:'PNPS',
+  schoolYear:2026,schoolKind:'readiness',child:'Alexander',due:'2026-10-23',
+  familyRoySourceId:'e'.repeat(64),state:'Next',module:'School Readiness'}
+];
+assert.equal(ctx.ingestActions(differentSchools,{persist:false}),2,
+ 'Similar preparation actions for separate schools must not collapse together');
+assert.equal(ctx.ingestActions(differentSchools,{persist:false}),0,
+ 'School-qualified deduplication must remain idempotent');
+assert.equal(ctx.db.tasks.filter(t=>differentSchools.some(x=>x.id===t.id)).length,2);
+
 const taskHtml=ctx.taskHtml(ctx.db.tasks[0]);
 assert.match(taskHtml,/Source ID: aaaaaaaaaa/);
 assert.match(taskHtml,/Source ID: bbbbbbbbbb/);
