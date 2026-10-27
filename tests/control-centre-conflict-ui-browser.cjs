@@ -158,7 +158,45 @@ const srv=createServer((req,res)=>{
   assert.equal(familyReview.originalText,true);
   assert.equal(remoteRequests.length,0,'Review actions cannot call an unapproved private API');
 
-  console.log('PASS real Chromium mobile UI: conflict decisions, historical learner-year edits, annual confirmation, browser persistence and audited FamilyRoy Review and no private API traffic');
+  // A genuinely fresh document must recover the saved parent decisions,
+  // original source references and historical school registry from storage.
+  await page.reload({waitUntil:'load',timeout:25000});
+  await page.waitForFunction(()=>Boolean(document.querySelector('#reviewList')));
+  const reopened=await page.evaluate(()=>{
+    const a='e'.repeat(64),b='f'.repeat(64);
+    const stored=readLocalSnapshot(localStorage,KEY);
+    const one=db.tasks.find(t=>t.familyRoySourceId===a);
+    const two=db.tasks.find(t=>t.familyRoySourceId===b);
+    const approvedYear=!ControlCentreSchoolRegistry.annualRequired(db.schoolRegistry,2027);
+    const changed=db.schoolRegistry.records.some(t=>t.year===2027&&t.grade==='3'&&t.classCode==='3A'&&t.child==='Harrison');
+    const unchanged=ControlCentreSchoolRegistry.resolve({text:'2026 PNPS Grade 2 homework',source:'PNPS',
+      sourceDate:new Date('2027-04-10'),registry:db.schoolRegistry}).children.join(',');
+    return{saved:stored.status,first:one?.state,firstChild:one?.child,
+      firstDecision:one?.reviewDecision?.decision,firstText:one?.evidenceText||'',
+      firstEvidence:one?.familyRoyEvidence?.[0]?.sha256,
+      second:two?.state,secondDecision:two?.reviewDecision?.decision,
+      approvedYear,changed,unchanged,
+      backendEnabled:window.ControlCentreBackendConfig?.enabled,
+      handoffOrigins:window.ControlCentreFamilyRoyHandoffConfig?.approvedOrigins||[]};
+  });
+  assert.equal(reopened.saved,'ok');
+  assert.equal(reopened.first,'Now');
+  assert.equal(reopened.firstChild,'Harrison');
+  assert.equal(reopened.firstDecision,'Add now');
+  assert.match(reopened.firstText,/Bring library bag/);
+  assert.equal(reopened.firstEvidence,'synthetic-eeeeeeee');
+  assert.equal(reopened.second,'Done');
+  assert.equal(reopened.secondDecision,'Dismissed');
+  assert.equal(reopened.approvedYear,true);
+  assert.equal(reopened.changed,true);
+  assert.equal(reopened.unchanged,'Harrison');
+  assert.equal(reopened.backendEnabled,false);
+  assert.deepEqual(reopened.handoffOrigins,[],
+    'An unapproved preview origin must stay disconnected after browser restart');
+  assert.equal(remoteRequests.length,0,'Browser reopening must not contact an unapproved private endpoint');
+
+
+  console.log('PASS real Chromium mobile UI: conflict decisions, historical learner-year edits, annual confirmation, browser persistence and audited FamilyRoy Review and no private API traffic; reload preserves Review, evidence and registry');
  }finally{
   await browser.close();
  }
