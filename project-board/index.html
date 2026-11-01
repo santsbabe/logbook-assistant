@@ -365,14 +365,13 @@ async function copyResumePrompt(prompt){
 }
 async function resumeProject(p){
   const prompt=buildResumePrompt(p);
+  // Open synchronously from the card gesture to avoid popup blockers.
+  const opened=window.open('https://chatgpt.com/','_blank');
+  if(opened)opened.opener=null;
   const copied=await copyResumePrompt(prompt);
-  // Do not rely on undocumented ChatGPT query parameters or deep-link schemes.
-  // Open a fresh chat and give an explicit copy/paste recovery path.
-  const url='https://chatgpt.com/';
-  const opened=window.open(url,'_blank','noopener');
-  if(!opened){window.location.assign(url);return}
   if(!copied){window.prompt('Copy this complete recovery context, then paste it into the new ChatGPT chat:',prompt)}
   else{window.alert('Project recovery context copied. Paste it into the new ChatGPT conversation to resume '+p.name+'.')}
+  if(!opened)window.location.assign('https://chatgpt.com/');
 }
 let activeHealthFilter="";let activeAttentionFilter="";let preferredView="dashboard";
 function sortRows(rows){
