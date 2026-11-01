@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-11T10:49:00+02:00",
+  "updated": "2026-11-01T12:10:00+02:00",
   "milestones": [
     "defined",
     "specified",
@@ -33,7 +33,21 @@
       "readyToTest": false,
       "quickWin": false,
       "statusReviewed": "2026-10-05",
-      "liveStage": "stable"
+      "liveStage": "stable",
+      "decisions": [
+        "Card opens a fresh ChatGPT conversation with full recovery context copied; original conversation links are not required.",
+        "Canonical register is projects.json; snag links remain independent anchors.",
+        "LESS acceptance gates precede marking a fix resolved."
+      ],
+      "worklog": [
+        {
+          "date": "2026-11-01",
+          "note": "Recovery reliability repair prepared as review-only PR. No production deployment authorised."
+        }
+      ],
+      "snags": [
+        "Card resume deep-link scheme was unsupported and recovery prompt omitted worklogs, decisions and snag links."
+      ]
     },
     {
       "id": "familyroy-control-centre",
@@ -325,7 +339,21 @@
       "readyToTest": false,
       "quickWin": false,
       "liveStage": "stable",
-      "statusReviewed": "2026-10-05"
+      "statusReviewed": "2026-10-05",
+      "decisions": [
+        "Preserve original game shell, four crew characters, XP and saved progress.",
+        "Parent Review acceptance and snag closure are distinct from deployment approval."
+      ],
+      "worklog": [
+        {
+          "date": "2026-10-21",
+          "note": "Parent Review mobile layout accepted; Close LESS restores ordinary Parent Review. Snag tracker acceptance check: 134 total, 19 resolved, 115 pending."
+        }
+      ],
+      "snags": [
+        "Week 2 import failed; investigate in canonical snag tracker.",
+        "Confirm latest tracker counts before claiming closure; historical GitHub snapshot may be stale."
+      ]
     },
     {
       "id": "homework-processing-system",
@@ -399,7 +427,16 @@
       "userAction": "Continue acceptance testing against the snag register.",
       "readyToTest": true,
       "quickWin": false,
-      "statusReviewed": "2026-10-05"
+      "statusReviewed": "2026-10-05",
+      "worklog": [
+        {
+          "date": "2026-10-21",
+          "note": "User accepted responsive Parent Review layout and read-only Close LESS restoration on iPhone."
+        }
+      ],
+      "decisions": [
+        "Preserve all LESS and snag repairs; no production, Drive or learner-progress changes without explicit authorisation."
+      ]
     },
     {
       "id": "afrikaans-tutor",
@@ -473,7 +510,17 @@
       "readyToTest": false,
       "quickWin": false,
       "liveStage": "testing",
-      "statusReviewed": "2026-10-05"
+      "statusReviewed": "2026-10-05",
+      "decisions": [
+        "Trial feedback is recorded without endless immediate polishing.",
+        "Do not claim iPhone reminder and period-completion acceptance until physical checks pass."
+      ],
+      "worklog": [
+        {
+          "date": "2026-10-04",
+          "note": "Adoption blocker repair promoted; physical acceptance items remain in Bloom snag tracker."
+        }
+      ]
     },
     {
       "id": "bloom-health-bridge",
@@ -569,7 +616,13 @@
       "readyToTest": false,
       "quickWin": false,
       "liveStage": "testing",
-      "statusReviewed": "2026-10-05"
+      "statusReviewed": "2026-10-05",
+      "worklog": [
+        {
+          "date": "2026-09-28",
+          "note": "ADDIS Clearly Neat 11L, 15L and 30L sale sizes committed; live real-world trial continues."
+        }
+      ]
     },
     {
       "id": "logbook-assistant",
@@ -604,7 +657,16 @@
       "userAction": "Run one full real-trip acceptance test.",
       "readyToTest": false,
       "quickWin": false,
-      "statusReviewed": "2026-10-05"
+      "statusReviewed": "2026-10-05",
+      "worklog": [
+        {
+          "date": "2026-10-01",
+          "note": "LB-001 Odo End handoff and evidence-only Rene flow remain unresolved."
+        }
+      ],
+      "snags": [
+        "LB-001: Odo End handoff misroutes test time and omits required end fields."
+      ]
     },
     {
       "id": "odo-start",
@@ -1231,11 +1293,11 @@
       "category": "Learning",
       "parent": "Homework Quest Parent Console",
       "summary": "Canonical snag register for Homework Quest and Parent Console issues, dependencies, resolution state and acceptance follow-up.",
-      "status": "Live tracker — 131 snags / 7 resolved",
+      "status": "Live tracker — latest user acceptance 134 / 19 resolved",
       "health": "live",
       "lastUpdated": "2026-09-30",
-      "blocker": "124 of 131 canonical snags remain pending.",
-      "next": "Continue the dependency-aware backlog from the canonical snag tracker.",
+      "blocker": "GitHub snapshot (131/7 on 30 September) differs from accepted live tracker (134/19 on 21 October); reconcile before reporting canonical totals.",
+      "next": "Reconcile live tracker against GitHub snapshot; preserve all existing records.",
       "milestones": {
         "defined": "done",
         "specified": "done",
@@ -1258,7 +1320,16 @@
       "readyToTest": false,
       "quickWin": false,
       "liveStage": "monitoring",
-      "statusReviewed": "2026-10-05"
+      "statusReviewed": "2026-10-05",
+      "worklog": [
+        {
+          "date": "2026-10-21",
+          "note": "User accepted tracker filters and counts: 134 total, 19 resolved, 115 pending; supersedes older 131/7 GitHub snapshot until independently reconciled."
+        }
+      ],
+      "snags": [
+        "Reconcile current live tracker and repository snapshot before changing canonical counts."
+      ]
     },
     {
       "id": "reading-radar",
@@ -1297,7 +1368,16 @@
       "readyToTest": false,
       "quickWin": false,
       "liveStage": "testing",
-      "statusReviewed": "2026-10-05"
+      "statusReviewed": "2026-10-05",
+      "decisions": [
+        "Stable baseline retained; discovery, reading-time tracking, sync and Figma redesign remain in improvement tracker."
+      ],
+      "worklog": [
+        {
+          "date": "2026-10-29",
+          "note": "Improvement tracker remains canonical for deferred work; no production promotion implied."
+        }
+      ]
     },
     {
       "id": "project-treehouse",
@@ -1331,7 +1411,16 @@
       "needsUser": false,
       "readyToTest": false,
       "quickWin": false,
-      "statusReviewed": "2026-10-05"
+      "statusReviewed": "2026-10-05",
+      "decisions": [
+        "Preview-only until executable QA and user acceptance; preserve Homework Quest independently."
+      ],
+      "worklog": [
+        {
+          "date": "2026-10-02",
+          "note": "Browser resume architecture and executable QA documents committed; child-facing copy preview refined."
+        }
+      ]
     },
     {
       "id": "term-4-launch-pad",
