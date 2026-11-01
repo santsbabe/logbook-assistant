@@ -333,18 +333,46 @@ function progress(m){const vals=Object.values(m||{}).map(v=>v==="done"?1:v==="ac
 function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function hc(h){return ["live","active","paused","blocked","closed"].includes(h)?h:"active"}
 function card(p){const pct=progress(p.milestones),ms=Object.keys(labels).map(k=>`<div class="milestone"><i class="dot ${p.milestones?.[k]||""}"></i><span>${labels[k]}</span></div>`).join(""),links=(p.links||[]).map(l=>`<a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label)} ↗</a>`).join(""),liveSub=p.health==="live"&&p.liveStage?` · ${({testing:"In testing",stable:"Stable",monitoring:"Monitoring"}[p.liveStage]||p.liveStage)}`:"",userNeed=p.needsUser&&p.userAction?`<div class="detail needsUserDetail"><b>Needs you:</b> ${esc(p.userAction)}</div>`:"";return `<article class="card health-${hc(p.health)}" data-project-id="${esc(p.id)}" tabindex="0" role="button" title="Continue this project in ChatGPT"><div class="cardTop"><div><div class="kicker">${esc(p.category)}</div><h3>${esc(p.name)}</h3></div><span class="state ${hc(p.health)}">${esc(p.status+liveSub)}</span></div>${p.parent?`<div class="parent">↳ ${esc(p.parent)}</div>`:""}<div class="summary">${esc(p.summary)}</div><div class="progressRow"><div class="bar"><i style="width:${pct}%"></i></div><div class="percent">${pct}%</div></div><div class="milestones">${ms}</div>${userNeed}<div class="detail"><b>Blocker:</b> ${esc(p.blocker)}</div><div class="detail"><b>Next:</b> ${esc(p.next)}</div><div class="links">${links}</div><div class="updated">Build changed ${esc(p.lastUpdated)} · Status reviewed ${esc(p.statusReviewed||p.lastUpdated)}</div></article>`}
-function buildResumePrompt(p){return [
-  'Please continue work on the Build Garden project "'+p.name+'".',
-  p.parent?'Parent project: '+p.parent+'.':'',
-  p.summary?'Why we are building it: '+p.summary:'',
-  p.blocker?'Current blocker: '+p.blocker:'',
-  p.next?'Current next action: '+p.next:'',
-  'Recover the relevant prior project context and continue from the first genuinely incomplete step. Do not restart from scratch if prior work can be recovered.'
-].filter(Boolean).join('\n\n')}
-function originConversationId(p){const raw=p.chat||p.originChat||'';const m=String(raw).match(/chatgpt\.com\/c\/([^/?#]+)/i);return m?m[1]:(String(raw).match(/^[a-zA-Z0-9-]{8,}$/)?String(raw):'')}
-async function copyResumePrompt(prompt){try{await navigator.clipboard.writeText(prompt);return true}catch(e){try{const t=document.createElement('textarea');t.value=prompt;t.style.position='fixed';t.style.opacity='0';document.body.appendChild(t);t.select();document.execCommand('copy');t.remove();return true}catch(_){return false}}}
-async function resumeProject(p){const prompt=buildResumePrompt(p);await copyResumePrompt(prompt);const id=originConversationId(p);if(id){const appUrl='com.openai.chat://chatgpt.com/c/'+encodeURIComponent(id)+'/?prompt='+encodeURIComponent(prompt);const webUrl='https://chatgpt.com/c/'+encodeURIComponent(id)+'?prompt='+encodeURIComponent(prompt);window.location.href=appUrl;setTimeout(()=>{if(!document.hidden)window.location.href=webUrl},1400);return}
-const appUrl='com.openai.chat://?prompt='+encodeURIComponent(prompt),webUrl='https://chatgpt.com/?prompt='+encodeURIComponent(prompt);window.location.href=appUrl;setTimeout(()=>{if(!document.hidden)window.location.href=webUrl},1400)}
+function buildResumePrompt(p){
+  const lines=[
+    'Continue this Build Garden project from its recorded state. Do not restart completed work.',
+    'Project: '+p.name,
+    'Project ID: '+p.id,
+    p.parent?'Parent: '+p.parent:null,
+    'Purpose: '+(p.summary||'Not recorded'),
+    'Lifecycle: '+p.health+' / '+p.status,
+    'Last build change: '+(p.lastUpdated||'Not recorded'),
+    'Status reviewed: '+(p.statusReviewed||'Not recorded'),
+    'Current blocker: '+(p.blocker||'None recorded'),
+    'Next action: '+(p.next||'Not recorded'),
+    p.userAction?'User decision pending: '+p.userAction:null,
+    p.worklog&&p.worklog.length?'WORKLOG (newest first):\\n'+p.worklog.map(w=>'- '+w.date+': '+w.note).join('\\n'):null,
+    p.decisions&&p.decisions.length?'ESTABLISHED DECISIONS:\\n'+p.decisions.map(d=>'- '+d).join('\\n'):null,
+    p.snags&&p.snags.length?'UNRESOLVED SNAGS:\\n'+p.snags.map(d=>'- '+d).join('\\n'):null,
+    p.links&&p.links.length?'SOURCE LINKS:\\n'+p.links.map(l=>'- '+l.label+': '+l.url).join('\\n'):null,
+    'LESS rules: preserve existing working behaviour, history and data; inspect the canonical snag log; repair one root cause at a time; test regressions; do not claim resolution before all acceptance gates pass.',
+    'Do not spend, deploy, modify production or overwrite learner progress without explicit approval.',
+    'Recover additional relevant context where accessible; distinguish verified facts from missing history. Continue from the first incomplete step.'
+  ];
+  return lines.filter(Boolean).join('\\n\\n');
+}
+async function copyResumePrompt(prompt){
+  try{await navigator.clipboard.writeText(prompt);return true}
+  catch(e){
+    try{const t=document.createElement('textarea');t.value=prompt;t.style.position='fixed';t.style.opacity='0';document.body.appendChild(t);t.select();const ok=document.execCommand('copy');t.remove();return ok}
+    catch(_){return false}
+  }
+}
+async function resumeProject(p){
+  const prompt=buildResumePrompt(p);
+  // Open synchronously from the card gesture to avoid popup blockers.
+  const opened=window.open('https://chatgpt.com/','_blank');
+  if(opened)opened.opener=null;
+  const copied=await copyResumePrompt(prompt);
+  if(!copied){window.prompt('Copy this complete recovery context, then paste it into the new ChatGPT chat:',prompt)}
+  else{window.alert('Project recovery context copied. Paste it into the new ChatGPT conversation to resume '+p.name+'.')}
+  if(!opened)window.location.assign('https://chatgpt.com/');
+}
 let activeHealthFilter="";let activeAttentionFilter="";let preferredView="dashboard";
 function sortRows(rows){
   const mode=document.querySelector("#sortBy")?.value||"value";
